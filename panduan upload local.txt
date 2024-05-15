@@ -1,0 +1,16 @@
+1. download dan instal xampp versi 5/7
+2. setelah itu copy folder ke xampp/htdocs/
+3. Aktifkan mysql dan apache di aplikasi xampp
+4. buka browser, lalu akses databse dengan alamat berikut localhost/phpmyadmin
+5. buat database baru dengan nama pmb_cbt, klik database lalu import databsenya
+6. setelah itu buka file database.php di application/config/
+7. lalu ganti :
+   'hostname' => 'localhost',
+   'username' => 'root',
+   'password' => '',
+   'database' => 'pmb_cbt',
+8. silahkan akses di browser localhost/pmb_cbt
+
+user     : superadmin
+password : admin123
+

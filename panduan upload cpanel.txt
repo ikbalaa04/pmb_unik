@@ -1,0 +1,11 @@
+1. buat folder di cpanel lalu upload semua folder dan file di folder yang telah di buat
+2. buat database kemuadian import databasenya
+3. setelah itu buka file database.php di application/config/
+4. lalu ganti :
+   'hostname' => 'localhost',
+   'username' => '', (isi sesuai username cpanel untuk database yang telah di buat)  
+   'password' => '', (isi sesuai password cpanel untuk database yang telah di buat)  
+   'database' => '', (isi sesuai nama databse yang telah di buat)   
+5. upload ulang file .htaccess di bagian folder yang telah di buat
+6. Jika website anda sudah https tapi halaman web masih tetap http, buka bagian 
+application/config/config.php cari bagian $config['enable_hooks'] = FALSE; ubah jadi $config['enable_hooks'] = TRUE;

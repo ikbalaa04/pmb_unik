@@ -1,0 +1,8 @@
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/core/autoload.php on line 48
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/lib/class_input.php on line 38
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/core/autoload.php on line 48
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/lib/class_input.php on line 38
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/core/autoload.php on line 48
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/lib/class_input.php on line 38
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  __autoload() is deprecated, use spl_autoload_register() instead in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/core/autoload.php on line 48
+[01-Feb-2023 12:01:12 UTC] PHP Deprecated:  Function get_magic_quotes_gpc() is deprecated in /home/u1276197/public_html/pmb.fmipauniga.ac.id/assets/kcfinder/lib/class_input.php on line 38
