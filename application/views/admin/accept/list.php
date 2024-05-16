@@ -87,6 +87,7 @@
             <th>Asal</th>
             <th>Jurusan</th>
             <th width="20">Berkas</th>
+            <th width="20">Bukti Bayar</th>
             <th width="30">No Ujian</th>
             <th width="20">Kartu</th>
             <th>Formulir</th>
@@ -155,10 +156,27 @@
 
             </center></td>
             
+            <td align="center"><center>
+                <?php $program = $accept->program;
+                $detail_program  = $this->admin_model->kartu_program($program);  ?>
+                <?php if($detail_program->tipe_program !='Berbayar'){ ?>
+                <span class="label label-default">Tidak Perlu</span>
+                <?php }else{ ?>
+                <?php if($accept->bukti_bayar == ''){ ?>
+                <span class="label label-danger"> Belum Ada</span>
+                <?php }else{ ?>
+                <?php include('detail.php') ?>
+                <?php } ?>
+                <?php } ?>
+                </center>
+            </td>
+            
 
             <?php $urut = $e++;
             $batas = str_pad($urut, 3, "0", STR_PAD_LEFT); ?>
 
+        
+            
             <td align="center">
             <?php if($accept->noujian == '') { ?>        
                 <form method="post" target="_blank" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">

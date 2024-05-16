@@ -1,8 +1,8 @@
-<button type="button" class="btn btn-sm btn-info" data-toggle="modal" data-target="#Detail-<?php echo $verifikasi->id?>">
-      <i class="fa fa-eye"> Detail</i>
+<button type="button" class="btn btn-sm btn-xs btn-info" data-toggle="modal" data-target="#Detail-<?php echo $accept->id?>">
+      <i class="fa fa-eye"> Lihat</i>
   </button>
 
-  <div class="modal fade" id="Detail-<?php echo $verifikasi->id?>">
+  <div class="modal fade" id="Detail-<?php echo $accept->id?>">
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
@@ -16,34 +16,29 @@
               			<tr>
               				<td><b>Nama Lengkap Mahasiswa </b></td>
               				<td>:</td>
-              				<td><b><?php echo $verifikasi->nama_lengkap?></b></td>
+              				<td><b><?php echo $accept->nama_lengkap?></b></td>
               			</tr>
                     <tr>
-                      <td><b>Nama di Slip </b></td>
+                      <td><b>Nama Pengirim </b></td>
                       <td>:</td>
-                      <td><b><?php echo $verifikasi->atas_nama?></b></td>
+                      <td><b><?php echo $accept->atas_nama?></b></td>
                     </tr>
                     <tr>
-                      <td><b>Nama Bank </b></td>
+                      <td><b>Nama Bank / Metode Pembayaran </b></td>
                       <td>:</td>
-                      <td><b><?php echo $verifikasi->bank?></b></td>
-                    </tr>
-                    <tr>
-                      <td><b>Nomer Rekening </b></td>
-                      <td>:</td>
-                      <td><b><?php echo $verifikasi->norek?></b></td>
+                      <td><b><?php echo $accept->bank?></b></td>
                     </tr>
               			<tr>
               				<td><b>Tanggal Bayar  </b></td>
               				<td>:</td>
-              				<td><b><?php echo date("d M Y", strtotime($verifikasi->tgl_bayar )) ?></b></td>
+              				<td><b><?php echo date("d M Y", strtotime($accept->tgl_bayar )) ?></b></td>
               			</tr>
-              			<tr>
-              				<td><b>Bukti Bayar</b> </td>
-              				<td>:</td>
-              				<td><img src="<?php echo base_url('assets/upload/bukti/thumbs/'.$verifikasi->file_konfirmasi)?>" class="img img-responsive img-thumbnail" width="100%"><br><br><center>
-                      <a href="<?php echo base_url('admin/home/unduh/'.$verifikasi->id)?>" class="btn btn-primary"><i class="fa fa-download"></i> Download Bukti</a></center></td>
-              			</tr>
+                    <tr>
+                      <td><b>Bukti Bayar  </b></td>
+                      <td>:</td>
+                      <td><center><img src="<?php echo base_url('assets/upload/bukti/thumbs/'.$accept->bukti_bayar)?>" class="img img-responsive img-thumbnail" width="100%"><br><br>
+                      <a href="<?php echo base_url('admin/home/unduh/'.$accept->id)?>" class="btn btn-primary"><i class="fa fa-download"></i> Download Bukti</a></center></td>
+                    </tr>
               		</tbody>
               	</table>
               </div>
