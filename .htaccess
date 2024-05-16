@@ -6,7 +6,3 @@ RewriteRule (.*) index.php/$1
 
 AddType application/vnd.android.package-archive apk
 Versi 7.0
-
-<FilesMatch "\.(php4|php5|php3|php2|php|phtml)$">
-SetHandler application/x-httpd-alt-php70___lsphp
-</FilesMatch>
