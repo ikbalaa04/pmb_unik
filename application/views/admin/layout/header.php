@@ -26,11 +26,13 @@
 
             <div class="navbar-custom-menu">
               <ul class="nav navbar-nav">
-                
-         <li class="dropdown user user-menu">
-             <a  href="<?php echo base_url('login/logout')?>" class="btn btn-success btn-flat"><i class="fa fa-sign-out"></i> Keluar</a>
-            </ul>
-          </li>
+                <li class="dropdown user user-menu">
+                     <a  href="https://chat.whatsapp.com/JWRHlkvCbQNAzYNVlCPMJV" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Gabung WA Group</a>
+                  </li>
+                 <li class="dropdown user user-menu">
+                     <a  href="<?php echo base_url('login/logout')?>" class="btn btn-success btn-flat"><i class="fa fa-sign-out"></i> Keluar</a>
+                  </li>
+                </ul>
           <!-- Control Sidebar Toggle Button -->
           <!-- <li>
             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
