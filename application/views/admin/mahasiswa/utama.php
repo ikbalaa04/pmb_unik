@@ -22,22 +22,77 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 <div class="row">
 <?php echo form_open_multipart(base_url('admin/home/form_utama/'),'class="form-horizontal"'); ?>
 
-<?php if($detail->bayar == 0){?>
-<?php $program = $detail->program;
-$detail_program  = $this->admin_model->kartu_program($program);  ?>
-<?php if($detail_program->tipe_program =='Gratis'){ ?>
-<div class="col-md-12"><center><b style="color:green"> Untuk pendaftaran jalur PMDK dan Prestasi gratis, Cukup upload berkas raport sesuai form yang kami sediakan, menu lain dan menu upload berkas akan muncul setelah data anda diverifikasi, silahkan lengkapi semua data dan tunggu veririfikasi admin, silahkan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi</b></center><hr></div>
-<?php }else{ ?>
-<div class="col-md-12"><center><b style="color:blue">Menu lain akan muncul jika semua data yang telah anda lengkapi sudah terverifikasi, silahkan lengkapi semua data dan tunggu veririfikasi admin, silahkan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi, jika sudah terverifikasi silahkan melakukan registrasi pendaftaran di menu Registrasi Pendaftaran</b></center><hr></div>
+<?php 
+$program = $detail->program;
+$detail_program  = $this->admin_model->kartu_program($program);  
 
-<?php }}elseif($detail->bayar == 1){ ?>
+if ($detail->fix == 1) {
+    // Jika sudah dinyatakan lulus
+    if ($detail->program != '19') {
+        ?>
+        <div class="col-md-12 border-1">
+            <center>
+                Selamat anda dinyatakan <b style="color:green">LULUS</b> tes seleksi ujian saringan masuk,<br>
+                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
+                dan lengkapi berkas persyaratan.<br>
+                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
+                <b>
+                    <a style="color:green" href="https://chat.whatsapp.com/HigAYzp8Xq7DXCnudC3P95" target="_blank">
+                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
+                    </a>
+                </b>
+            </center>
+            <hr>
+        </div>
+        <?php
+    }
 
-    <?php if($detail->program !='19'){ ?>
-    <div class="col-md-12"><b style="color:green"><marquee>Data kelengkapan anda sudah terverifikasi, Silahkan segera lakukan registrasi pendaftaran di menu Registrasi Pendaftaran, dan upload berkas-berkas di menu Upload berkas, nanti akan ada verifikasi lanjutan dari admin, jika sudah ada verifikasi lanjutan maka nomor ujian anda akan otomatis tergenerate. terimakasih !!! </marquee></b><hr></div>
-    <?php }else{ ?>
-    <div class="col-md-12"><b style="color:green"><marquee>Data kelengkapan anda sudah terverifikasi, Silahkan segera lakukan upload berkas-berkas di menu Upload berkas, nanti akan ada verifikasi lanjutan dari admin, untuk pendaftar jalur PMDK atau Prestasi hanya mengikuti wawancara saja tidak ikut ujian seleksi masuk metode CBT. terimakasih !!! </marquee></b><hr></div>
-    <?php } ?>
-<?php }?>
+} elseif ($detail->non_fix == 1) {
+    // Jika dinyatakan tidak lulus
+    if ($detail->program != '19') {
+        ?>
+        <div class="col-md-12">
+                <center>
+                    Mohon maaf anda dinyatakan <b style="color:red">TIDAK LULUS</b> tes seleksi ujian saringan masuk.
+                </center>
+        </div>
+        <?php
+    }
+
+} elseif ($detail->bayar == 0) {
+    // Belum melakukan pembayaran
+    if ($detail_program->tipe_program == 'Gratis') {
+        ?>
+        <div class="col-md-12">
+            <center>
+                <b style="color:green">
+                    Untuk pendaftaran jalur PMDK dan Prestasi gratis, cukup upload berkas rapor sesuai form yang kami sediakan.
+                    Menu lain dan menu upload berkas akan muncul setelah data anda diverifikasi.
+                    Silakan lengkapi semua data dan tunggu verifikasi admin.
+                    Silakan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi.
+                </b>
+            </center>
+            <hr>
+        </div>
+        <?php
+    } else {
+        ?>
+        <div class="col-md-12">
+            <center>
+                <b style="color:blue">
+                    Menu lain akan muncul jika semua data yang telah anda lengkapi sudah terverifikasi. 
+                    Silakan lengkapi semua data dan tunggu verifikasi admin. 
+                    Silakan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi.
+                    Jika sudah terverifikasi silakan melakukan registrasi pendaftaran di menu <b>Registrasi Pendaftaran</b>.
+                </b>
+            </center>
+            <hr>
+        </div>
+        <?php
+    }
+}
+?>
+
 
 <div class="col-md-12"><center><h2><b>Profil Utama</b></h2></center></div>
 <div class="col-md-12"><hr></div>
@@ -188,4 +243,3 @@ $detail_program  = $this->admin_model->kartu_program($program);  ?>
 
 
 <?php echo form_close(); ?>
-

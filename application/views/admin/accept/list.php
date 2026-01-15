@@ -179,12 +179,12 @@
             
             <td align="center">
             <?php if($accept->noujian == '') { ?>        
-                <form method="post" target="_blank" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">
+                <form method="post" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">
                 <input type="hidden" name="noujian" value="USM<?php echo date('y') ?><?php echo $accept->fakultas ?><?php echo $batas ?>">
                 <input type="submit" value="Generate" class="btn btn-xs btn-info">
                 </form>
             <?php  }else{?>
-                <form method="post" target="_blank" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">
+                <form method="post" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">
                 <input type="hidden" name="noujian" value="USM<?php echo date('y') ?><?php echo $accept->fakultas ?><?php echo $batas ?>">
                 <input type="submit" value="Ganti" class="btn btn-xs btn-success">
                 </form>
@@ -192,7 +192,7 @@
             </td>
 
             <td>
-            <a target="_blank" href="<?php echo base_url('admin/home/cetak_kartu_admin/'.$accept->id) ?>" class="btn btn-xs btn-primary"><i class="fa fa-print"></i> Cetak</a>
+            <a  href="<?php echo base_url('admin/home/cetak_kartu_admin/'.$accept->id) ?>" class="btn btn-xs btn-primary"><i class="fa fa-print"></i> Cetak</a>
             </td> 
 
             <td>

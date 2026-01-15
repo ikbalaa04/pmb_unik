@@ -18,7 +18,17 @@
 	   Nama Bank / AN : <b><?php echo $prodi->namabank ?></b> <br>
 	   No. Rekening : <b><?php echo $prodi->norek ?></b> <br>
 	   Rincian Registrasi Ulang : <b><?php echo $prodi->rincian_regis ?></b>
+	   
 	</p>
+	<p><span style="color:red;">**</span> Catatan:</p>
+	<ul>
+	    <li>
+	        Ini adalah jumlah pembayaran setelah dikurangi biaya pendaftaran, jika anda belum melakukan registrasi pendaftaran silahkan selesaikan di menu <b>Registrasi Pembayaran</b>
+	    </li>
+	    <li>
+	        Pembayaran minimal adalah <b>Rp1.000.000</b> dengan masa pelunasan sampai dengan priode Ujian Tengah Semester 1
+	    </li>
+	</ul>
 </div>
 
 <div class="col-md-6"><hr>

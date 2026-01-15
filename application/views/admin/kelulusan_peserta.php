@@ -2,7 +2,7 @@
 <section class="content">
  <div class="row">
       <div class="col-lg-12">
-      <div class="panel panel-primary">  
+      <div class="panel panel-success">  
       <div class="panel-body"> 
       <div class="rspv-tabel">
       <table  class="table table-bordered table-striped">
@@ -11,13 +11,13 @@
                   $detail_program  = $this->admin_model->kartu_program($program);  ?>
                   <?php if($detail_program->tipe_program =='Berbayar'){ ?>
                   <th><center>Status Registrasi Pendaftaran</center></th>
+                  <th><center>Status Registrasi Ulang</center></th>
                   <?php } ?>
                   <th><center>Status Berkas</center></th>
                   <th><center>Status Kelulusan</center></th>
                   <?php if($detail_institusi->status_batas_lulus == '1'){ ?>
                   <th><center>Status CBT</center></th>
                   <?php } ?>
-                  <th><center>Nomor Ujian</center></th>
               </tr>
           </thead>
           <tbody align="center">
@@ -28,12 +28,22 @@
                   <td align="center"><center>
                     <?php if($detail->approve == 0){ ?>
                       <?php if($detail->bukti_bayar == ''){ ?>
-                      <span class="label label-danger"><i class="fa fa-close"></i> Belum upload pembayaran</span>
+                      <span class="label label-danger"><i class="fa fa-money"></i> Belum upload pembayaran</span>
                     <?php }else{ ?>
-                      <span class="label label-warning"><i class="fa fa-money"></i> Pembayaran Belum Diverifikasi</span>
+                      <span class="label label-warning"><i class="fa fa-eye"></i> Pembayaran Belum Diverifikasi</span>
                     <?php }}else{ ?>
                       <span class="label label-success"><i class="fa fa-check"></i> Pembayaran Telah Terverifikasi</span>
                     <?php } ?>
+                  </center></td>
+                  <td align="center"><center>
+                    <?php if($detail->verifikasi_regis == '0'){ ?>
+        			<?php if($detail->registrasi_ulang == '0'){ ?>
+                      <span class="label label-danger"><i class="fa fa-money"></i> Belum Registrasi Ulang</span>
+                      <?php }else{ ?>
+                      <span class="label label-warning"><i class="fa fa-eye"></i> Registasi Ulang Belum Dicek Admin</span>
+                		<?php }}else{ ?>
+        			<span class="label label-success"><i class="fa fa-check"></i> Registasi Ulang Sudah Terverifikasi</span>
+        		<?php } ?>
                   </center></td>
                   <?php } ?>
 
@@ -100,12 +110,7 @@
                     </td>
                     <?php } ?> 
 
-                    <td align="center"><center><?php if($detail->noujian == ''){ ?>
-                        <span class="label label-danger">Belum Ada</span>
-                    <?php }else{ ?>
-                        <span class="label label-primary"><?php  echo $detail->noujian ?></span>
-                    <?php } ?></center>
-                    </td>
+                    
               </tr>
           </tbody>
         </table>

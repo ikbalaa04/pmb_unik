@@ -3,7 +3,8 @@
         <div class="container">
             <div class="row justify-content">
                 <div class="col-lg-12 col-sm-6 col-md-6">
-                       <h3><center><br><br>FORMULIR PENDAFTARAN</center><br></h3>
+                       <h3><center><br><br>FORMULIR PENDAFTARAN SARJANA (S1)</center><br></h3>
+                       <p class="text-center">Untuk pendaftaran Pascasarjana (S2) silahkan <a href="http://pmbpasca.unik-cipasung.ac.id/" target="_blank" class="fw-bold">klik disini</a></p>
                       <form action="<?php echo base_url('home/pendaftaran')?>" method="post" >
                       <div class="row">
                         <div class="col-md-12">
@@ -147,7 +148,7 @@
                                 </select>
 
                               <label><b>Asal Sekolah</b></label>
-                              <input style="text-transform: uppercase;" type="text" class="form-control" required name="sekolah_nama" placeholder="Sekolah / Kampus asal anda" value="<?php echo set_value('sekolah_nama') ?>"/>
+                              <input  type="text" class="form-control" required name="sekolah_nama" placeholder="Sekolah asal anda" value="<?php echo set_value('sekolah_nama') ?>"/>
 
                               <label><b>Jurusan</b></label>
                               <input type="text" class="form-control" required name="sekolah_jurusan" placeholder="Masukan jurusan sekolah" value="<?php echo set_value('sekolah_jurusan') ?>"/>
@@ -164,7 +165,7 @@
                               <label><b>Email  </b></label>  
                                 <input type="email" class="form-control" required name="email" placeholder="Daftarkan email aktif" value="<?php echo set_value('email') ?>"/>
 
-                              <label><b>Nomor WA </b></label>   
+                              <label><b>Nomor WA (dimulai dengan 62XXX) </b></label>   
                               <input type="number" class="form-control" required name="hp" placeholder="Contoh : 628213597XXX" value="<?php echo set_value('hp') ?>"/>
 
                               <label><b>Sumber Referensi </b></label>   

