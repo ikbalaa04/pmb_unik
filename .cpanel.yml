@@ -1,5 +1,0 @@
----
-deployment:
-  tasks:
-    - export DEPLOYPATH=/home/fagshwzc/pmb-unik
-    - /usr/bin/rsync -Paz * $DEPLOYPATH --delete
