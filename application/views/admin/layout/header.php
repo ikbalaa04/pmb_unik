@@ -27,7 +27,7 @@
             <div class="navbar-custom-menu">
               <ul class="nav navbar-nav">
                 <li class="dropdown user user-menu">
-                     <a  href="#" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Gabung WA Group</a>
+                     <a  href="https://chat.whatsapp.com/EsWexbnuSt7HlKCsD5s8g4" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Gabung WA Group</a>
                   </li>
                 <!--<li class="dropdown user user-menu">-->
                 <!--     <a  href="https://chat.whatsapp.com/GS1jLrWOnF39NOBKxJCncR" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> WA Group Test Gel. 3</a>-->
