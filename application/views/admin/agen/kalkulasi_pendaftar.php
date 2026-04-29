@@ -38,13 +38,20 @@ $chart_status_prodi_labels = array();
 $chart_status_prodi_registrasi = array();
 $chart_status_prodi_diverifikasi = array();
 $chart_status_prodi_diterima = array();
+$chart_status_prodi_legend = array();
 
 if (!empty($chart_status_per_prodi)) {
     foreach ($chart_status_per_prodi as $row) {
-        $chart_status_prodi_labels[] = $row->jenjang . ' - ' . $row->nama_prodi;
+        $short_label = $row->kode;
+        if (preg_match('/\(([^)]+)\)/', $row->nama_prodi, $matches)) {
+            $short_label = $matches[1];
+        }
+
+        $chart_status_prodi_labels[] = $short_label;
         $chart_status_prodi_registrasi[] = (int) $row->registrasi;
         $chart_status_prodi_diverifikasi[] = (int) $row->diverifikasi;
         $chart_status_prodi_diterima[] = (int) $row->diterima;
+        $chart_status_prodi_legend[] = $short_label . ' = ' . $row->jenjang . ' - ' . $row->nama_prodi;
     }
 }
 ?>
@@ -75,67 +82,34 @@ if (!empty($chart_status_per_prodi)) {
         width: 100% !important;
         height: 320px !important;
     }
+
+    .chart-panel.chart-panel-tall {
+        min-height: 620px;
+    }
+
+    .chart-panel.chart-panel-tall .chart-wrap {
+        height: 420px;
+    }
+
+    .chart-panel.chart-panel-tall canvas {
+        height: 420px !important;
+    }
+
+    .chart-legend-note {
+        margin-top: 15px;
+        font-size: 12px;
+        line-height: 1.7;
+        color: #555;
+        column-count: 2;
+        column-gap: 24px;
+    }
+
+    @media screen and (max-width: 991px) {
+        .chart-legend-note {
+            column-count: 1;
+        }
+    }
 </style>
-
-<div class="row">
-<div class="col-lg-6 col-md-6">
-<div class="panel panel-default chart-panel">
-<div class="panel-heading">
-    Perkembangan dan Komparasi Pendaftaran Umum
-    <span class="panel-subtitle">Perbandingan jumlah pendaftar pada tiap tahun akademik.</span>
-</div>
-<div class="panel-body">
-    <div class="chart-wrap">
-        <canvas id="chartPendaftarUmum"></canvas>
-    </div>
-</div>
-</div>
-</div>
-
-<div class="col-lg-6 col-md-6">
-<div class="panel panel-default chart-panel">
-<div class="panel-heading">
-    Perkembangan dan Komparasi Pendaftaran per Prodi
-    <span class="panel-subtitle">Setiap garis mewakili satu program studi pada seluruh tahun akademik.</span>
-</div>
-<div class="panel-body">
-    <div class="chart-wrap">
-        <canvas id="chartPendaftarPerProdi"></canvas>
-    </div>
-</div>
-</div>
-</div>
-</div>
-
-<div class="row">
-<div class="col-lg-6 col-md-6">
-<div class="panel panel-default chart-panel">
-<div class="panel-heading">
-    Perbandingan Status Pendaftar Umum
-    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
-</div>
-<div class="panel-body">
-    <div class="chart-wrap">
-        <canvas id="chartStatusUmum"></canvas>
-    </div>
-</div>
-</div>
-</div>
-
-<div class="col-lg-6 col-md-6">
-<div class="panel panel-default chart-panel">
-<div class="panel-heading">
-    Perbandingan Status Pendaftar per Prodi
-    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
-</div>
-<div class="panel-body">
-    <div class="chart-wrap">
-        <canvas id="chartStatusPerProdi"></canvas>
-    </div>
-</div>
-</div>
-</div>
-</div>
 
 <div class="row">
 <div class="col-lg-12">
@@ -555,6 +529,84 @@ if (!empty($chart_status_per_prodi)) {
 </div>
 </div>
 
+<div class="row">
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perkembangan dan Komparasi Pendaftaran Umum
+    <span class="panel-subtitle">Perbandingan jumlah pendaftar pada tiap tahun akademik.</span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartPendaftarUmum"></canvas>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perkembangan dan Komparasi Pendaftaran per Prodi
+    <span class="panel-subtitle">Setiap garis mewakili satu program studi pada seluruh tahun akademik.</span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartPendaftarPerProdi"></canvas>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perbandingan Status Pendaftar Umum
+    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartStatusUmum"></canvas>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Ringkasan Label Prodi
+    <span class="panel-subtitle">Singkatan yang dipakai pada chart status per prodi.</span>
+</div>
+<div class="panel-body">
+    <div class="chart-legend-note">
+        <?php foreach ($chart_status_prodi_legend as $legend_item) { ?>
+            <div><?php echo $legend_item; ?></div>
+        <?php } ?>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-lg-12">
+<div class="panel panel-default chart-panel chart-panel-tall">
+<div class="panel-heading">
+    Perbandingan Status Pendaftar per Prodi
+    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartStatusPerProdi"></canvas>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
 <script src="<?php echo base_url('assets/admin/bower_components/chart.js/Chart.min.js'); ?>"></script>
 <script type="text/javascript">
 (function () {
@@ -693,5 +745,4 @@ if (!empty($chart_status_per_prodi)) {
     }
 })();
 </script>
-
 
