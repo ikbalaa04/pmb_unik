@@ -4020,6 +4020,64 @@ class Admin_model extends CI_Model {
 		$query = $this->db->get();
 		return $query->result();
     }
+
+    public function chart_pendaftar_tahunan_umum()
+    {
+    	$this->db->select('tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, COUNT(pendaftaran.id) as jumlah_pendaftar');
+		$this->db->from('tahun_akademik');
+		$this->db->join('pendaftaran', 'pendaftaran.tahun_akademik = tahun_akademik.id_thn_akademik', 'left');
+		$this->db->group_by(array('tahun_akademik.id_thn_akademik', 'tahun_akademik.nama_thn_akademik'));
+		$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
+    public function chart_pendaftar_tahunan_per_prodi()
+    {
+    	$this->db->select('tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, prodi.kode, prodi.nama as nama_prodi, prodi.jenjang, COUNT(pendaftaran.id) as jumlah_pendaftar');
+		$this->db->from('pendaftaran');
+		$this->db->join('tahun_akademik', 'tahun_akademik.id_thn_akademik = pendaftaran.tahun_akademik', 'left');
+		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan', 'left');
+		$this->db->group_by(array('tahun_akademik.id_thn_akademik', 'tahun_akademik.nama_thn_akademik', 'prodi.kode', 'prodi.nama', 'prodi.jenjang'));
+		$this->db->order_by('prodi.jenjang', 'asc');
+		$this->db->order_by('prodi.nama', 'asc');
+		$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
+    public function chart_status_umum($id_thn_akademik)
+    {
+    	$this->db->select("
+    		SUM(CASE WHEN bayar = '1' AND approve = '0' AND fix = '0' AND non_fix = '0' THEN 1 ELSE 0 END) as registrasi,
+    		SUM(CASE WHEN bayar = '1' AND approve = '1' AND fix = '0' AND non_fix = '0' THEN 1 ELSE 0 END) as diverifikasi,
+    		SUM(CASE WHEN bayar = '1' AND approve = '1' AND fix = '1' AND non_fix = '0' THEN 1 ELSE 0 END) as diterima
+    	", FALSE);
+		$this->db->from('pendaftaran');
+		$this->db->where('tahun_akademik', $id_thn_akademik);
+		$query = $this->db->get();
+		return $query->row();
+    }
+
+    public function chart_status_per_prodi($id_thn_akademik)
+    {
+    	$this->db->select("
+    		prodi.kode,
+    		prodi.nama as nama_prodi,
+    		prodi.jenjang,
+    		SUM(CASE WHEN bayar = '1' AND approve = '0' AND fix = '0' AND non_fix = '0' THEN 1 ELSE 0 END) as registrasi,
+    		SUM(CASE WHEN bayar = '1' AND approve = '1' AND fix = '0' AND non_fix = '0' THEN 1 ELSE 0 END) as diverifikasi,
+    		SUM(CASE WHEN bayar = '1' AND approve = '1' AND fix = '1' AND non_fix = '0' THEN 1 ELSE 0 END) as diterima
+    	", FALSE);
+		$this->db->from('pendaftaran');
+		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan', 'left');
+		$this->db->where('tahun_akademik', $id_thn_akademik);
+		$this->db->group_by(array('prodi.kode', 'prodi.nama', 'prodi.jenjang'));
+		$this->db->order_by('prodi.jenjang', 'asc');
+		$this->db->order_by('prodi.nama', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
 	
 
  }

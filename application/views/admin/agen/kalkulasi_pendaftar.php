@@ -1,3 +1,142 @@
+<?php
+$chart_year_labels = array();
+$chart_year_totals = array();
+$chart_year_index = array();
+
+if (!empty($chart_pendaftar_tahunan_umum)) {
+    foreach ($chart_pendaftar_tahunan_umum as $row) {
+        $chart_year_labels[] = $row->nama_thn_akademik;
+        $chart_year_totals[] = (int) $row->jumlah_pendaftar;
+        $chart_year_index[$row->id_thn_akademik] = count($chart_year_labels) - 1;
+    }
+}
+
+$chart_prodi_datasets_map = array();
+if (!empty($chart_pendaftar_tahunan_per_prodi) && !empty($chart_year_labels)) {
+    foreach ($chart_pendaftar_tahunan_per_prodi as $row) {
+        $prodi_key = (string) $row->kode;
+        if (!isset($chart_prodi_datasets_map[$prodi_key])) {
+            $chart_prodi_datasets_map[$prodi_key] = array(
+                'label' => $row->jenjang . ' - ' . $row->nama_prodi,
+                'data'  => array_fill(0, count($chart_year_labels), 0),
+            );
+        }
+
+        if (isset($chart_year_index[$row->id_thn_akademik])) {
+            $chart_prodi_datasets_map[$prodi_key]['data'][$chart_year_index[$row->id_thn_akademik]] = (int) $row->jumlah_pendaftar;
+        }
+    }
+}
+
+$chart_status_umum_data = array(
+    isset($chart_status_umum->registrasi) ? (int) $chart_status_umum->registrasi : 0,
+    isset($chart_status_umum->diverifikasi) ? (int) $chart_status_umum->diverifikasi : 0,
+    isset($chart_status_umum->diterima) ? (int) $chart_status_umum->diterima : 0,
+);
+
+$chart_status_prodi_labels = array();
+$chart_status_prodi_registrasi = array();
+$chart_status_prodi_diverifikasi = array();
+$chart_status_prodi_diterima = array();
+
+if (!empty($chart_status_per_prodi)) {
+    foreach ($chart_status_per_prodi as $row) {
+        $chart_status_prodi_labels[] = $row->jenjang . ' - ' . $row->nama_prodi;
+        $chart_status_prodi_registrasi[] = (int) $row->registrasi;
+        $chart_status_prodi_diverifikasi[] = (int) $row->diverifikasi;
+        $chart_status_prodi_diterima[] = (int) $row->diterima;
+    }
+}
+?>
+
+<style type="text/css">
+    .chart-panel {
+        min-height: 430px;
+    }
+
+    .chart-panel .panel-heading {
+        font-weight: bold;
+    }
+
+    .chart-panel .panel-subtitle {
+        display: block;
+        margin-top: 4px;
+        color: #666;
+        font-size: 12px;
+        font-weight: normal;
+    }
+
+    .chart-panel .chart-wrap {
+        position: relative;
+        height: 320px;
+    }
+
+    .chart-panel canvas {
+        width: 100% !important;
+        height: 320px !important;
+    }
+</style>
+
+<div class="row">
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perkembangan dan Komparasi Pendaftaran Umum
+    <span class="panel-subtitle">Perbandingan jumlah pendaftar pada tiap tahun akademik.</span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartPendaftarUmum"></canvas>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perkembangan dan Komparasi Pendaftaran per Prodi
+    <span class="panel-subtitle">Setiap garis mewakili satu program studi pada seluruh tahun akademik.</span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartPendaftarPerProdi"></canvas>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perbandingan Status Pendaftar Umum
+    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartStatusUmum"></canvas>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel">
+<div class="panel-heading">
+    Perbandingan Status Pendaftar per Prodi
+    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartStatusPerProdi"></canvas>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
 <div class="row">
 <div class="col-lg-12">
 <div class="panel panel-default">  
@@ -416,5 +555,143 @@
 </div>
 </div>
 
+<script src="<?php echo base_url('assets/admin/bower_components/chart.js/Chart.min.js'); ?>"></script>
+<script type="text/javascript">
+(function () {
+    var palette = [
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b',
+        '#e377c2', '#7f7f7f', '#bcbd22', '#17becf', '#3366cc', '#dc3912',
+        '#ff9900', '#109618', '#990099', '#0099c6', '#dd4477', '#66aa00'
+    ];
+
+    function colorAt(index) {
+        return palette[index % palette.length];
+    }
+
+    function hexToRgba(hex, alpha) {
+        var clean = hex.replace('#', '');
+        var bigint = parseInt(clean, 16);
+        var r = (bigint >> 16) & 255;
+        var g = (bigint >> 8) & 255;
+        var b = bigint & 255;
+        return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
+    var yearLabels = <?php echo json_encode($chart_year_labels); ?>;
+    var yearTotals = <?php echo json_encode($chart_year_totals); ?>;
+    var prodiSeries = <?php echo json_encode(array_values($chart_prodi_datasets_map)); ?>;
+    var statusUmumLabels = ['Registrasi', 'Diverifikasi', 'Diterima'];
+    var statusUmumData = <?php echo json_encode($chart_status_umum_data); ?>;
+    var statusProdiLabels = <?php echo json_encode($chart_status_prodi_labels); ?>;
+    var statusProdiRegistrasi = <?php echo json_encode($chart_status_prodi_registrasi); ?>;
+    var statusProdiDiverifikasi = <?php echo json_encode($chart_status_prodi_diverifikasi); ?>;
+    var statusProdiDiterima = <?php echo json_encode($chart_status_prodi_diterima); ?>;
+
+    if (document.getElementById('chartPendaftarUmum') && yearLabels.length) {
+        new Chart(document.getElementById('chartPendaftarUmum').getContext('2d')).Line({
+            labels: yearLabels,
+            datasets: [{
+                label: 'Jumlah Pendaftar',
+                fillColor: 'rgba(60,141,188,0.15)',
+                strokeColor: '#3c8dbc',
+                pointColor: '#3c8dbc',
+                pointStrokeColor: '#ffffff',
+                pointHighlightFill: '#ffffff',
+                pointHighlightStroke: '#3c8dbc',
+                data: yearTotals
+            }]
+        }, {
+            responsive: true,
+            maintainAspectRatio: false,
+            bezierCurve: false,
+            datasetFill: true,
+            multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
+        });
+    }
+
+    if (document.getElementById('chartPendaftarPerProdi') && yearLabels.length && prodiSeries.length) {
+        var prodiDatasets = prodiSeries.map(function (series, index) {
+            var color = colorAt(index);
+            return {
+                label: series.label,
+                fillColor: hexToRgba(color, 0.04),
+                strokeColor: color,
+                pointColor: color,
+                pointStrokeColor: '#ffffff',
+                pointHighlightFill: '#ffffff',
+                pointHighlightStroke: color,
+                data: series.data
+            };
+        });
+
+        new Chart(document.getElementById('chartPendaftarPerProdi').getContext('2d')).Line({
+            labels: yearLabels,
+            datasets: prodiDatasets
+        }, {
+            responsive: true,
+            maintainAspectRatio: false,
+            bezierCurve: false,
+            datasetFill: false,
+            multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
+        });
+    }
+
+    if (document.getElementById('chartStatusUmum')) {
+        new Chart(document.getElementById('chartStatusUmum').getContext('2d')).Bar({
+            labels: statusUmumLabels,
+            datasets: [{
+                label: 'Jumlah Pendaftar',
+                fillColor: 'rgba(0,166,90,0.75)',
+                strokeColor: '#00a65a',
+                highlightFill: 'rgba(0,166,90,0.9)',
+                highlightStroke: '#008d4c',
+                data: statusUmumData
+            }]
+        }, {
+            responsive: true,
+            maintainAspectRatio: false,
+            scaleBeginAtZero: true,
+            multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
+        });
+    }
+
+    if (document.getElementById('chartStatusPerProdi') && statusProdiLabels.length) {
+        new Chart(document.getElementById('chartStatusPerProdi').getContext('2d')).Bar({
+            labels: statusProdiLabels,
+            datasets: [
+                {
+                    label: 'Registrasi',
+                    fillColor: 'rgba(243,156,18,0.75)',
+                    strokeColor: '#f39c12',
+                    highlightFill: 'rgba(243,156,18,0.9)',
+                    highlightStroke: '#d58512',
+                    data: statusProdiRegistrasi
+                },
+                {
+                    label: 'Diverifikasi',
+                    fillColor: 'rgba(60,141,188,0.75)',
+                    strokeColor: '#3c8dbc',
+                    highlightFill: 'rgba(60,141,188,0.9)',
+                    highlightStroke: '#367fa9',
+                    data: statusProdiDiverifikasi
+                },
+                {
+                    label: 'Diterima',
+                    fillColor: 'rgba(0,166,90,0.75)',
+                    strokeColor: '#00a65a',
+                    highlightFill: 'rgba(0,166,90,0.9)',
+                    highlightStroke: '#008d4c',
+                    data: statusProdiDiterima
+                }
+            ]
+        }, {
+            responsive: true,
+            maintainAspectRatio: false,
+            scaleBeginAtZero: true,
+            multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
+        });
+    }
+})();
+</script>
 
 
