@@ -28,17 +28,20 @@ if (!empty($chart_pendaftar_tahunan_per_prodi) && !empty($chart_year_labels)) {
     }
 }
 
-$chart_status_umum_data = array(
-    isset($chart_status_umum->registrasi) ? (int) $chart_status_umum->registrasi : 0,
-    isset($chart_status_umum->diverifikasi) ? (int) $chart_status_umum->diverifikasi : 0,
-    isset($chart_status_umum->diterima) ? (int) $chart_status_umum->diterima : 0,
-);
+$chart_diterima_year_labels = array();
+$chart_diterima_year_totals = array();
+
+if (!empty($chart_diterima_tahunan_umum)) {
+    foreach ($chart_diterima_tahunan_umum as $row) {
+        $chart_diterima_year_labels[] = $row->nama_thn_akademik;
+        $chart_diterima_year_totals[] = (int) $row->jumlah_diterima;
+    }
+}
 
 $chart_status_prodi_labels = array();
 $chart_status_prodi_registrasi = array();
 $chart_status_prodi_diverifikasi = array();
 $chart_status_prodi_diterima = array();
-$chart_status_prodi_legend = array();
 
 if (!empty($chart_status_per_prodi)) {
     foreach ($chart_status_per_prodi as $row) {
@@ -51,7 +54,6 @@ if (!empty($chart_status_per_prodi)) {
         $chart_status_prodi_registrasi[] = (int) $row->registrasi;
         $chart_status_prodi_diverifikasi[] = (int) $row->diverifikasi;
         $chart_status_prodi_diterima[] = (int) $row->diterima;
-        $chart_status_prodi_legend[] = $short_label . ' = ' . $row->jenjang . ' - ' . $row->nama_prodi;
     }
 }
 ?>
@@ -563,12 +565,12 @@ if (!empty($chart_status_per_prodi)) {
 <div class="col-lg-6 col-md-6">
 <div class="panel panel-default chart-panel">
 <div class="panel-heading">
-    Perbandingan Status Pendaftar Umum
-    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+    Perbandingan Mahasiswa Diterima Umum
+    <span class="panel-subtitle">Perbandingan jumlah mahasiswa diterima pada tiap tahun akademik.</span>
 </div>
 <div class="panel-body">
     <div class="chart-wrap">
-        <canvas id="chartStatusUmum"></canvas>
+        <canvas id="chartDiterimaUmum"></canvas>
     </div>
 </div>
 </div>
@@ -577,14 +579,12 @@ if (!empty($chart_status_per_prodi)) {
 <div class="col-lg-6 col-md-6">
 <div class="panel panel-default chart-panel">
 <div class="panel-heading">
-    Ringkasan Label Prodi
-    <span class="panel-subtitle">Singkatan yang dipakai pada chart status per prodi.</span>
+    Perbandingan Mahasiswa Diterima per Prodi
+    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
 </div>
 <div class="panel-body">
-    <div class="chart-legend-note">
-        <?php foreach ($chart_status_prodi_legend as $legend_item) { ?>
-            <div><?php echo $legend_item; ?></div>
-        <?php } ?>
+    <div class="chart-wrap">
+        <canvas id="chartDiterimaPerProdi"></canvas>
     </div>
 </div>
 </div>
@@ -632,8 +632,8 @@ if (!empty($chart_status_per_prodi)) {
     var yearLabels = <?php echo json_encode($chart_year_labels); ?>;
     var yearTotals = <?php echo json_encode($chart_year_totals); ?>;
     var prodiSeries = <?php echo json_encode(array_values($chart_prodi_datasets_map)); ?>;
-    var statusUmumLabels = ['Registrasi', 'Diverifikasi', 'Diterima'];
-    var statusUmumData = <?php echo json_encode($chart_status_umum_data); ?>;
+    var diterimaYearLabels = <?php echo json_encode($chart_diterima_year_labels); ?>;
+    var diterimaYearTotals = <?php echo json_encode($chart_diterima_year_totals); ?>;
     var statusProdiLabels = <?php echo json_encode($chart_status_prodi_labels); ?>;
     var statusProdiRegistrasi = <?php echo json_encode($chart_status_prodi_registrasi); ?>;
     var statusProdiDiverifikasi = <?php echo json_encode($chart_status_prodi_diverifikasi); ?>;
@@ -688,16 +688,38 @@ if (!empty($chart_status_per_prodi)) {
         });
     }
 
-    if (document.getElementById('chartStatusUmum')) {
-        new Chart(document.getElementById('chartStatusUmum').getContext('2d')).Bar({
-            labels: statusUmumLabels,
+    if (document.getElementById('chartDiterimaUmum') && diterimaYearLabels.length) {
+        new Chart(document.getElementById('chartDiterimaUmum').getContext('2d')).Line({
+            labels: diterimaYearLabels,
             datasets: [{
-                label: 'Jumlah Pendaftar',
+                label: 'Mahasiswa Diterima',
+                fillColor: 'rgba(0,166,90,0.15)',
+                strokeColor: '#00a65a',
+                pointColor: '#00a65a',
+                pointStrokeColor: '#ffffff',
+                pointHighlightFill: '#ffffff',
+                pointHighlightStroke: '#00a65a',
+                data: diterimaYearTotals
+            }]
+        }, {
+            responsive: true,
+            maintainAspectRatio: false,
+            bezierCurve: false,
+            datasetFill: true,
+            multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
+        });
+    }
+
+    if (document.getElementById('chartDiterimaPerProdi') && statusProdiLabels.length) {
+        new Chart(document.getElementById('chartDiterimaPerProdi').getContext('2d')).Bar({
+            labels: statusProdiLabels,
+            datasets: [{
+                label: 'Mahasiswa Diterima',
                 fillColor: 'rgba(0,166,90,0.75)',
                 strokeColor: '#00a65a',
                 highlightFill: 'rgba(0,166,90,0.9)',
                 highlightStroke: '#008d4c',
-                data: statusUmumData
+                data: statusProdiDiterima
             }]
         }, {
             responsive: true,
@@ -745,4 +767,3 @@ if (!empty($chart_status_per_prodi)) {
     }
 })();
 </script>
-

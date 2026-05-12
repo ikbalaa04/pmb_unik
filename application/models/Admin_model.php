@@ -4046,6 +4046,21 @@ class Admin_model extends CI_Model {
 		return $query->result();
     }
 
+    public function chart_diterima_tahunan_umum()
+    {
+    	$this->db->select("
+    		tahun_akademik.id_thn_akademik,
+    		tahun_akademik.nama_thn_akademik,
+    		SUM(CASE WHEN pendaftaran.bayar = '1' AND pendaftaran.approve = '1' AND pendaftaran.fix = '1' AND pendaftaran.non_fix = '0' THEN 1 ELSE 0 END) as jumlah_diterima
+    	", FALSE);
+		$this->db->from('tahun_akademik');
+		$this->db->join('pendaftaran', 'pendaftaran.tahun_akademik = tahun_akademik.id_thn_akademik', 'left');
+		$this->db->group_by(array('tahun_akademik.id_thn_akademik', 'tahun_akademik.nama_thn_akademik'));
+		$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
     public function chart_status_umum($id_thn_akademik)
     {
     	$this->db->select("
