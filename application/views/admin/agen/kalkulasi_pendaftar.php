@@ -38,22 +38,61 @@ if (!empty($chart_diterima_tahunan_umum)) {
     }
 }
 
-$chart_status_prodi_labels = array();
-$chart_status_prodi_registrasi = array();
-$chart_status_prodi_diverifikasi = array();
-$chart_status_prodi_diterima = array();
+$chart_diterima_year_index = array();
+if (!empty($chart_diterima_tahunan_umum)) {
+    foreach ($chart_diterima_tahunan_umum as $index => $row) {
+        $chart_diterima_year_index[$row->id_thn_akademik] = $index;
+    }
+}
 
-if (!empty($chart_status_per_prodi)) {
-    foreach ($chart_status_per_prodi as $row) {
-        $short_label = $row->kode;
-        if (preg_match('/\(([^)]+)\)/', $row->nama_prodi, $matches)) {
-            $short_label = $matches[1];
+$chart_diterima_prodi_datasets_map = array();
+if (!empty($chart_diterima_tahunan_per_prodi) && !empty($chart_diterima_year_labels)) {
+    foreach ($chart_diterima_tahunan_per_prodi as $row) {
+        $prodi_key = (string) $row->kode;
+        if (!isset($chart_diterima_prodi_datasets_map[$prodi_key])) {
+            $chart_diterima_prodi_datasets_map[$prodi_key] = array(
+                'label' => $row->jenjang . ' - ' . $row->nama_prodi,
+                'data'  => array_fill(0, count($chart_diterima_year_labels), 0),
+            );
         }
 
-        $chart_status_prodi_labels[] = $short_label;
-        $chart_status_prodi_registrasi[] = (int) $row->registrasi;
-        $chart_status_prodi_diverifikasi[] = (int) $row->diverifikasi;
-        $chart_status_prodi_diterima[] = (int) $row->diterima;
+        if (isset($chart_diterima_year_index[$row->id_thn_akademik])) {
+            $chart_diterima_prodi_datasets_map[$prodi_key]['data'][$chart_diterima_year_index[$row->id_thn_akademik]] = (int) $row->jumlah_diterima;
+        }
+    }
+}
+
+$chart_month_labels = array('Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des');
+$chart_monthly_year_options = array();
+$chart_monthly_data_by_year = array();
+
+if (!empty($chart_pendaftar_tahunan_umum)) {
+    foreach ($chart_pendaftar_tahunan_umum as $row) {
+        $year_id = (string) $row->id_thn_akademik;
+        $chart_monthly_year_options[] = array(
+            'id' => $year_id,
+            'label' => $row->nama_thn_akademik,
+        );
+        $chart_monthly_data_by_year[$year_id] = array_fill(0, 12, 0);
+    }
+}
+
+if (!empty($chart_pendaftar_bulanan_tahunan)) {
+    foreach ($chart_pendaftar_bulanan_tahunan as $row) {
+        $year_id = (string) $row->id_thn_akademik;
+        $month_index = (int) $row->bulan - 1;
+
+        if (!isset($chart_monthly_data_by_year[$year_id])) {
+            $chart_monthly_year_options[] = array(
+                'id' => $year_id,
+                'label' => $row->nama_thn_akademik,
+            );
+            $chart_monthly_data_by_year[$year_id] = array_fill(0, 12, 0);
+        }
+
+        if ($month_index >= 0 && $month_index < 12) {
+            $chart_monthly_data_by_year[$year_id][$month_index] = (int) $row->jumlah_pendaftar;
+        }
     }
 }
 ?>
@@ -106,9 +145,28 @@ if (!empty($chart_status_per_prodi)) {
         column-gap: 24px;
     }
 
+    .chart-panel .chart-filter {
+        float: right;
+        width: 180px;
+        margin-top: -4px;
+        font-weight: normal;
+    }
+
+    .chart-panel .chart-filter select {
+        height: 30px;
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
     @media screen and (max-width: 991px) {
         .chart-legend-note {
             column-count: 1;
+        }
+
+        .chart-panel .chart-filter {
+            float: none;
+            width: 100%;
+            margin-top: 10px;
         }
     }
 </style>
@@ -580,7 +638,7 @@ if (!empty($chart_status_per_prodi)) {
 <div class="panel panel-default chart-panel">
 <div class="panel-heading">
     Perbandingan Mahasiswa Diterima per Prodi
-    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+    <span class="panel-subtitle">Setiap garis mewakili jumlah mahasiswa diterima per program studi pada seluruh tahun akademik.</span>
 </div>
 <div class="panel-body">
     <div class="chart-wrap">
@@ -595,12 +653,21 @@ if (!empty($chart_status_per_prodi)) {
 <div class="col-lg-12">
 <div class="panel panel-default chart-panel chart-panel-tall">
 <div class="panel-heading">
-    Perbandingan Status Pendaftar per Prodi
-    <span class="panel-subtitle">Tahun akademik aktif: <?php echo $tahun_akademik_aktif->nama_thn_akademik; ?></span>
+    Trend Pendaftar per Bulan
+    <div class="chart-filter">
+        <select id="chartMonthlyYearFilter" class="form-control">
+            <?php foreach ($chart_monthly_year_options as $year_option) { ?>
+                <option value="<?php echo $year_option['id']; ?>" <?php if ((string) $tahun_akademik_aktif->id_thn_akademik === (string) $year_option['id']) { echo 'selected'; } ?>>
+                    <?php echo $year_option['label']; ?>
+                </option>
+            <?php } ?>
+        </select>
+    </div>
+    <span class="panel-subtitle">Jumlah pendaftar dikelompokkan berdasarkan bulan pada tahun akademik yang dipilih.</span>
 </div>
 <div class="panel-body">
     <div class="chart-wrap">
-        <canvas id="chartStatusPerProdi"></canvas>
+        <canvas id="chartPendaftarBulanan"></canvas>
     </div>
 </div>
 </div>
@@ -634,10 +701,9 @@ if (!empty($chart_status_per_prodi)) {
     var prodiSeries = <?php echo json_encode(array_values($chart_prodi_datasets_map)); ?>;
     var diterimaYearLabels = <?php echo json_encode($chart_diterima_year_labels); ?>;
     var diterimaYearTotals = <?php echo json_encode($chart_diterima_year_totals); ?>;
-    var statusProdiLabels = <?php echo json_encode($chart_status_prodi_labels); ?>;
-    var statusProdiRegistrasi = <?php echo json_encode($chart_status_prodi_registrasi); ?>;
-    var statusProdiDiverifikasi = <?php echo json_encode($chart_status_prodi_diverifikasi); ?>;
-    var statusProdiDiterima = <?php echo json_encode($chart_status_prodi_diterima); ?>;
+    var diterimaProdiSeries = <?php echo json_encode(array_values($chart_diterima_prodi_datasets_map)); ?>;
+    var monthLabels = <?php echo json_encode($chart_month_labels); ?>;
+    var monthlyDataByYear = <?php echo json_encode($chart_monthly_data_by_year); ?>;
 
     if (document.getElementById('chartPendaftarUmum') && yearLabels.length) {
         new Chart(document.getElementById('chartPendaftarUmum').getContext('2d')).Line({
@@ -710,60 +776,72 @@ if (!empty($chart_status_per_prodi)) {
         });
     }
 
-    if (document.getElementById('chartDiterimaPerProdi') && statusProdiLabels.length) {
-        new Chart(document.getElementById('chartDiterimaPerProdi').getContext('2d')).Bar({
-            labels: statusProdiLabels,
-            datasets: [{
-                label: 'Mahasiswa Diterima',
-                fillColor: 'rgba(0,166,90,0.75)',
-                strokeColor: '#00a65a',
-                highlightFill: 'rgba(0,166,90,0.9)',
-                highlightStroke: '#008d4c',
-                data: statusProdiDiterima
-            }]
+    if (document.getElementById('chartDiterimaPerProdi') && diterimaYearLabels.length && diterimaProdiSeries.length) {
+        var diterimaProdiDatasets = diterimaProdiSeries.map(function (series, index) {
+            var color = colorAt(index);
+            return {
+                label: series.label,
+                fillColor: hexToRgba(color, 0.04),
+                strokeColor: color,
+                pointColor: color,
+                pointStrokeColor: '#ffffff',
+                pointHighlightFill: '#ffffff',
+                pointHighlightStroke: color,
+                data: series.data
+            };
+        });
+
+        new Chart(document.getElementById('chartDiterimaPerProdi').getContext('2d')).Line({
+            labels: diterimaYearLabels,
+            datasets: diterimaProdiDatasets
         }, {
             responsive: true,
             maintainAspectRatio: false,
-            scaleBeginAtZero: true,
+            bezierCurve: false,
+            datasetFill: false,
             multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
         });
     }
 
-    if (document.getElementById('chartStatusPerProdi') && statusProdiLabels.length) {
-        new Chart(document.getElementById('chartStatusPerProdi').getContext('2d')).Bar({
-            labels: statusProdiLabels,
-            datasets: [
-                {
-                    label: 'Registrasi',
-                    fillColor: 'rgba(243,156,18,0.75)',
-                    strokeColor: '#f39c12',
-                    highlightFill: 'rgba(243,156,18,0.9)',
-                    highlightStroke: '#d58512',
-                    data: statusProdiRegistrasi
-                },
-                {
-                    label: 'Diverifikasi',
-                    fillColor: 'rgba(60,141,188,0.75)',
-                    strokeColor: '#3c8dbc',
-                    highlightFill: 'rgba(60,141,188,0.9)',
-                    highlightStroke: '#367fa9',
-                    data: statusProdiDiverifikasi
-                },
-                {
-                    label: 'Diterima',
-                    fillColor: 'rgba(0,166,90,0.75)',
-                    strokeColor: '#00a65a',
-                    highlightFill: 'rgba(0,166,90,0.9)',
-                    highlightStroke: '#008d4c',
-                    data: statusProdiDiterima
-                }
-            ]
+    var monthlyChart = null;
+    function renderMonthlyChart(yearId) {
+        var canvas = document.getElementById('chartPendaftarBulanan');
+        if (!canvas) {
+            return;
+        }
+
+        var selectedData = monthlyDataByYear[yearId] || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        if (monthlyChart) {
+            monthlyChart.destroy();
+        }
+
+        monthlyChart = new Chart(canvas.getContext('2d')).Line({
+            labels: monthLabels,
+            datasets: [{
+                label: 'Jumlah Pendaftar',
+                fillColor: 'rgba(60,141,188,0.15)',
+                strokeColor: '#3c8dbc',
+                pointColor: '#3c8dbc',
+                pointStrokeColor: '#ffffff',
+                pointHighlightFill: '#ffffff',
+                pointHighlightStroke: '#3c8dbc',
+                data: selectedData
+            }]
         }, {
             responsive: true,
             maintainAspectRatio: false,
-            scaleBeginAtZero: true,
+            bezierCurve: false,
+            datasetFill: true,
             multiTooltipTemplate: '<%= datasetLabel %>: <%= value %>'
         });
+    }
+
+    var monthlyYearFilter = document.getElementById('chartMonthlyYearFilter');
+    if (monthlyYearFilter) {
+        renderMonthlyChart(monthlyYearFilter.value);
+        monthlyYearFilter.onchange = function () {
+            renderMonthlyChart(this.value);
+        };
     }
 })();
 </script>

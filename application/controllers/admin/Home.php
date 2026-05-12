@@ -4927,7 +4927,8 @@ class Home extends CI_CONTROLLER
         $chart_pendaftar_tahunan_umum = $this->admin_model->chart_pendaftar_tahunan_umum();
         $chart_pendaftar_tahunan_per_prodi = $this->admin_model->chart_pendaftar_tahunan_per_prodi();
         $chart_diterima_tahunan_umum = $this->admin_model->chart_diterima_tahunan_umum();
-        $chart_status_per_prodi = $this->admin_model->chart_status_per_prodi($id_thn_akademik);
+        $chart_diterima_tahunan_per_prodi = $this->admin_model->chart_diterima_tahunan_per_prodi();
+        $chart_pendaftar_bulanan_tahunan = $this->admin_model->chart_pendaftar_bulanan_tahunan();
 
         $data = array( 'title'          	=> 'Halaman Statistik Pendaftar TA ' .$ambil_detail_thn_akademik->nama_thn_akademik,
                        'tampil_fakultas' 	=> $tampil_fakultas,
@@ -4939,7 +4940,8 @@ class Home extends CI_CONTROLLER
                        'chart_pendaftar_tahunan_umum' => $chart_pendaftar_tahunan_umum,
                        'chart_pendaftar_tahunan_per_prodi' => $chart_pendaftar_tahunan_per_prodi,
                        'chart_diterima_tahunan_umum' => $chart_diterima_tahunan_umum,
-                       'chart_status_per_prodi'  => $chart_status_per_prodi,
+                       'chart_diterima_tahunan_per_prodi' => $chart_diterima_tahunan_per_prodi,
+                       'chart_pendaftar_bulanan_tahunan' => $chart_pendaftar_bulanan_tahunan,
                        'isi'            			 => 'admin/agen/kalkulasi_pendaftar');
         $this->load->view('admin/layout/wrapper', $data, FALSE);
     }

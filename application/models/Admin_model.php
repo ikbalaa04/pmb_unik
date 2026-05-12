@@ -4061,6 +4061,46 @@ class Admin_model extends CI_Model {
 		return $query->result();
     }
 
+    public function chart_diterima_tahunan_per_prodi()
+    {
+    	$this->db->select("
+    		tahun_akademik.id_thn_akademik,
+    		tahun_akademik.nama_thn_akademik,
+    		prodi.kode,
+    		prodi.nama as nama_prodi,
+    		prodi.jenjang,
+    		COUNT(pendaftaran.id) as jumlah_diterima
+    	", FALSE);
+		$this->db->from('pendaftaran');
+		$this->db->join('tahun_akademik', 'tahun_akademik.id_thn_akademik = pendaftaran.tahun_akademik', 'left');
+		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan', 'left');
+		$this->db->where(array(
+			'pendaftaran.bayar' => '1',
+			'pendaftaran.approve' => '1',
+			'pendaftaran.fix' => '1',
+			'pendaftaran.non_fix' => '0',
+		));
+		$this->db->group_by(array('tahun_akademik.id_thn_akademik', 'tahun_akademik.nama_thn_akademik', 'prodi.kode', 'prodi.nama', 'prodi.jenjang'));
+		$this->db->order_by('prodi.jenjang', 'asc');
+		$this->db->order_by('prodi.nama', 'asc');
+		$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
+    public function chart_pendaftar_bulanan_tahunan()
+    {
+    	$this->db->select('tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, MONTH(pendaftaran.tanggal_daftar) as bulan, COUNT(pendaftaran.id) as jumlah_pendaftar', FALSE);
+		$this->db->from('pendaftaran');
+		$this->db->join('tahun_akademik', 'tahun_akademik.id_thn_akademik = pendaftaran.tahun_akademik', 'left');
+		$this->db->where('pendaftaran.tanggal_daftar IS NOT NULL', NULL, FALSE);
+		$this->db->group_by(array('tahun_akademik.id_thn_akademik', 'tahun_akademik.nama_thn_akademik', 'MONTH(pendaftaran.tanggal_daftar)'));
+		$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
+		$this->db->order_by('bulan', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
     public function chart_status_umum($id_thn_akademik)
     {
     	$this->db->select("
