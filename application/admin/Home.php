@@ -4178,6 +4178,152 @@ class Home extends CI_CONTROLLER
         $this->load->view('admin/verifikasi/export', $data, FALSE);
     }
 
+    public function export_pendaftaran_excel($status = 'registrasi'){
+        $allowed = array('registrasi', 'terverifikasi', 'diterima', 'registrasi_ulang');
+        if (!in_array($status, $allowed)) {
+            show_404();
+        }
+
+        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
+        $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
+        $labels = array(
+            'registrasi' => 'Registrasi',
+            'terverifikasi' => 'Terverifikasi',
+            'diterima' => 'Diterima',
+            'registrasi_ulang' => 'Registrasi Ulang'
+        );
+
+        $data = array(
+            'title' => 'Export Data '.$labels[$status],
+            'label' => $labels[$status],
+            'status' => $status,
+            'excel_pmb' => $this->admin_model->export_pendaftaran_status($id_thn_akademik, $status)
+        );
+        $this->load->view('admin/export/pendaftaran_excel', $data, FALSE);
+    }
+
+    public function export_data(){
+        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik();
+        $default_tahun = $this->default_tahun_siakad($ambil_detail_thn_akademik->nama_thn_akademik);
+
+        $data = array(
+            'title' => 'Export Data',
+            'tahun_akademik' => $this->admin_model->list_thn_akademik(),
+            'list_prodi' => $this->admin_model->list_prodi(),
+            'default_tahun' => $default_tahun,
+            'isi' => 'admin/export/data'
+        );
+        $this->load->view('admin/layout/wrapper', $data, FALSE);
+    }
+
+    public function export_data_siakad(){
+        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik();
+        $id_thn_akademik = $this->input->post('id_thn_akademik') ?: 'all';
+        $prodi = $this->input->post('prodi') ?: 'all';
+        $tahun_ajar = $this->input->post('tahun_ajar') ?: $this->default_tahun_siakad($ambil_detail_thn_akademik->nama_thn_akademik);
+        $tahun_masuk = $this->input->post('tahun_masuk') ?: $tahun_ajar;
+        $kelas = $this->input->post('kelas');
+        $status = $this->input->post('status') ?: '1';
+        $sumber_nim = $this->input->post('sumber_nim') ?: 'noujian';
+        $data_lulus = $this->admin_model->export_siakad_mahasiswa_lulus($id_thn_akademik, $prodi);
+
+        $this->load->library('excel');
+        $excel = new PHPExcel();
+        $sheet = $excel->getSheet(0);
+        $sheet->setTitle('Template Mahasiswa');
+        $headers = array('NO', 'PRODI', 'NAMA', 'NIM', 'NIK', 'TAHUN AJAR', 'TAHUN MASUK', 'PASSWORD', 'EMAIL', 'STATUS', 'JENIS KELAMIN', 'KELAS', 'TEMPAT LAHIR', 'TGL LAHIR');
+        foreach ($headers as $col => $header) {
+            $sheet->setCellValueByColumnAndRow($col, 1, $header);
+        }
+        $sheet->freezePane('A2');
+        $sheet->getStyle('A1:N1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:N1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB('D9D9D9');
+        foreach (range('A', 'N') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        $row = 2;
+        $no = 1;
+
+        foreach ($data_lulus as $mhs) {
+            $nim = $this->nim_siakad($mhs, $sumber_nim);
+            $sheet->setCellValueByColumnAndRow(0, $row, $no);
+            $sheet->setCellValueExplicitByColumnAndRow(1, $row, $this->id_prodi_siakad($mhs), PHPExcel_Cell_DataType::TYPE_STRING);
+            $sheet->setCellValueByColumnAndRow(2, $row, strtoupper($mhs->nama_lengkap));
+            $sheet->setCellValueExplicitByColumnAndRow(3, $row, $nim, PHPExcel_Cell_DataType::TYPE_STRING);
+            $sheet->setCellValueExplicitByColumnAndRow(4, $row, $mhs->nik, PHPExcel_Cell_DataType::TYPE_STRING);
+            $sheet->setCellValueExplicitByColumnAndRow(5, $row, $tahun_ajar, PHPExcel_Cell_DataType::TYPE_STRING);
+            $sheet->setCellValueExplicitByColumnAndRow(6, $row, $tahun_masuk, PHPExcel_Cell_DataType::TYPE_STRING);
+            $sheet->setCellValueExplicitByColumnAndRow(7, $row, $nim, PHPExcel_Cell_DataType::TYPE_STRING);
+            $sheet->setCellValueByColumnAndRow(8, $row, $mhs->email ?: ($nim.'@student.siakadku.ac.id'));
+            $sheet->setCellValueByColumnAndRow(9, $row, $status);
+            $sheet->setCellValueByColumnAndRow(10, $row, $this->jenis_kelamin_siakad($mhs->jk));
+            $sheet->setCellValueByColumnAndRow(11, $row, $kelas);
+            $sheet->setCellValueByColumnAndRow(12, $row, $mhs->tempat_lahir);
+            $sheet->setCellValueExplicitByColumnAndRow(13, $row, $mhs->tanggal_lahir, PHPExcel_Cell_DataType::TYPE_STRING);
+            $row++;
+            $no++;
+        }
+
+        $filter_tahun = $id_thn_akademik == 'all' ? 'semua_tahun' : $id_thn_akademik;
+        $filter_prodi = $prodi == 'all' ? 'semua_prodi' : $prodi;
+        $filter_prodi = preg_replace('/[^A-Za-z0-9_-]/', '-', $filter_prodi);
+        $filename = 'template_mahasiswa_pmb_lulus_'.$filter_tahun.'_'.$filter_prodi.'_'.$tahun_ajar.'_'.$tahun_masuk.'_'.date('YmdHis').'.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $writer->save('php://output');
+    }
+
+    private function default_tahun_siakad($nama_thn_akademik)
+    {
+        preg_match('/([0-9]{4})/', $nama_thn_akademik, $match);
+        $tahun = isset($match[1]) ? $match[1] : (date('n') >= 8 ? date('Y') : date('Y') - 1);
+        $semester = date('n') >= 8 ? '1' : '2';
+        return $tahun.$semester;
+    }
+
+    private function id_prodi_siakad($mhs)
+    {
+        $map = array(
+            'S1|PAI' => '9',
+            'S1|PBA' => '10',
+            'S1|BKPI' => '11',
+            'S1|PIAUD' => '12',
+            'S1|EKOS' => '13',
+            'S1|HKI' => '14',
+            'S1|MHU' => '15',
+            'S1|KPI' => '16',
+            'S2|MPI' => '17',
+            'S2|PBA' => '18'
+        );
+        $jenjang = isset($mhs->jenjang_prodi_lulus) && trim($mhs->jenjang_prodi_lulus) != '' ? $mhs->jenjang_prodi_lulus : $mhs->jenjang;
+        $kode = isset($mhs->kode_prodi_lulus) && trim($mhs->kode_prodi_lulus) != '' ? $mhs->kode_prodi_lulus : $mhs->jurusan_pilihan;
+        $key = strtoupper(trim($jenjang)).'|'.strtoupper(trim($kode));
+        return isset($map[$key]) ? $map[$key] : $mhs->id_prodi_lulus;
+    }
+
+    private function nim_siakad($mhs, $sumber_nim)
+    {
+        if ($sumber_nim == 'username') {
+            return $mhs->username;
+        }
+        return $mhs->noujian ?: $mhs->username;
+    }
+
+    private function jenis_kelamin_siakad($jk)
+    {
+        $jk = strtoupper(trim($jk));
+        if ($jk == 'L' || $jk == 'LAKI-LAKI') {
+            return 'Laki-Laki';
+        }
+        if ($jk == 'P' || $jk == 'PEREMPUAN') {
+            return 'Perempuan';
+        }
+        return $jk;
+    }
+
     public function excel_diterima(){
     	$ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
         $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;

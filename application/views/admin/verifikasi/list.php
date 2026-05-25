@@ -1,4 +1,5 @@
-<a href="<?php echo base_url('admin/home/tambah_mahasiswa') ?>" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Tambah Mahasiswa</a> <br>
+<a href="<?php echo base_url('admin/home/tambah_mahasiswa') ?>" class="btn btn-xs btn-success"><i class="fa fa-plus"></i> Tambah Mahasiswa</a>
+<a href="<?php echo base_url('admin/home/export_pendaftaran_excel/registrasi') ?>" class="btn btn-xs btn-primary"><i class="fa fa-file-excel-o"></i> Export Excel</a> <br>
 <?php
               echo validation_errors('<div class="alert alert-warning">','</div>');
 

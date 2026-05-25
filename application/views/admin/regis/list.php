@@ -61,6 +61,7 @@
                 <br>
                 <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
                 <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/registrasi_ulang')?>" > Tanpa Filter</a>
+                <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/export_pendaftaran_excel/registrasi_ulang')?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
     </form>
 </div><br>
 

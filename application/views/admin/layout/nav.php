@@ -109,6 +109,8 @@
 
         <li><a href="<?php echo base_url('admin/home/diterima')?>"><i class="fa fa-mortar-board text-aqua"></i> <span>Diterima</span></a></li>
 
+        <li><a href="<?php echo base_url('admin/home/export_data')?>"><i class="fa fa-file-excel-o text-aqua"></i> <span>Export Data</span></a></li>
+
         <!-- <li><a href="<?php echo base_url('admin/home/registrasi_ulang')?>"><i class="fa fa-hourglass-end text-aqua"></i> <span>Registrasi Ulang</span></a></li> -->
 
         <li><a href="<?php echo base_url('admin/home/kelulusan_login')?>"><i class="fa fa-book text-aqua"></i> <span>Kelulusan</span></a></li>  
@@ -180,6 +182,8 @@
         <li ><a href="<?php echo base_url('admin/home/accept')?>"><i class="fa fa-check-square text-aqua"></i> <span>Terverifikasi</span></a></li>
         
         <li><a href="<?php echo base_url('admin/home/diterima')?>"><i class="fa fa-mortar-board text-aqua"></i> <span>Diterima</span></a></li>
+
+        <li><a href="<?php echo base_url('admin/home/export_data')?>"><i class="fa fa-file-excel-o text-aqua"></i> <span>Export Data</span></a></li>
 
         <!-- <li><a href="<?php echo base_url('admin/home/registrasi_ulang')?>"><i class="fa fa-hourglass-end text-aqua"></i> <span>Registrasi Ulang</span></a></li> -->
 
@@ -298,4 +302,3 @@
             
             <!-- /.box-header -->
             <div class="box-body">
-

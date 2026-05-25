@@ -1638,6 +1638,78 @@ class Admin_model extends CI_Model {
 		return $query->result();
     }
 
+    public function export_pendaftaran_status($id_thn_akademik, $status)
+	{
+		$this->db->select('pendaftaran.*, prodi.nama as nama_prodi, prodi.jenjang as jenjang_prodi, prodi2.nama as nama_prodi2, prodi2.jenjang as jenjang_prodi2, program.nama as nama_program, fakultas.singkatan, fakultas.nama_fakultas, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->from('pendaftaran');
+		$this->db->where('pendaftaran.tahun_akademik', $id_thn_akademik);
+
+		if ($status == 'registrasi') {
+			$this->db->where(array(
+				'bayar' => '1',
+				'approve' => '0',
+				'fix' => '0',
+				'non_fix' => '0'
+			));
+		} elseif ($status == 'terverifikasi') {
+			$this->db->where(array(
+				'bayar' => '1',
+				'approve' => '1',
+				'fix' => '0'
+			));
+		} elseif ($status == 'diterima' || $status == 'registrasi_ulang') {
+			$this->db->where(array(
+				'bayar' => '1',
+				'approve' => '1',
+				'fix' => '1',
+				'non_fix' => '0'
+			));
+		}
+
+		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan', 'left');
+		$this->db->join('prodi prodi2', 'prodi2.kode = pendaftaran.jurusan_pilihan2', 'left');
+		$this->db->join('program', 'program.id = pendaftaran.program', 'left');
+		$this->db->join('fakultas', 'fakultas.id = pendaftaran.fakultas', 'left');
+		$this->db->join('gelombang', 'gelombang.id = pendaftaran.gelombang', 'left');
+		$this->db->order_by('pendaftaran.tanggal_update', 'desc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
+    public function export_siakad_mahasiswa_lulus($id_thn_akademik = 'all', $prodi = 'all')
+	{
+		$prodi_kode = $prodi;
+		$prodi_jenjang = '';
+		if (strpos($prodi, '|') !== FALSE) {
+			list($prodi_jenjang, $prodi_kode) = explode('|', $prodi, 2);
+		}
+
+		$this->db->select('pendaftaran.*, prodi.id as id_prodi_lulus, prodi.kode as kode_prodi_lulus, prodi.jenjang as jenjang_prodi_lulus, prodi.nama as nama_prodi_lulus, gelombang.tahun as tahun_gelombang');
+		$this->db->from('pendaftaran');
+		$this->db->where(array(
+			'pendaftaran.bayar' => '1',
+			'pendaftaran.approve' => '1',
+			'pendaftaran.fix' => '1',
+			'pendaftaran.non_fix' => '0'
+		));
+		if ($id_thn_akademik != '' && $id_thn_akademik != 'all') {
+			$this->db->where('pendaftaran.tahun_akademik', $id_thn_akademik);
+		}
+		if ($prodi != '' && $prodi != 'all') {
+			$this->db->where('pendaftaran.jurusan_pilihan', $prodi_kode);
+			if ($prodi_jenjang != '') {
+				$this->db->where('pendaftaran.jenjang', $prodi_jenjang);
+			}
+		}
+		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan AND prodi.jenjang = pendaftaran.jenjang', 'left');
+		$this->db->join('gelombang', 'gelombang.id = pendaftaran.gelombang', 'left');
+		$this->db->order_by('prodi.jenjang', 'asc');
+		$this->db->order_by('prodi.nama', 'asc');
+		$this->db->order_by('pendaftaran.nama_lengkap', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+    }
+
     //sesi urutan daftar hadir
     public function sesi_dari($g,$p)
 	{

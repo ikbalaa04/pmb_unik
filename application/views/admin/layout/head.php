@@ -74,17 +74,21 @@ function showUser(str) {
 
  <style>
 
-    body { font-family: Trebuchet MS; }
-    p { font-family: Trebuchet MS; }
-    div { font-family:  Trebuchet MS; }
-    h1 { font-family:  Trebuchet MS;  }
-    h2 { font-family:  Trebuchet MS; }
-    h3 { font-family:  Trebuchet MS; }
-    h4 { font-family:  Trebuchet MS; }
-    title { font-family: Trebuchet MS; }
-    th { font-family: Trebuchet MS; }
-    td  { font-family: Trebuchet MS; }
-    table  { font-family: Trebuchet MS; }
+    body,
+    .wrapper,
+    .main-header,
+    .main-sidebar,
+    .content-wrapper,
+    .app-content,
+    .box,
+    .table,
+    .dataTables_wrapper,
+    input,
+    select,
+    textarea,
+    button {
+      font-family: "Trebuchet MS", "Segoe UI", Arial, Helvetica, sans-serif !important;
+    }
 
     #nav li.active a{
       background-color: white  !important;
