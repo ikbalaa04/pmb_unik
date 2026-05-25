@@ -2108,6 +2108,50 @@ class Home extends CI_CONTROLLER
         redirect(base_url('admin/home/accept'),'refresh');
     }
 
+    public function generate_semua_nomor_ujian(){
+
+        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
+        $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
+        $pendaftaran = $this->admin_model->pendaftaran_belum_nomor_ujian($id_thn_akademik);
+        $jumlah = 0;
+
+        foreach ($pendaftaran as $pendaftar) {
+            $fakultas = $this->admin_model->fakultas_pilihan_pertama($pendaftar);
+            $noujian = $this->admin_model->generate_nomor_ujian($fakultas);
+            $data = array(
+                'id' => $pendaftar->id,
+                'noujian' => $noujian
+            );
+            $this->admin_model->edit_pendaftaran($data);
+            $jumlah++;
+        }
+
+        $this->session->set_flashdata('success', $jumlah.' nomor ujian berhasil digenerate');
+        redirect(base_url('admin/home/accept'),'refresh');
+    }
+
+    public function generate_semua_nomor_ujian_apt(){
+
+        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
+        $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
+        $pendaftaran = $this->admin_model->pendaftaran_belum_nomor_ujian($id_thn_akademik);
+        $jumlah = 0;
+
+        foreach ($pendaftaran as $pendaftar) {
+            $fakultas = $this->admin_model->fakultas_pilihan_pertama($pendaftar);
+            $noujian = $this->admin_model->generate_nomor_ujian($fakultas);
+            $data = array(
+                'id' => $pendaftar->id,
+                'noujian' => $noujian
+            );
+            $this->admin_model->edit_pendaftaran($data);
+            $jumlah++;
+        }
+
+        $this->session->set_flashdata('success', $jumlah.' nomor ujian berhasil digenerate');
+        redirect(base_url('admin/home/accept_apt'),'refresh');
+    }
+
     public function cetak_kartu_admin($id){
 
       $detail_pendaftaran 			= $this->admin_model->detail_pendaftaran($id);

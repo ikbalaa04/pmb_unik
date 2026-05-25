@@ -1171,6 +1171,23 @@ class Admin_model extends CI_Model {
 		return 'USM' . date('y') . $kode_fakultas . $nomor;
 	}
 
+	public function pendaftaran_belum_nomor_ujian($id_thn_akademik)
+	{
+		$this->db->select('*');
+		$this->db->from('pendaftaran');
+		$this->db->where(array(
+			'tahun_akademik' => $id_thn_akademik,
+			'bayar' => '1',
+			'approve' => '1',
+			'fix' => '0',
+			'noujian' => ''
+		));
+		$this->db->order_by('tanggal_update', 'asc');
+		$this->db->order_by('id', 'asc');
+		$query = $this->db->get();
+		return $query->result();
+	}
+
 	public function fakultas_pilihan_pertama($pendaftaran)
 	{
 		$fakultas = $pendaftaran->fakultas;

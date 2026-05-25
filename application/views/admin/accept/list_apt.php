@@ -14,6 +14,9 @@
                 <br>
                 <input type="submit" value="Filter" class="btn btn-info btn-md">
     </form>
+    <form method="post" action="<?php echo base_url('admin/home/generate_semua_nomor_ujian_apt')?>" onsubmit="return confirm('Generate nomor ujian untuk semua peserta terverifikasi yang belum memiliki nomor ujian?')">
+        <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Generate Semua No Ujian" class="btn btn-warning btn-md">
+    </form>
 </div><br>
 
 <!-- Example row of columns -->
