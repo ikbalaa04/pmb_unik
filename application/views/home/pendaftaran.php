@@ -3,9 +3,7 @@
         <div class="container">
             <div class="row justify-content">
                 <div class="col-lg-12 col-sm-6 col-md-6">
-                       <h3><center><br><br>FORMULIR PENDAFTARAN SARJANA (S1)</center><br></h3>
-                       <p class="text-center">Untuk pendaftaran Pascasarjana (S2) silahkan <a href="http://pmbpasca.unik-cipasung.ac.id/" target="_blank" class="fw-bold">klik disini</a></p>
-                      <form action="<?php echo base_url('home/pendaftaran')?>" method="post" >
+                       <h3><center><br><br>FORMULIR PENDAFTARAN</center><br></h3>
                       <div class="row">
                         <div class="col-md-12">
                             <?php
