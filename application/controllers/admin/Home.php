@@ -2099,10 +2099,11 @@ class Home extends CI_CONTROLLER
     public function ujian($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $i = $this->input;
+        $fakultas = $this->admin_model->fakultas_pilihan_pertama($detail_pendaftaran);
+        $noujian = $this->admin_model->generate_nomor_ujian($fakultas);
 
         $data = array('id' 		=> $detail_pendaftaran->id, 
-        			  'noujian' => $i->post('noujian'));
+        			  'noujian' => $noujian);
         $this->admin_model->edit_pendaftaran($data);
         redirect(base_url('admin/home/accept'),'refresh');
     }
@@ -2255,10 +2256,11 @@ class Home extends CI_CONTROLLER
     public function ujian_apt($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $i = $this->input;
+        $fakultas = $this->admin_model->fakultas_pilihan_pertama($detail_pendaftaran);
+        $noujian = $this->admin_model->generate_nomor_ujian($fakultas);
 
         $data = array('id' 		=> $detail_pendaftaran->id, 
-        			  'noujian' => $i->post('noujian'));
+        			  'noujian' => $noujian);
         $this->admin_model->edit_pendaftaran($data);
         redirect(base_url('admin/home/accept_apt'),'refresh');
     }

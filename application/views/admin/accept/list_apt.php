@@ -75,12 +75,10 @@
 
             <td align="center"><?php if($accept->noujian == '') { ?>        
                 <form method="post" target="_blank" action="<?php echo base_url('admin/home/ujian_apt/'.$accept->id)?>">
-                <input type="hidden" name="noujian" value="<?php echo $accept->KG ?>-<?php echo $Pecah[0]; ?>-<?php echo $accept->jenis ?>-000<?php echo $e++?>">
                 <input type="submit" value="Generate" class="btn btn-xs btn-info">
                 </form>
             <?php  }else{?>
                 <form method="post" target="_blank" action="<?php echo base_url('admin/home/ujian_apt/'.$accept->id)?>">
-                <input type="hidden" name="noujian" value="<?php echo $accept->KG ?>-<?php echo $Pecah[0]; ?>-<?php echo $accept->jenis ?>-000<?php echo $e++?>">
                 <input type="submit" value="Ganti" class="btn btn-xs btn-success">
                 </form>
             <?php } ?></td>

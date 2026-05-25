@@ -1145,6 +1145,46 @@ class Admin_model extends CI_Model {
       $this->db->update('pendaftaran', $data);
 	}
 
+	public function generate_nomor_ujian($fakultas)
+	{
+		$detail_fakultas = $this->detail_fakultas($fakultas);
+		$kode_fakultas = ($detail_fakultas && $detail_fakultas->kode != '') ? $detail_fakultas->kode : $fakultas;
+		$nomor_terakhir = 0;
+
+		$this->db->select('pendaftaran.noujian, fakultas.kode as kode_fakultas');
+		$this->db->from('pendaftaran');
+		$this->db->join('fakultas', 'fakultas.id = pendaftaran.fakultas', 'left');
+		$this->db->where("noujian LIKE 'USM%'", NULL, FALSE);
+		$this->db->where("noujian NOT LIKE '%-%'", NULL, FALSE);
+		$query = $this->db->get();
+
+		foreach ($query->result() as $row) {
+			$kode = $row->kode_fakultas;
+			if ($kode != '' && preg_match('/^USM\d{2}' . preg_quote($kode, '/') . '(\d+)$/', $row->noujian, $matches)) {
+				$nomor_terakhir = max($nomor_terakhir, (int) $matches[1]);
+			} elseif (preg_match('/^USM\d+$/', $row->noujian)) {
+				$nomor_terakhir = max($nomor_terakhir, (int) substr($row->noujian, -3));
+			}
+		}
+
+		$nomor = str_pad($nomor_terakhir + 1, 3, '0', STR_PAD_LEFT);
+		return 'USM' . date('y') . $kode_fakultas . $nomor;
+	}
+
+	public function fakultas_pilihan_pertama($pendaftaran)
+	{
+		$fakultas = $pendaftaran->fakultas;
+
+		if ($pendaftaran->jurusan_pilihan != '' && $pendaftaran->jurusan_pilihan != '0') {
+			$detail_prodi = $this->detail_prodi_kode($pendaftaran->jurusan_pilihan);
+			if ($detail_prodi && $detail_prodi->fakultas != '') {
+				$fakultas = $detail_prodi->fakultas;
+			}
+		}
+
+		return $fakultas;
+	}
+
 	public function edit_pendaftaran_password($dataa){
       $this->db->where('id', $dataa['id']);
       $this->db->update('pendaftaran', $dataa);

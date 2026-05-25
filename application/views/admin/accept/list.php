@@ -172,20 +172,13 @@
             </td>
             
 
-            <?php $urut = $e++;
-            $batas = str_pad($urut, 3, "0", STR_PAD_LEFT); ?>
-
-        
-            
             <td align="center">
             <?php if($accept->noujian == '') { ?>        
                 <form method="post" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">
-                <input type="hidden" name="noujian" value="USM<?php echo date('y') ?><?php echo $accept->fakultas ?><?php echo $batas ?>">
                 <input type="submit" value="Generate" class="btn btn-xs btn-info">
                 </form>
             <?php  }else{?>
                 <form method="post" action="<?php echo base_url('admin/home/ujian/'.$accept->id)?>">
-                <input type="hidden" name="noujian" value="USM<?php echo date('y') ?><?php echo $accept->fakultas ?><?php echo $batas ?>">
                 <input type="submit" value="Ganti" class="btn btn-xs btn-success">
                 </form>
             <?php } ?>
