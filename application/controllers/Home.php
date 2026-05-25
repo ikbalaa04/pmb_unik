@@ -6,6 +6,9 @@ class Home extends CI_CONTROLLER
     public function __construct(){
     parent::__construct();
     $this->load->model('admin_model');
+    if ($this->input->post('hp') !== NULL) {
+        $_POST['hp'] = $this->admin_model->normalize_nomor_wa($this->input->post('hp'));
+    }
     }
     
     public function index(){

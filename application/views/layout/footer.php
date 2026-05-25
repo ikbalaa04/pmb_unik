@@ -155,12 +155,30 @@
             });
 
         });
+    function normalizeNomorWaInput(input) {
+        var value = (input.value || '').replace(/\D+/g, '');
+        if (value.charAt(0) === '0') {
+            value = '62' + value.substring(1);
+        } else if (value !== '' && value.substring(0, 2) !== '62') {
+            value = '62' + value;
+        }
+        input.value = value;
+    }
+
+    $(document).on('blur', 'input[name="hp"]', function(){
+        normalizeNomorWaInput(this);
+    });
+
+    $(document).on('submit', 'form', function(){
+        $(this).find('input[name="hp"]').each(function(){
+            normalizeNomorWaInput(this);
+        });
+    });
   </script>
 
 </body>
 
 </html>
-
 
 
 

@@ -7,6 +7,14 @@ include('application/views/admin/layout/nav.php');
 
  <main class="app-content">
       <div class="app-title">
+        <div>
+          <?php if ($this->session->flashdata('success')) { ?>
+            <div class="alert alert-success"><?php echo $this->session->flashdata('success'); ?></div>
+          <?php } ?>
+          <a href="<?php echo base_url('admin/home/normalisasi_nomor_wa_lama'); ?>" class="btn btn-warning" onclick="return confirm('Normalisasi nomor WA lama yang masih diawali 0 menjadi 62?')">
+            Normalisasi Nomor WA Lama
+          </a>
+        </div>
       </div>
       <!-- Main content -->
             <section class="content">

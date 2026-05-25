@@ -1,8 +1,18 @@
+<?php
+if($this->session->flashdata('warning')){
+    echo $this->session->flashdata('warning');
+}
+
+if($this->session->flashdata('success')){
+    echo $this->session->flashdata('success');
+}
+?>
+
 <div class="row" align="text-center"> 
-    <form method="post" action="<?php echo base_url('admin/home/accept_filter')?>">
+    <form id="accept-filter-form" method="post" action="<?php echo base_url('admin/home/accept_filter')?>">
 
         <?php if($this->session->userdata('id_level')=='1'||'2'){?>
-        <div class="col-lg-5">
+        <div class="col-lg-4">
             <?php $list_prodi_aktif = $this->admin_model->list_prodi_aktif();?>
             <label>Program Studi</label><br>
             <select required="" name="prodi" class="form-control">
@@ -13,7 +23,7 @@
             </select>
         </div>
 
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <label>Gelombang</label><br>
             <select required="" class="form-control" name="gelombang">
                 <option value="">-Pilih Gelombang-</option>
@@ -25,7 +35,7 @@
 
         <?php }else{ ?>
 
-        <div class="col-lg-5">
+        <div class="col-lg-4">
             <?php $list_prodi_aktif = $this->admin_model->fakultas_prodi();?>
             <label>Program Studi</label><br>
             <select required="" name="prodi" class="form-control">
@@ -46,14 +56,15 @@
             </select>
         </div>
         <?php } ?>
+    </form>
 
-                <br>
-                <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
-                <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/accept')?>" > Tanpa Filter</a>
-    </form>
-    <form method="post" action="<?php echo base_url('admin/home/generate_semua_nomor_ujian')?>" onsubmit="return confirm('Generate nomor ujian untuk semua peserta terverifikasi yang belum memiliki nomor ujian?')">
-        <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Generate Semua No Ujian" class="btn btn-warning btn-md">
-    </form>
+    <div class="col-lg-5" style="padding-top: 25px">
+        <input form="accept-filter-form" style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
+        <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/accept')?>" >Tanpa Filter</a>
+        <form style="display: inline-block" method="post" action="<?php echo base_url('admin/home/generate_semua_nomor_ujian')?>" onsubmit="return confirm('Generate nomor ujian untuk semua peserta terverifikasi yang belum memiliki nomor ujian?')">
+            <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Generate Semua No Ujian" class="btn btn-warning btn-md">
+        </form>
+    </div>
 </div><br>
 
 <!-- Example row of columns -->

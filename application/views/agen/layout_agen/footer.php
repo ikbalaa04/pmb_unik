@@ -57,6 +57,31 @@
                 });
             });
         </script>
+<script>
+    function normalizeNomorWaInput(input) {
+        var nomor = (input.value || '').replace(/\D+/g, '');
+        if (!nomor) {
+            input.value = nomor;
+            return;
+        }
+        if (nomor.charAt(0) === '0') {
+            nomor = '62' + nomor.substring(1);
+        } else if (nomor.substring(0, 2) !== '62') {
+            nomor = '62' + nomor;
+        }
+        input.value = nomor;
+    }
+
+    $(document).on('blur', 'input[name="hp"]', function () {
+        normalizeNomorWaInput(this);
+    });
+
+    $(document).on('submit', 'form', function () {
+        $(this).find('input[name="hp"]').each(function () {
+            normalizeNomorWaInput(this);
+        });
+    });
+</script>
 
 
 </html>

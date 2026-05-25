@@ -8,6 +8,49 @@ class Admin_model extends CI_Model {
 		$this->load->database(); //memanggil database
     }
 
+    public function normalize_nomor_wa($nomor)
+    {
+        $nomor = preg_replace('/\D+/', '', (string) $nomor);
+
+        if ($nomor === '') {
+            return $nomor;
+        }
+
+        if (substr($nomor, 0, 1) === '0') {
+            return '62' . substr($nomor, 1);
+        }
+
+        if (substr($nomor, 0, 2) !== '62') {
+            return '62' . $nomor;
+        }
+
+        return $nomor;
+    }
+
+    public function update_nomor_wa_lama()
+    {
+        $tables = array('pendaftaran', 'agen', 'pengguna');
+        $result = array();
+
+        foreach ($tables as $table) {
+            $result[$table] = 0;
+            $query = $this->db->select('id, hp')->get($table);
+
+            foreach ($query->result() as $row) {
+                $nomor = $this->normalize_nomor_wa($row->hp);
+                if ($nomor === '' || $nomor === (string) $row->hp) {
+                    continue;
+                }
+
+                $this->db->where('id', $row->id);
+                $this->db->update($table, array('hp' => $nomor));
+                $result[$table] += $this->db->affected_rows();
+            }
+        }
+
+        return $result;
+    }
+
     //Model Data Pengguna
     public function login($username,$password)
 	{
@@ -1179,9 +1222,9 @@ class Admin_model extends CI_Model {
 			'tahun_akademik' => $id_thn_akademik,
 			'bayar' => '1',
 			'approve' => '1',
-			'fix' => '0',
-			'noujian' => ''
+			'fix' => '0'
 		));
+		$this->db->where("TRIM(COALESCE(noujian, '')) = ''", NULL, FALSE);
 		$this->db->order_by('tanggal_update', 'asc');
 		$this->db->order_by('id', 'asc');
 		$query = $this->db->get();

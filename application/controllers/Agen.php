@@ -8,6 +8,9 @@ class Agen extends CI_Controller
 		parent::__construct();
 		$this->load->model('agen_model');
     $this->load->model('admin_model');
+    if ($this->input->post('hp') !== NULL) {
+        $_POST['hp'] = $this->admin_model->normalize_nomor_wa($this->input->post('hp'));
+    }
     // $this->simple_login_agen->cek_login();     
     }     
 

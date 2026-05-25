@@ -7,6 +7,9 @@ class Home extends CI_CONTROLLER
     parent::__construct();
     $this->load->model('admin_model');
     $this->load->model('usm_model');
+    if ($this->input->post('hp') !== NULL) {
+        $_POST['hp'] = $this->admin_model->normalize_nomor_wa($this->input->post('hp'));
+    }
 	//proteksi halaman
     $this->simple_login->cek_login();
     }
@@ -25,6 +28,12 @@ class Home extends CI_CONTROLLER
         			  'total_pendaftar_apoteker'=> $total_pendaftar_apoteker,
                       'isi'   					=> 'admin/dasbor/list');
         $this->load->view('admin/layout/wrapper', $data, FALSE);
+    }
+
+    public function normalisasi_nomor_wa_lama(){
+        $result = $this->admin_model->update_nomor_wa_lama();
+        $this->session->set_flashdata('success', 'Normalisasi nomor WA selesai. Pendaftaran: '.$result['pendaftaran'].', Agen: '.$result['agen'].', Pengguna: '.$result['pengguna']);
+        redirect(base_url('admin/home/dasbor'),'refresh');
     }
     //End Dasbor
 
@@ -2126,7 +2135,11 @@ class Home extends CI_CONTROLLER
             $jumlah++;
         }
 
-        $this->session->set_flashdata('success', $jumlah.' nomor ujian berhasil digenerate');
+        if ($jumlah > 0) {
+            $this->session->set_flashdata('success', $jumlah.' nomor ujian berhasil digenerate');
+        } else {
+            $this->session->set_flashdata('warning', 'Tidak ada peserta terverifikasi yang belum memiliki nomor ujian');
+        }
         redirect(base_url('admin/home/accept'),'refresh');
     }
 
@@ -2148,7 +2161,11 @@ class Home extends CI_CONTROLLER
             $jumlah++;
         }
 
-        $this->session->set_flashdata('success', $jumlah.' nomor ujian berhasil digenerate');
+        if ($jumlah > 0) {
+            $this->session->set_flashdata('success', $jumlah.' nomor ujian berhasil digenerate');
+        } else {
+            $this->session->set_flashdata('warning', 'Tidak ada peserta terverifikasi yang belum memiliki nomor ujian');
+        }
         redirect(base_url('admin/home/accept_apt'),'refresh');
     }
 
