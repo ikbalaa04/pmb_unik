@@ -109,6 +109,13 @@ echo form_open(base_url('admin/home/edit_konfigurasi'),'class="form-horizontal"'
 </div>
 
 <div class="form-group">
+  <label class="col-md-3 control-label">Link Group WA</label>
+  <div class="col-md-9">
+    <input type="url" name="wa_group" class="form-control" value="<?php echo isset($detail_institusi->wa_group) ? $detail_institusi->wa_group : ''; ?>" placeholder="https://chat.whatsapp.com/..." >
+  </div>
+</div>
+
+<div class="form-group">
   <label class="col-md-3 control-label">facebook</label>
   <div class="col-md-9">
     <input type="text" name="fb" class="form-control"  value="<?php echo $detail_institusi->fb?>" >
@@ -223,5 +230,4 @@ echo form_open(base_url('admin/home/edit_konfigurasi'),'class="form-horizontal"'
 </div>
 
 <?php echo form_close(); ?>
-
 

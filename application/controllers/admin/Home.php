@@ -346,6 +346,9 @@ class Home extends CI_CONTROLLER
 	                        'status_batas_lulus'					=> $i->post('status_batas_lulus'),
 	                        'status_pencairan'					=> $i->post('status_pencairan')
 	      );
+	      if ($this->db->field_exists('wa_group', 'konfigurasi')) {
+	        $data['wa_group'] = $i->post('wa_group');
+	      }
 	      $this->admin_model->edit_institusi($data);
 	      $this->session->set_flashdata('success', 'Data telah diedit');
 	      redirect(base_url('admin/home/konfigurasi'),'refresh');
@@ -4193,13 +4196,93 @@ class Home extends CI_CONTROLLER
             'registrasi_ulang' => 'Registrasi Ulang'
         );
 
-        $data = array(
-            'title' => 'Export Data '.$labels[$status],
-            'label' => $labels[$status],
-            'status' => $status,
-            'excel_pmb' => $this->admin_model->export_pendaftaran_status($id_thn_akademik, $status)
+        $excel_pmb = $this->admin_model->export_pendaftaran_status($id_thn_akademik, $status);
+
+        $this->load->library('excel');
+        $excel = new PHPExcel();
+        $sheet = $excel->getSheet(0);
+        $sheet->setTitle(substr($labels[$status], 0, 31));
+
+        $headers = array(
+            'No', 'Status Data', 'Tanggal Daftar', 'Tanggal Update', 'Username', 'No. Ujian', 'Sumber',
+            'NIK', 'NISN', 'Nama Lengkap', 'Jenis', 'Program', 'Fakultas', 'Gelombang', 'Pilihan 1',
+            'Pilihan 2', 'Email', 'No WA', 'Asal Sekolah', 'Jurusan Sekolah', 'Tahun Lulus',
+            'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Alamat', 'Kecamatan',
+            'Kota', 'Provinsi', 'Status Bayar', 'Status Verifikasi', 'Status Diterima',
+            'Registrasi Ulang', 'Verifikasi Registrasi', 'Berkas', 'Jumlah Bayar', 'Bank Bayar',
+            'Atas Nama Bayar', 'Tanggal Bayar', 'Bank Regis', 'Atas Nama Regis', 'Tanggal Regis'
         );
-        $this->load->view('admin/export/pendaftaran_excel', $data, FALSE);
+
+        foreach ($headers as $col => $header) {
+            $sheet->setCellValueByColumnAndRow($col, 1, $header);
+            $sheet->getColumnDimensionByColumn($col)->setAutoSize(true);
+        }
+        $sheet->freezePane('A2');
+        $sheet->getStyle('A1:AP1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:AP1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB('D9D9D9');
+
+        $row_number = 2;
+        $no = 1;
+        foreach ($excel_pmb as $row) {
+            $berkas = $row->verifikasi_berkas == '1' ? 'Sudah Dicek' : ($row->keterangan_berkas ?: 'Belum Dicek');
+            $values = array(
+                $no,
+                $labels[$status],
+                $row->tanggal_daftar,
+                $row->tanggal_update,
+                $row->username,
+                $row->noujian,
+                trim($row->sumber.' '.$row->keterangan_sumber),
+                $row->nik,
+                $row->nisn,
+                strtoupper($row->nama_lengkap),
+                $row->jenis,
+                $row->nama_program,
+                trim($row->singkatan.' - '.$row->nama_fakultas),
+                trim($row->nama_gelombang.' '.$row->tahun_gelombang),
+                trim($row->jenjang_prodi.' '.$row->nama_prodi),
+                trim($row->jenjang_prodi2.' '.$row->nama_prodi2),
+                $row->email,
+                $row->hp,
+                $row->sekolah_nama,
+                $row->sekolah_jurusan ?: $row->sekolah_nama_jurusan,
+                $row->tahun_lulus,
+                $row->tempat_lahir,
+                $row->tanggal_lahir,
+                $row->jk,
+                $row->agama,
+                $row->alamat,
+                $row->kecamatan,
+                $row->kota,
+                $row->prov,
+                ((string) $row->bayar === '1') ? 'Sudah Bayar' : 'Belum Bayar',
+                ((string) $row->approve === '1') ? 'Terverifikasi' : 'Belum Terverifikasi',
+                ((string) $row->fix === '1') ? 'Diterima' : 'Belum Diterima',
+                ((string) $row->registrasi_ulang === '1') ? 'Sudah Registrasi' : 'Belum Registrasi',
+                ((string) $row->verifikasi_regis === '1') ? 'Terverifikasi' : 'Belum Terverifikasi',
+                $berkas,
+                $row->jumlahbayar,
+                $row->bank,
+                $row->atas_nama,
+                $row->tgl_bayar,
+                $row->bank_regis,
+                $row->atas_regis,
+                $row->tgl_regis
+            );
+
+            foreach ($values as $col => $value) {
+                $sheet->setCellValueExplicitByColumnAndRow($col, $row_number, $value, PHPExcel_Cell_DataType::TYPE_STRING);
+            }
+            $row_number++;
+            $no++;
+        }
+
+        $filename = 'Data_PMB_'.$labels[$status].'_'.date('Ymd_His').'.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+        $writer = PHPExcel_IOFactory::createWriter($excel, 'Excel2007');
+        $writer->save('php://output');
     }
 
     public function export_data(){
