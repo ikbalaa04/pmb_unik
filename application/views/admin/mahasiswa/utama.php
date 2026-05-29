@@ -18,10 +18,18 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
 ?>
 
-<?php $this->load->view('admin/mahasiswa/required_alert'); ?>
-
 <div class="row">
-<?php echo form_open_multipart(base_url('admin/home/form_utama/'),'class="form-horizontal" novalidate="novalidate"'); ?>
+<?php
+if (!function_exists('mahasiswa_old_value')) {
+    function mahasiswa_old_value($CI, $name, $fallback = '')
+    {
+        $posted = $CI->input->post($name);
+        return $posted !== NULL ? $posted : $fallback;
+    }
+}
+?>
+	<?php echo form_open_multipart(base_url('admin/home/formulir'),'class="form-horizontal" novalidate="novalidate"'); ?>
+	<input type="hidden" name="form_step" value="utama">
 
 <div class="col-md-12">
     <ul class="form-step-indicator">
@@ -39,20 +47,21 @@ if ($detail->fix == 1) {
     // Jika sudah dinyatakan lulus
     if ($detail->program != '19') {
         ?>
-        <div class="col-md-12 border-1">
-            <center>
-                Selamat anda dinyatakan <b style="color:green">LULUS</b> tes seleksi ujian saringan masuk,<br>
-                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
-                dan lengkapi berkas persyaratan.<br>
-                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
-                <b>
-                    <a style="color:green" href="https://chat.whatsapp.com/HigAYzp8Xq7DXCnudC3P95" target="_blank">
-                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
-                    </a>
-                </b>
-            </center>
-            <hr>
-        </div>
+	        <div class="col-md-12">
+	            <div class="alert alert-success alert-persistent" style="border:1px solid #00a65a;background:#eaf8f0;color:#256b3f;">
+	            <center>
+	                Selamat anda dinyatakan <b>LULUS</b> tes seleksi ujian saringan masuk,<br>
+	                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
+	                dan lengkapi berkas persyaratan.<br>
+	                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
+	                <b>
+	                    <a style="color:#008d4c" href="https://chat.whatsapp.com/HigAYzp8Xq7DXCnudC3P95" target="_blank">
+	                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
+	                    </a>
+	                </b>
+	            </center>
+	            </div>
+	        </div>
         <?php
     }
 
@@ -60,11 +69,13 @@ if ($detail->fix == 1) {
     // Jika dinyatakan tidak lulus
     if ($detail->program != '19') {
         ?>
-        <div class="col-md-12">
-                <center>
-                    Mohon maaf anda dinyatakan <b style="color:red">TIDAK LULUS</b> tes seleksi ujian saringan masuk.
-                </center>
-        </div>
+	        <div class="col-md-12">
+	            <div class="alert alert-danger" style="border:1px solid #dd4b39;background:#fdecea;color:#8a2f25;">
+	                <center>
+	                    Mohon maaf anda dinyatakan <b>TIDAK LULUS</b> tes seleksi ujian saringan masuk.
+	                </center>
+	            </div>
+	        </div>
         <?php
     }
 
@@ -72,35 +83,41 @@ if ($detail->fix == 1) {
     // Belum melakukan pembayaran
     if ($detail_program->tipe_program == 'Gratis') {
         ?>
-        <div class="col-md-12">
-            <center>
-                <b style="color:green">
-                    Untuk pendaftaran jalur PMDK dan Prestasi gratis, cukup upload berkas rapor sesuai form yang kami sediakan.
-                    Menu lain dan menu upload berkas akan muncul setelah data anda diverifikasi.
-                    Silakan lengkapi semua data dan tunggu verifikasi admin.
-                    Silakan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi.
-                </b>
-            </center>
-            <hr>
-        </div>
+	        <div class="col-md-12">
+	            <div class="alert alert-info" style="border:1px solid #00c0ef;background:#eaf8fd;color:#31708f;">
+	            <center>
+	                <b>
+	                    Untuk pendaftaran jalur PMDK dan Prestasi gratis, cukup upload berkas rapor sesuai form yang kami sediakan.
+	                    Menu lain dan menu upload berkas akan muncul setelah data anda diverifikasi.
+	                    Silakan lengkapi semua data dan tunggu verifikasi admin.
+	                    Silakan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi.
+	                </b>
+	            </center>
+	            </div>
+	        </div>
         <?php
     } else {
         ?>
-        <div class="col-md-12">
-            <center>
-                <b style="color:blue">
-                    Menu lain akan muncul jika semua data yang telah anda lengkapi sudah terverifikasi. 
-                    Silakan lengkapi semua data dan tunggu verifikasi admin. 
-                    Silakan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi.
-                    Jika sudah terverifikasi silakan melakukan registrasi pendaftaran di menu <b>Registrasi Pendaftaran</b>.
-                </b>
-            </center>
-            <hr>
-        </div>
+	        <div class="col-md-12">
+	            <div class="alert alert-info" style="border:1px solid #00c0ef;background:#eaf8fd;color:#31708f;">
+	            <center>
+	                <b>
+	                    Menu lain akan muncul jika semua data yang telah anda lengkapi sudah terverifikasi. 
+	                    Silakan lengkapi semua data dan tunggu verifikasi admin. 
+	                    Silakan hubungi admin jika dalam 1x24 jam data anda belum diverifikasi.
+	                    Jika sudah terverifikasi silakan melakukan registrasi pendaftaran di menu <b>Registrasi Pendaftaran</b>.
+	                </b>
+	            </center>
+	            </div>
+	        </div>
         <?php
     }
 }
 ?>
+
+<div class="col-md-12">
+<?php $this->load->view('admin/mahasiswa/required_alert'); ?>
+</div>
 
 
 <div class="col-md-12"><center><h2><b>Data Utama</b></h2></center></div>
@@ -133,7 +150,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
         <select <?php echo $atribut_ubah_prodi ?> name="fakultas" id="fakultas" class="form-control">
             <option value="">-Pilih-</option>
             <?php foreach($fakultas_aktif as $list_fakultas) {?>
-            <option value="<?php echo $list_fakultas->id?>" <?php if($detail->fakultas == $list_fakultas->id){echo "selected";} ?>><?php echo $list_fakultas->nama_fakultas?></option>
+	            <option value="<?php echo $list_fakultas->id?>" <?php if(mahasiswa_old_value($this, 'fakultas', $detail->fakultas) == $list_fakultas->id){echo "selected";} ?>><?php echo $list_fakultas->nama_fakultas?></option>
             <?php } ?>
         </select>
     </div>
@@ -145,7 +162,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
 		<select <?php echo $atribut_ubah_prodi ?> name="gelombang" id="gelombang" class="form-control">
 	        <option selected disabled>-Pilih-</option>
 	            <?php foreach($pilih_gelombang as $pilih_gelombang) {?>
-	        	<option value="<?php echo $pilih_gelombang->id?>" <?php if($detail->gelombang ==$pilih_gelombang->id){echo "selected";} ?>><?php echo $pilih_gelombang->nama_fakultas ?> - <?php echo $pilih_gelombang->nama?></option>
+		        	<option value="<?php echo $pilih_gelombang->id?>" <?php if(mahasiswa_old_value($this, 'gelombang', $detail->gelombang) == $pilih_gelombang->id){echo "selected";} ?>><?php echo $pilih_gelombang->nama_fakultas ?> - <?php echo $pilih_gelombang->nama?></option>
 	            <?php } ?>
 	        </select>
 	</div>
@@ -158,7 +175,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
 	<select <?php echo $atribut_ubah_prodi ?> name="jurusan_pilihan" id="prodi" class="form-control">
         <option value="">-Pilih-</option>
             <?php foreach($prodi as $prodi) {?>
-        	<option value="<?php echo $prodi->kode?>" <?php if($detail->jurusan_pilihan == $prodi->kode){echo "selected";}elseif($this->input->post('jurusan_pilihan')==$prodi->kode){echo "selected";} ?>><?php echo $prodi->jenjang?> <?php echo $prodi->nama?></option>
+	        	<option value="<?php echo $prodi->kode?>" <?php if(mahasiswa_old_value($this, 'jurusan_pilihan', $detail->jurusan_pilihan) == $prodi->kode){echo "selected";} ?>><?php echo $prodi->jenjang?> <?php echo $prodi->nama?></option>
             <?php } ?>
         </select>
 	</div>
@@ -170,7 +187,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
         <select <?php echo $atribut_ubah_prodi ?> name="fakultas2" id="fakultas2" class="form-control">
             <option value="">-Pilih-</option>
             <?php foreach($fakultas_aktif as $list_fakultas2) {?>
-            <option value="<?php echo $list_fakultas2->id?>" <?php if($fakultas2 == $list_fakultas2->id){echo "selected";} ?>><?php echo $list_fakultas2->nama_fakultas?></option>
+	            <option value="<?php echo $list_fakultas2->id?>" <?php if(mahasiswa_old_value($this, 'fakultas2', $fakultas2) == $list_fakultas2->id){echo "selected";} ?>><?php echo $list_fakultas2->nama_fakultas?></option>
             <?php } ?>
         </select>
     </div>
@@ -182,7 +199,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
         <select <?php echo $atribut_ubah_prodi ?> name="gelombang_2" id="gelombang_2" class="form-control">
             <option selected disabled>-Pilih-</option>
                 <?php foreach($pilih_gelombang_2 as $pilih_gelombang_2) {?>
-                <option value="<?php echo $pilih_gelombang_2->id?>" <?php if($detail->gelombang_2 ==$pilih_gelombang_2->id){echo "selected";} ?>><?php echo $pilih_gelombang_2->nama_fakultas ?> - <?php echo $pilih_gelombang_2->nama?></option>
+	                <option value="<?php echo $pilih_gelombang_2->id?>" <?php if(mahasiswa_old_value($this, 'gelombang_2', $detail->gelombang_2) == $pilih_gelombang_2->id){echo "selected";} ?>><?php echo $pilih_gelombang_2->nama_fakultas ?> - <?php echo $pilih_gelombang_2->nama?></option>
                 <?php } ?>
             </select>
     </div>
@@ -195,7 +212,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
         <option value="">-Pilih-</option>
             <?php   
             foreach($prodi1 as $prodi1) {?>
-        	<option value="<?php echo $prodi1->kode?>" <?php if($detail->jurusan_pilihan2 == $prodi1->kode){echo "selected";}elseif($this->input->post('jurusan_pilihan2')==$prodi1->kode){echo "selected";} ?>><?php echo $prodi1->jenjang?> <?php echo $prodi1->nama?></option>
+	        	<option value="<?php echo $prodi1->kode?>" <?php if(mahasiswa_old_value($this, 'jurusan_pilihan2', $detail->jurusan_pilihan2) == $prodi1->kode){echo "selected";} ?>><?php echo $prodi1->jenjang?> <?php echo $prodi1->nama?></option>
             <?php } ?>
         </select>
 	</div>	
@@ -227,7 +244,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
         <select name="jenis" class="form-control" required="">
         <option value="">-Pilih-</option>
             <?php foreach($list_jenis as $list_jenis) {?>
-            <option value="<?php echo $list_jenis->kode?>" <?php if($detail->jenis==$list_jenis->kode){echo "selected";} ?>><?php echo $list_jenis->nama?></option>
+	            <option value="<?php echo $list_jenis->kode?>" <?php if(mahasiswa_old_value($this, 'jenis', $detail->jenis) == $list_jenis->kode){echo "selected";} ?>><?php echo $list_jenis->nama?></option>
             <?php } ?>
         </select>
     </div>

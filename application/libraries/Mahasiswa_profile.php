@@ -74,10 +74,10 @@ class Mahasiswa_profile
 	public function completion_target($mahasiswa)
 	{
 		if (!$this->form_complete('utama', $mahasiswa)) {
-			return 'admin/home/form_utama';
+			return 'admin/home/formulir';
 		}
 
-		return 'admin/home/form_lanjutan';
+		return 'admin/home/formulir?step=diri';
 	}
 
 	public function apply_validation_rules($form_validation, $group, $mahasiswa, $step = NULL)

@@ -218,7 +218,7 @@
           ?>
 
           <li>
-            <a href="<?php echo base_url('admin/home/form_utama')?>">
+            <a href="<?php echo base_url('admin/home/formulir')?>">
               <i class="fa fa-list-alt text-aqua"></i> <span>Formulir</span>
             </a>
           </li>

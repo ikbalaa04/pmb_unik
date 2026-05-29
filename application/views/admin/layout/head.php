@@ -200,9 +200,18 @@ function showUser(str) {
 }
   </style>
 
-  <script>
-  $(function(){
-    $('.form-horizontal').each(function(){
+	  <script>
+	  $(function(){
+	    $('.alert-success').not('.alert-persistent').each(function(){
+	      var alert = $(this);
+	      setTimeout(function(){
+	        alert.fadeOut(400, function(){
+	          $(this).remove();
+	        });
+	      }, 4500);
+	    });
+
+	    $('.form-horizontal').each(function(){
       $(this).find(':input[required]').each(function(){
         var group = $(this).closest('.form-group');
         var label = group.find('label.control-label').first();

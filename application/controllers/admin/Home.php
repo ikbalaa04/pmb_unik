@@ -28,7 +28,7 @@ class Home extends CI_CONTROLLER
         }
 
         $method = $this->router->fetch_method();
-        $allowed = array('form_utama', 'form_lanjutan', 'isi_form');
+        $allowed = array('formulir', 'form_utama', 'form_lanjutan', 'isi_form');
         if (in_array($method, $allowed)) {
             return;
         }
@@ -109,6 +109,20 @@ class Home extends CI_CONTROLLER
         }
 
         return implode($separator, $result);
+    }
+
+    private function required_post_array_errors($fields)
+    {
+        $errors = array();
+        foreach ($fields as $field) {
+            $posted = $this->input->post($field['name']);
+            $value = is_array($posted) && isset($posted[$field['index']]) ? $posted[$field['index']] : '';
+            if ($this->is_empty_form_value($value)) {
+                $errors[] = $field['label'].' harus diisi';
+            }
+        }
+
+        return $errors;
     }
 
     //Menu Dasbor
@@ -2764,7 +2778,10 @@ class Home extends CI_CONTROLLER
 	    }
     }
 
-	    public function form_utama(){
+		    public function form_utama(){
+	        if ($this->router->fetch_method() == 'form_utama') {
+	            redirect(base_url('admin/home/formulir'), 'refresh');
+	        }
 
 	  		$detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();
 	  		$list_jenis 		= $this->admin_model->list_jenis();
@@ -2800,7 +2817,7 @@ class Home extends CI_CONTROLLER
 	    if($valid->run()===FALSE){
 	      //end validasi
 
-	    $data = array( 'title'            => 'Halaman Form Utama',          
+	    $data = array( 'title'            => 'Halaman Formulir',          
                        'detail'     	  => $detail_pendaftaran,
                        'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
                        'wajib_utama_belum_lengkap' => !$this->mahasiswa_profile->form_complete('utama', $detail_pendaftaran),
@@ -2839,7 +2856,7 @@ class Home extends CI_CONTROLLER
 
 		      if($prodi_diubah && $sisa_ubah_prodi <= 0 && !$wajib_utama_belum_lengkap){
 		        $this->session->set_flashdata('warning', 'Kuota perubahan pilihan program studi sudah habis. Mahasiswa hanya bisa mengubah pilihan 1 kali.');
-		        redirect(base_url('admin/home/form_utama'),'refresh');
+			        redirect(base_url('admin/home/formulir'),'refresh');
 		      }
 
 		      if($prodi_diubah){
@@ -2850,7 +2867,7 @@ class Home extends CI_CONTROLLER
 
 		        if(empty($detail_prodi_baru) || empty($detail_prodi_2_baru) || empty($detail_gelombang_baru) || empty($detail_gelombang_2_baru)){
 		          $this->session->set_flashdata('warning', 'Pilihan fakultas, gelombang, atau program studi tidak valid.');
-		          redirect(base_url('admin/home/form_utama'),'refresh');
+			          redirect(base_url('admin/home/formulir'),'refresh');
 		        }
 
 		        $jenjang_aktif = array();
@@ -2860,17 +2877,17 @@ class Home extends CI_CONTROLLER
 
 		        if(!isset($jenjang_aktif[$detail_prodi_baru->jenjang]) || !isset($jenjang_aktif[$detail_prodi_2_baru->jenjang])){
 		          $this->session->set_flashdata('warning', 'Program studi yang dipilih tidak tersedia karena jenjangnya sedang tidak aktif.');
-		          redirect(base_url('admin/home/form_utama'),'refresh');
+			          redirect(base_url('admin/home/formulir'),'refresh');
 		        }
 
 		        if($detail_prodi_baru->fakultas != $fakultas_baru || $detail_gelombang_baru->fakultas != $fakultas_baru){
 		          $this->session->set_flashdata('warning', 'Pilihan pertama tidak sesuai dengan fakultas yang dipilih.');
-		          redirect(base_url('admin/home/form_utama'),'refresh');
+			          redirect(base_url('admin/home/formulir'),'refresh');
 		        }
 
 		        if($detail_prodi_2_baru->fakultas != $detail_gelombang_2_baru->fakultas){
 		          $this->session->set_flashdata('warning', 'Pilihan kedua tidak sesuai dengan fakultas yang dipilih.');
-		          redirect(base_url('admin/home/form_utama'),'refresh');
+			          redirect(base_url('admin/home/formulir'),'refresh');
 		        }
 
 		        if(
@@ -2880,7 +2897,7 @@ class Home extends CI_CONTROLLER
 		          ($detail_prodi_baru->jenjang != 'Profesi' && $detail_prodi_2_baru->jenjang == 'Profesi')
 		        ){
 		          $this->session->set_flashdata('warning', 'Jenjang pilihan pertama dan pilihan kedua tidak boleh dicampur antara S2/Profesi dan jenjang lain.');
-		          redirect(base_url('admin/home/form_utama'),'refresh');
+			          redirect(base_url('admin/home/formulir'),'refresh');
 		        }
 		      }
 
@@ -2919,8 +2936,21 @@ class Home extends CI_CONTROLLER
 		      }else{
 		      $this->session->set_flashdata('success', 'Data telah diedit');
 		      }
-		      redirect(base_url('admin/home/form_lanjutan'),'refresh');
+			      redirect(base_url('admin/home/formulir?step=diri'),'refresh');
+			    }
 		    }
+
+	    public function formulir(){
+	        $step = $this->input->post('form_step');
+	        if ($step == '') {
+	            $step = $this->input->get('step');
+	        }
+
+	        if (in_array($step, array('data_diri', 'orang_tua', 'diri', 'ortu'))) {
+	            return $this->form_lanjutan();
+	        }
+
+	        return $this->form_utama();
 	    }
 
     public function isi_form(){
@@ -2931,11 +2961,14 @@ class Home extends CI_CONTROLLER
 							'valid_lanjutan'	=> "1"
 	      );
 	      $this->admin_model->edit_pendaftaran($data);
-	      redirect(base_url('admin/home/form_lanjutan'),'refresh');
+		      redirect(base_url('admin/home/formulir?step=diri'),'refresh');
 	    
     }
 
     public function form_lanjutan(){
+        if ($this->router->fetch_method() == 'form_lanjutan') {
+            redirect(base_url('admin/home/formulir?step=diri'), 'refresh');
+        }
 
   		$detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();
   		$username 			= $detail_pendaftaran->username;
@@ -2959,16 +2992,17 @@ class Home extends CI_CONTROLLER
         $this->mahasiswa_profile->apply_validation_rules($valid, 'lanjutan', $detail_pendaftaran, $step_simpan);
 
 
-	    if($valid->run()===FALSE){
-	      //end validasi
+		    if($valid->run()===FALSE){
+		      //end validasi
 
-	    $data = array( 'title'            => 'Halaman Form Lanjutan',          
-                       'detail'     	  => $detail_pendaftaran,
-                       'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
-                       'list_penghasilan' => $list_penghasilan,
-                       'list_penghasilan1'=> $list_penghasilan1,
-                       'list_penghasilan2'=> $list_penghasilan2,
-                       'isi'              => 'admin/mahasiswa/lanjutan');
+		    $data = array( 'title'            => 'Halaman Formulir',          
+	                       'detail'     	  => $detail_pendaftaran,
+	                       'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
+	                       'form_lanjutan_step' => $step_simpan == 'orang_tua' ? 'ortu' : 'diri',
+	                       'list_penghasilan' => $list_penghasilan,
+	                       'list_penghasilan1'=> $list_penghasilan1,
+	                       'list_penghasilan2'=> $list_penghasilan2,
+	                       'isi'              => 'admin/mahasiswa/lanjutan');
         $this->load->view('admin/layout/wrapper', $data, FALSE);
 	    }else{
 	      $i=$this->input;
@@ -3017,8 +3051,30 @@ class Home extends CI_CONTROLLER
               $this->admin_model->edit_pengguna_verifikasi($data_username);
 
               $this->session->set_flashdata('success', 'Data diri telah disimpan. Silakan lengkapi data orang tua/wali.');
-              redirect(base_url('admin/home/form_lanjutan/?step=ortu'), 'refresh');
-          }
+	              redirect(base_url('admin/home/formulir?step=ortu'), 'refresh');
+	          }
+
+	          $manual_errors = $this->required_post_array_errors(array(
+	              array('name' => 'ortu_nama', 'index' => 0, 'label' => 'Nama Ayah'),
+	              array('name' => 'ortu_nama', 'index' => 1, 'label' => 'Nama Ibu'),
+	              array('name' => 'ortu_nik', 'index' => 0, 'label' => 'NIK Ayah'),
+	              array('name' => 'ortu_nik', 'index' => 1, 'label' => 'NIK Ibu'),
+	          ));
+	          if (count($manual_errors) > 0) {
+	              $data = array(
+	                  'title' => 'Halaman Formulir',
+	                  'detail' => $detail_pendaftaran,
+	                  'manual_validation_errors' => $manual_errors,
+	                  'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
+	                  'form_lanjutan_step' => 'ortu',
+	                  'list_penghasilan' => $list_penghasilan,
+	                  'list_penghasilan1'=> $list_penghasilan1,
+	                  'list_penghasilan2'=> $list_penghasilan2,
+	                  'isi' => 'admin/mahasiswa/lanjutan'
+	              );
+	              $this->load->view('admin/layout/wrapper', $data, FALSE);
+	              return;
+	          }
 
 	      $ortu_nama = $this->post_array_or_existing('ortu_nama', $detail_pendaftaran->ortu_nama, ',', TRUE);
 	      $ortu_tempat_lahir = $this->post_array_or_existing('ortu_tempat_lahir', $detail_pendaftaran->ortu_tempat_lahir, '|', TRUE);
@@ -3045,9 +3101,9 @@ class Home extends CI_CONTROLLER
 	      );
 	      $this->admin_model->edit_pendaftaran($data);
 
-	      $this->session->set_flashdata('success', 'Data telah diedit');
-	      redirect(base_url('admin/home/form_lanjutan/'),'refresh');
-	    }
+		      $this->session->set_flashdata('success', 'Data orang tua/wali telah disimpan');
+		      redirect(base_url('admin/home/formulir?step=ortu'),'refresh');
+		    }
     }
 
     public function form_wali(){
