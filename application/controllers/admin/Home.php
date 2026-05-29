@@ -139,6 +139,47 @@ class Home extends CI_CONTROLLER
         }
     }
 
+    private function legacy_parent_value($legacy, $separator, $index, $capital_each_word = FALSE)
+    {
+        $parts = explode($separator, (string) $legacy);
+        $value = isset($parts[$index]) ? $parts[$index] : '';
+
+        return $this->clean_form_value($value, $capital_each_word);
+    }
+
+    private function sync_explicit_parent_columns(&$data, $ortu_nama = '', $ortu_tempat_lahir = '', $ortu_tgl_lahir = '', $ortu_agama = '', $ortu_nik = '', $ortu_pendidikan = '', $ortu_hp = '', $ortu_pekerjaan = '', $ortu_penghasilan = '', $ortu_alamat = '')
+    {
+        $this->set_if_column_exists($data, 'nama_ayah', $this->legacy_parent_value($ortu_nama, ',', 0, TRUE));
+        $this->set_if_column_exists($data, 'nik_ayah', $this->legacy_parent_value($ortu_nik, ',', 0));
+        $this->set_if_column_exists($data, 'tempat_lahir_ayah', $this->legacy_parent_value($ortu_tempat_lahir, '|', 0, TRUE));
+        $this->set_if_column_exists($data, 'tanggal_lahir_ayah', $this->legacy_parent_value($ortu_tgl_lahir, '|', 0));
+        $this->set_if_column_exists($data, 'agama_ayah', $this->legacy_parent_value($ortu_agama, ',', 0));
+        $this->set_if_column_exists($data, 'pendidikan_ayah', $this->legacy_parent_value($ortu_pendidikan, ',', 0));
+        $this->set_if_column_exists($data, 'hp_ayah', $this->legacy_parent_value($ortu_hp, ',', 0));
+        $this->set_if_column_exists($data, 'pekerjaan_ayah', $this->legacy_parent_value($ortu_pekerjaan, ',', 0, TRUE));
+        $this->set_if_column_exists($data, 'penghasilan_ayah', $this->legacy_parent_value($ortu_penghasilan, ',', 0));
+        $this->set_if_column_exists($data, 'nama_ibu', $this->legacy_parent_value($ortu_nama, ',', 1, TRUE));
+        $this->set_if_column_exists($data, 'nik_ibu', $this->legacy_parent_value($ortu_nik, ',', 1));
+        $this->set_if_column_exists($data, 'tempat_lahir_ibu', $this->legacy_parent_value($ortu_tempat_lahir, '|', 1, TRUE));
+        $this->set_if_column_exists($data, 'tanggal_lahir_ibu', $this->legacy_parent_value($ortu_tgl_lahir, '|', 1));
+        $this->set_if_column_exists($data, 'agama_ibu', $this->legacy_parent_value($ortu_agama, ',', 1));
+        $this->set_if_column_exists($data, 'pendidikan_ibu', $this->legacy_parent_value($ortu_pendidikan, ',', 1));
+        $this->set_if_column_exists($data, 'hp_ibu', $this->legacy_parent_value($ortu_hp, ',', 1));
+        $this->set_if_column_exists($data, 'pekerjaan_ibu', $this->legacy_parent_value($ortu_pekerjaan, ',', 1, TRUE));
+        $this->set_if_column_exists($data, 'penghasilan_ibu', $this->legacy_parent_value($ortu_penghasilan, ',', 1));
+        $this->set_if_column_exists($data, 'alamat_orang_tua', $this->legacy_parent_value($ortu_alamat, '|', 0));
+        $this->set_if_column_exists($data, 'nama_wali', $this->legacy_parent_value($ortu_nama, ',', 2, TRUE));
+        $this->set_if_column_exists($data, 'nik_wali', $this->legacy_parent_value($ortu_nik, ',', 2));
+        $this->set_if_column_exists($data, 'tempat_lahir_wali', $this->legacy_parent_value($ortu_tempat_lahir, '|', 2, TRUE));
+        $this->set_if_column_exists($data, 'tanggal_lahir_wali', $this->legacy_parent_value($ortu_tgl_lahir, '|', 2));
+        $this->set_if_column_exists($data, 'agama_wali', $this->legacy_parent_value($ortu_agama, ',', 2));
+        $this->set_if_column_exists($data, 'pendidikan_wali', $this->legacy_parent_value($ortu_pendidikan, ',', 2));
+        $this->set_if_column_exists($data, 'hp_wali', $this->legacy_parent_value($ortu_hp, ',', 2));
+        $this->set_if_column_exists($data, 'pekerjaan_wali', $this->legacy_parent_value($ortu_pekerjaan, ',', 2, TRUE));
+        $this->set_if_column_exists($data, 'penghasilan_wali', $this->legacy_parent_value($ortu_penghasilan, ',', 2));
+        $this->set_if_column_exists($data, 'alamat_wali', $this->legacy_parent_value($ortu_alamat, '|', 1));
+    }
+
     private function required_post_array_errors($fields)
     {
         $errors = array();
@@ -487,6 +528,9 @@ class Home extends CI_CONTROLLER
 	      );
 	      if ($this->db->field_exists('wa_group', 'konfigurasi')) {
 	        $data['wa_group'] = $i->post('wa_group');
+	      }
+	      if ($this->db->field_exists('wa_group_kelulusan', 'konfigurasi')) {
+	        $data['wa_group_kelulusan'] = $i->post('wa_group_kelulusan');
 	      }
 	      $this->admin_model->edit_institusi($data);
 	      $this->session->set_flashdata('success', 'Data telah diedit');
@@ -1635,6 +1679,7 @@ class Home extends CI_CONTROLLER
 	                        'npsn'      => $i->post('npsn'),
 	                        'baju'				=> $i->post('baju')
 	      );
+	      $this->sync_explicit_parent_columns($data, $ortu_nama, $ortu_tempat_lahir, $ortu_tgl_lahir, $ortu_agama, isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : '', $ortu_pendidikan, $ortu_hp, $ortu_pekerjaan, $ortu_penghasilan, $ortu_alamat);
 	      $this->admin_model->edit_pendaftaran($data);
 
 	      $data_username = array(   'id'                => $pengguna->id,
@@ -1751,6 +1796,7 @@ class Home extends CI_CONTROLLER
 	                        'baju'				=> $i->post('baju')
 
 	      );
+	      $this->sync_explicit_parent_columns($data, $ortu_nama, $ortu_tempat_lahir, $ortu_tgl_lahir, $ortu_agama, isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : '', $ortu_pendidikan, $ortu_hp, $ortu_pekerjaan, $ortu_penghasilan, $ortu_alamat);
 	      $this->admin_model->edit_pendaftaran($data);
 
 	      $data_username = array(   'id'                => $pengguna->id,
@@ -2800,6 +2846,7 @@ class Home extends CI_CONTROLLER
 	        				'pindahan_jumlahsks'=> $i->post('pindahan_jumlahsks'),
 	                        'nilai_ijazah'      => $i->post('nilai_ijazah')
 	      );
+	      $this->sync_explicit_parent_columns($data, $ortu_nama, isset($detail_pendaftaran->ortu_tempat_lahir) ? $detail_pendaftaran->ortu_tempat_lahir : '', isset($detail_pendaftaran->ortu_tgl_lahir) ? $detail_pendaftaran->ortu_tgl_lahir : '', $ortu_agama, isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : '', $ortu_pendidikan, $ortu_hp, $ortu_pekerjaan, $ortu_penghasilan, isset($detail_pendaftaran->ortu_alamat) ? $detail_pendaftaran->ortu_alamat : '');
 	      $this->admin_model->edit_pendaftaran($data);
 	      $this->session->set_flashdata('success', 'Data telah diedit');
 	      redirect(base_url('admin/home/mahasiswa/'),'refresh');
@@ -3217,6 +3264,7 @@ class Home extends CI_CONTROLLER
 	                        'ortu_penghasilan'  => $ortu_penghasilan,
 	                        'ortu_alamat'      	=> $ortu_alamat
 	      );
+	      $this->sync_explicit_parent_columns($data, $ortu_nama, $ortu_tempat_lahir, $ortu_tgl_lahir, $ortu_agama, isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : '', $ortu_pendidikan, $ortu_hp, $ortu_pekerjaan, $ortu_penghasilan, $ortu_alamat);
 	      $this->admin_model->edit_pendaftaran($data);
 	      $this->session->set_flashdata('success', 'Data telah diedit');
 	      redirect(base_url('admin/home/form_wali'),'refresh');

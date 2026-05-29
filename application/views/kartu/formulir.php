@@ -147,6 +147,13 @@ $print = $_REQUEST['print']; include "$print";
 	        $arr = function($array, $index) use ($val) {
 	          return isset($array[$index]) ? $val($array[$index]) : '-';
 	        };
+	        $parent = function($column, $array, $index) use ($detail_pendaftaran, $arr, $val) {
+	          if (isset($detail_pendaftaran->$column) && trim((string) $detail_pendaftaran->$column) !== '') {
+	            return $val($detail_pendaftaran->$column);
+	          }
+
+	          return $arr($array, $index);
+	        };
 	        $section = function($title) {
 	          echo '<tr class="section-title"><td colspan="6">'.$title.'</td></tr>';
 	        };
@@ -193,14 +200,14 @@ $print = $_REQUEST['print']; include "$print";
 
 	      <?php $section('III. DATA ORANG TUA / WALI'); ?>
 	      <?php $grid(array(
-	        array(array('Nama Ayah', $arr($nama_ortu, 0)), array('Nama Ibu', $arr($nama_ortu, 1))),
-	        array(array('Pekerjaan Ayah', $arr($pekerjaan_ortu, 0)), array('Pekerjaan Ibu', $arr($pekerjaan_ortu, 1))),
-	        array(array('Penghasilan Ayah', $arr($penghasilan, 0)), array('Penghasilan Ibu', $arr($penghasilan, 1))),
-	        array(array('No. Telp Ayah', $arr($hp_ortu, 0)), array('No. Telp Ibu', $arr($hp_ortu, 1))),
-	        array(array('Alamat Orang Tua', $arr($ortu_alamat, 0))),
-	        array(array('Nama Wali', $arr($nama_ortu, 2)), array('Pekerjaan Wali', $arr($pekerjaan_ortu, 2))),
-	        array(array('Penghasilan Wali', $arr($penghasilan, 2)), array('No. Telp Wali', $arr($hp_ortu, 2))),
-	        array(array('Alamat Wali', $arr($ortu_alamat, 1)))
+	        array(array('Nama Ayah', $parent('nama_ayah', $nama_ortu, 0)), array('Nama Ibu', $parent('nama_ibu', $nama_ortu, 1))),
+	        array(array('Pekerjaan Ayah', $parent('pekerjaan_ayah', $pekerjaan_ortu, 0)), array('Pekerjaan Ibu', $parent('pekerjaan_ibu', $pekerjaan_ortu, 1))),
+	        array(array('Penghasilan Ayah', $parent('penghasilan_ayah', $penghasilan, 0)), array('Penghasilan Ibu', $parent('penghasilan_ibu', $penghasilan, 1))),
+	        array(array('No. Telp Ayah', $parent('hp_ayah', $hp_ortu, 0)), array('No. Telp Ibu', $parent('hp_ibu', $hp_ortu, 1))),
+	        array(array('Alamat Orang Tua', $parent('alamat_orang_tua', $ortu_alamat, 0))),
+	        array(array('Nama Wali', $parent('nama_wali', $nama_ortu, 2)), array('Pekerjaan Wali', $parent('pekerjaan_wali', $pekerjaan_ortu, 2))),
+	        array(array('Penghasilan Wali', $parent('penghasilan_wali', $penghasilan, 2)), array('No. Telp Wali', $parent('hp_wali', $hp_ortu, 2))),
+	        array(array('Alamat Wali', $parent('alamat_wali', $ortu_alamat, 1)))
 	      )); ?>
 
 	      <tr><td colspan="6"><br><br><br><br><br><br></td></tr>

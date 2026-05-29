@@ -32,7 +32,7 @@ if (!function_exists('mahasiswa_old_value')) {
 $program = $detail->program;
 $detail_program  = $this->admin_model->kartu_program($program);  
 $konfigurasi_formulir = $this->admin_model->detail_institusi();
-$link_wa_group = isset($konfigurasi_formulir->wa_group) ? trim($konfigurasi_formulir->wa_group) : '';
+$link_wa_group_kelulusan = isset($konfigurasi_formulir->wa_group_kelulusan) ? trim($konfigurasi_formulir->wa_group_kelulusan) : '';
 
 if ($detail->fix == 1) {
     // Jika sudah dinyatakan lulus
@@ -44,10 +44,10 @@ if ($detail->fix == 1) {
 	                Selamat anda dinyatakan <b>LULUS</b> tes seleksi ujian saringan masuk,<br>
 	                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
 	                dan lengkapi berkas persyaratan.<br>
-	                <?php if($link_wa_group != '') { ?>
+	                <?php if($link_wa_group_kelulusan != '') { ?>
 	                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
 	                <b>
-	                    <a style="color:#008d4c" href="<?php echo $link_wa_group; ?>" target="_blank">
+	                    <a style="color:#008d4c" href="<?php echo $link_wa_group_kelulusan; ?>" target="_blank">
 	                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
 	                    </a>
 	                </b>
