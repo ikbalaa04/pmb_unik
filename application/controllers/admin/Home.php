@@ -1652,9 +1652,9 @@ class Home extends CI_CONTROLLER
 							'jurusan_pilihan'   => $i->post('prodi'),
                             'jurusan_pilihan2'  => $i->post('prodi2')
 	      );
-	      $this->admin_model->edit_pendaftaran($data);
+		      $this->admin_model->edit_pendaftaran($data);
 
-	      $username = $detail_pendaftaran->username;
+		      $username = $detail_pendaftaran->username;
           $detail_pengguna = $this->admin_model->detail_pengguna_admin($username);
 
           $pengguna = array(  'id'              => $detail_pengguna->id,   
@@ -2049,6 +2049,7 @@ class Home extends CI_CONTROLLER
 			   			 'approve' 	=> '0',
 			   			 'fix' 		=> '0',
 			   			 'non_fix' 	=> '0',
+                         'nim' => NULL,
 			   			 'jumlahbayar' 	=> '0');
         $this->admin_model->edit_pendaftaran($data);
 
@@ -2062,23 +2063,25 @@ class Home extends CI_CONTROLLER
 
     }
 
-    public function lulus_accept($id){
+	    public function lulus_accept($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $data = array( 'id' 		=> $detail_pendaftaran->id,
+	        $data = array( 'id' 		=> $detail_pendaftaran->id,
         			   'fix' 		=> '1',
         			   'non_fix' 	=> '0');
-        $this->admin_model->edit_pendaftaran($data);
-        redirect(base_url('admin/home/accept'),'refresh');
+	        $this->admin_model->edit_pendaftaran($data);
+	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
+	        redirect(base_url('admin/home/accept'),'refresh');
 
-    }
+	    }
 
     public function gagal_accept($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $data = array( 'id' 		=> $detail_pendaftaran->id,
+	        $data = array( 'id' 		=> $detail_pendaftaran->id,
         			   'fix' 		=> '0',
-        			   'non_fix'	=> '1');
+                       'non_fix' => '1',
+                       'nim' => NULL);
         $this->admin_model->edit_pendaftaran($data);
         redirect(base_url('admin/home/accept'),'refresh');
 
@@ -2087,9 +2090,10 @@ class Home extends CI_CONTROLLER
     public function gagal_diterima($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $data = array( 'id' 		=> $detail_pendaftaran->id,
+	        $data = array( 'id' 		=> $detail_pendaftaran->id,
         			   'fix' 		=> '0',
-        			   'non_fix'	=> '1');
+                       'non_fix' => '1',
+                       'nim' => NULL);
         $this->admin_model->edit_pendaftaran($data);
         redirect(base_url('admin/home/diterima'),'refresh');
 
@@ -2299,21 +2303,23 @@ class Home extends CI_CONTROLLER
 
     }
 
-    public function lulus_accept_apt($id){
+	    public function lulus_accept_apt($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $data = array( 'id' 		=> $detail_pendaftaran->id,
+	        $data = array( 'id' 		=> $detail_pendaftaran->id,
         			   'fix' 		=> '1');
-        $this->admin_model->edit_pendaftaran($data);
-        redirect(base_url('admin/home/accept_apt'),'refresh');
+	        $this->admin_model->edit_pendaftaran($data);
+	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
+	        redirect(base_url('admin/home/accept_apt'),'refresh');
 
-    }
+	    }
 
     public function gagal_accept_apt($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $data = array( 'id' 		=> $detail_pendaftaran->id,
-        			   'fix' 		=> '0');
+	        $data = array( 'id' 		=> $detail_pendaftaran->id,
+                       'fix' => '0',
+                       'nim' => NULL);
         $this->admin_model->edit_pendaftaran($data);
         redirect(base_url('admin/home/accept_apt'),'refresh');
 
@@ -2359,7 +2365,7 @@ class Home extends CI_CONTROLLER
         $this->load->view('admin/layout/wrapper', $data, FALSE);
     }
 
-    public function diterima_filter(){
+	    public function diterima_filter(){
 
         $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
         $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
@@ -2381,14 +2387,29 @@ class Home extends CI_CONTROLLER
                        'list_prodi'					=> $list_prodi,
                        'pilih_gelombang'   			=> $pilih_gelombang,
                        'isi'           	 			=> 'admin/diterima/list');
-        $this->load->view('admin/layout/wrapper', $data, FALSE);
-    }
+	        $this->load->view('admin/layout/wrapper', $data, FALSE);
+	    }
 
-    public function balik_diterima($id){
+	    public function generate_nim_diterima(){
+	        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik();
+	        $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
+	        $result = $this->admin_model->generate_nim_lulus($id_thn_akademik);
+	        $message = $result['berhasil'].' NIM berhasil digenerate';
+	        if ($result['gagal'] > 0) {
+	            $message .= ', '.$result['gagal'].' gagal karena mapping fakultas/prodi belum cocok';
+	            $this->session->set_flashdata('warning', $message);
+	        } else {
+	            $this->session->set_flashdata('success', $message);
+	        }
+	        redirect(base_url('admin/home/diterima'),'refresh');
+	    }
+
+	    public function balik_diterima($id){
 
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-        $data = array( 'id' 		=> $detail_pendaftaran->id,
-        			   'fix' 		=> '0');
+	        $data = array( 'id' 		=> $detail_pendaftaran->id,
+                       'fix' => '0',
+                       'nim' => NULL);
         $this->admin_model->edit_pendaftaran($data);
         redirect(base_url('admin/home/accept'),'refresh');
 
@@ -4410,7 +4431,7 @@ class Home extends CI_CONTROLLER
         $tahun_masuk = $this->input->post('tahun_masuk') ?: $tahun_ajar;
         $kelas = $this->input->post('kelas');
         $status = $this->input->post('status') ?: '1';
-        $sumber_nim = $this->input->post('sumber_nim') ?: 'noujian';
+	        $sumber_nim = $this->input->post('sumber_nim') ?: 'nim';
         $data_lulus = $this->admin_model->export_siakad_mahasiswa_lulus($id_thn_akademik, $prodi);
 
         $this->load->library('excel');
@@ -4490,11 +4511,14 @@ class Home extends CI_CONTROLLER
         return isset($map[$key]) ? $map[$key] : $mhs->id_prodi_lulus;
     }
 
-    private function nim_siakad($mhs, $sumber_nim)
-    {
-        if ($sumber_nim == 'username') {
-            return $mhs->username;
-        }
+	    private function nim_siakad($mhs, $sumber_nim)
+	    {
+	        if ($sumber_nim == 'nim' && isset($mhs->nim) && trim($mhs->nim) != '') {
+	            return $mhs->nim;
+	        }
+	        if ($sumber_nim == 'username') {
+	            return $mhs->username;
+	        }
         return $mhs->noujian ?: $mhs->username;
     }
 
@@ -4695,17 +4719,19 @@ class Home extends CI_CONTROLLER
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
     	$id_gelombang = $detail_pendaftaran->gelombang_2;
     	$detail_gelombang = $this->admin_model->detail_gelombang_id($id_gelombang);
-        $data = array( 'id' 			=> $detail_pendaftaran->id,
+	        $data = array( 'id' 			=> $detail_pendaftaran->id,
         			   'fakultas' 		=> $detail_gelombang->fakultas,
         			   'fix' 			=> '1',
         			   'non_fix' 		=> '0',
+                       'nim' => NULL,
         			   'gelombang'=> $detail_pendaftaran->gelombang_2,
         			   'gelombang_2'=> $detail_pendaftaran->gelombang,
         			   'jurusan_pilihan'=> $detail_pendaftaran->jurusan_pilihan2,
         			   'jurusan_pilihan2'=> $detail_pendaftaran->jurusan_pilihan);
-        $this->admin_model->edit_pendaftaran($data);
+	        $this->admin_model->edit_pendaftaran($data);
+	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
 
-        $username = $detail_pendaftaran->username;
+	        $username = $detail_pendaftaran->username;
         $detail_pengguna = $this->admin_model->detail_pengguna_admin($username);
 
         $pengguna = array(  'id'              => $detail_pengguna->id,   
@@ -4724,15 +4750,17 @@ class Home extends CI_CONTROLLER
     	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
     	$id_gelombang = $detail_pendaftaran->gelombang_2;
     	$detail_gelombang = $this->admin_model->detail_gelombang_id($id_gelombang);
-        $data = array( 'id' 			=> $detail_pendaftaran->id,
+	        $data = array( 'id' 			=> $detail_pendaftaran->id,
         			   'fakultas' 		=> $detail_gelombang->fakultas,
+                       'nim' => NULL,
         			   'gelombang'=> $detail_pendaftaran->gelombang_2,
         			   'gelombang_2'=> $detail_pendaftaran->gelombang,
         			   'jurusan_pilihan'=> $detail_pendaftaran->jurusan_pilihan2,
         			   'jurusan_pilihan2'=> $detail_pendaftaran->jurusan_pilihan);
-        $this->admin_model->edit_pendaftaran($data);
+	        $this->admin_model->edit_pendaftaran($data);
+	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
 
-        $username = $detail_pendaftaran->username;
+	        $username = $detail_pendaftaran->username;
         $detail_pengguna = $this->admin_model->detail_pengguna_admin($username);
 
         $pengguna = array(  'id'              => $detail_pengguna->id,   

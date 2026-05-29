@@ -63,10 +63,11 @@ if (!empty($export_filter)) {
         <?php } ?>
 
         <br>
-        <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
-        <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/diterima')?>" > Tanpa Filter</a>
-        <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo $export_url ?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
-    </form>
+	        <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
+	        <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/diterima')?>" > Tanpa Filter</a>
+	        <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo $export_url ?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+	        <a class="btn btn-warning btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/generate_nim_diterima')?>" onclick="return confirm('Generate NIM untuk semua peserta lulus yang belum memiliki NIM?')"><i class="fa fa-id-card"></i> Generate NIM</a>
+	    </form>
 </div><br>
 
 <!-- Example row of columns -->
@@ -80,8 +81,9 @@ if (!empty($export_filter)) {
         <tr>
             <th width="20">No</th>
             <th>Sumber</th>
-            <th>Registrasi Ulang</th>
-            <th width="120">No. Ujian</th>
+	            <th>Registrasi Ulang</th>
+	            <th width="120">NIM</th>
+	            <th width="120">No. Ujian</th>
             <th width="20">Jenis</th>
             <th width="20">Program</th>
             <th width="20">Fakultas</th>
@@ -129,7 +131,8 @@ if (!empty($export_filter)) {
             </td>  
             <?php } ?>
 
-            <td width="20"><?php if($diterima->noujian == ''){echo "Belum Ada";}else{echo $diterima->noujian;} ?></td>
+	            <td width="20"><?php if(!isset($diterima->nim) || $diterima->nim == ''){echo "Belum Ada";}else{echo $diterima->nim;} ?></td>
+	            <td width="20"><?php if($diterima->noujian == ''){echo "Belum Ada";}else{echo $diterima->noujian;} ?></td>
             <td width="20"><?php if($diterima->jenis == ''){echo "Belum diisi";}else{echo $diterima->jenis;} ?></td>
             <td width="20"><?php if($diterima->nama_program == ''){echo "Belum diisi";}else{echo $diterima->nama_program;} ?></td>
             <td><?php echo $diterima->singkatan ?></td>

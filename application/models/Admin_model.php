@@ -1220,11 +1220,166 @@ class Admin_model extends CI_Model {
 			}
 		}
 
-		$nomor = str_pad($nomor_terakhir + 1, 3, '0', STR_PAD_LEFT);
-		return 'USM' . date('y') . $kode_fakultas . $nomor;
-	}
+			$nomor = str_pad($nomor_terakhir + 1, 3, '0', STR_PAD_LEFT);
+			return 'USM' . date('y') . $kode_fakultas . $nomor;
+		}
 
-	public function pendaftaran_belum_nomor_ujian($id_thn_akademik)
+		public function generate_nim_pendaftar($id_pendaftaran)
+		{
+			$pendaftaran = $this->detail_pendaftaran($id_pendaftaran);
+			if (!$pendaftaran) {
+				return FALSE;
+			}
+
+			if (isset($pendaftaran->nim) && trim($pendaftaran->nim) != '') {
+				return $pendaftaran->nim;
+			}
+
+			$tahun_akademik = $this->detail_thn_akademik($pendaftaran->tahun_akademik);
+			$tahun = $tahun_akademik ? $tahun_akademik->nama_thn_akademik : '';
+			if (!preg_match('/([0-9]{4})/', $tahun, $match)) {
+				$gelombang = $this->detail_gelombang_id($pendaftaran->gelombang);
+				$tahun = $gelombang && $gelombang->tahun != '' ? $gelombang->tahun : date('Y');
+				preg_match('/([0-9]{4})/', $tahun, $match);
+			}
+			$kode_tahun = isset($match[1]) ? substr($match[1], -2) : date('y');
+
+				$prodi = $this->detail_prodi_nim($pendaftaran->jurusan_pilihan, $pendaftaran->jenjang);
+				if (!$prodi) {
+					return FALSE;
+				}
+
+			$kode_fakultas = $this->kode_fakultas_nim($pendaftaran->fakultas);
+			$kode_prodi = $this->kode_prodi_nim($kode_fakultas, $prodi);
+			if ($kode_fakultas === FALSE || $kode_prodi === FALSE) {
+				return FALSE;
+			}
+
+			$prefix = $kode_tahun.$kode_fakultas.$kode_prodi;
+			$this->db->select('nim');
+			$this->db->from('pendaftaran');
+			$this->db->like('nim', $prefix, 'after');
+			$this->db->order_by('nim', 'desc');
+			$this->db->limit(1);
+			$query = $this->db->get();
+			$last = $query->row();
+			$nomor_terakhir = 0;
+			if ($last && preg_match('/([0-9]{4})$/', $last->nim, $last_match)) {
+				$nomor_terakhir = (int) $last_match[1];
+			}
+
+			$nim = $prefix.str_pad($nomor_terakhir + 1, 4, '0', STR_PAD_LEFT);
+			$this->edit_pendaftaran(array(
+				'id'  => $pendaftaran->id,
+				'nim' => $nim
+			));
+			return $nim;
+		}
+
+		public function generate_nim_lulus($id_thn_akademik)
+		{
+			$this->db->select('id');
+			$this->db->from('pendaftaran');
+			$this->db->where(array(
+				'tahun_akademik' => $id_thn_akademik,
+				'bayar' => '1',
+				'approve' => '1',
+				'fix' => '1',
+				'non_fix' => '0'
+			));
+			$this->db->group_start();
+			$this->db->where('nim', '');
+			$this->db->or_where('nim IS NULL', NULL, FALSE);
+			$this->db->group_end();
+			$this->db->order_by('jurusan_pilihan', 'asc');
+			$this->db->order_by('id', 'asc');
+			$query = $this->db->get();
+
+			$result = array('berhasil' => 0, 'gagal' => 0);
+			foreach ($query->result() as $row) {
+				if ($this->generate_nim_pendaftar($row->id)) {
+					$result['berhasil']++;
+				} else {
+					$result['gagal']++;
+				}
+			}
+			return $result;
+		}
+
+			private function kode_fakultas_nim($id_fakultas)
+			{
+			$fakultas = $this->detail_fakultas($id_fakultas);
+			$nama = $fakultas ? strtoupper($fakultas->nama_fakultas.' '.$fakultas->singkatan) : '';
+			$kode = $fakultas ? ltrim($fakultas->kode, '0') : '';
+
+			if (in_array($kode, array('1', '2', '3', '4'))) {
+				return $kode;
+			}
+
+			if (strpos($nama, 'TARBIYAH') !== FALSE) {
+				return '1';
+			}
+			if (strpos($nama, 'SYARIAH') !== FALSE || strpos($nama, 'SYARI') !== FALSE) {
+				return '2';
+			}
+			if (strpos($nama, 'DAKWAH') !== FALSE) {
+				return '3';
+			}
+			if (strpos($nama, 'PASCA') !== FALSE) {
+				return '4';
+			}
+			if (in_array((string) $id_fakultas, array('1', '2', '3', '4'))) {
+				return (string) $id_fakultas;
+			}
+				return FALSE;
+			}
+
+			private function detail_prodi_nim($kode_prodi, $jenjang)
+			{
+				$this->db->select('*');
+				$this->db->from('prodi');
+				$this->db->where('kode', $kode_prodi);
+				if (trim($jenjang) != '') {
+					$this->db->where('jenjang', $jenjang);
+				}
+				$this->db->limit(1);
+				$query = $this->db->get();
+				$prodi = $query->row();
+				if ($prodi) {
+					return $prodi;
+				}
+
+				return $this->detail_prodi_kode($kode_prodi);
+			}
+
+			private function kode_prodi_nim($kode_fakultas, $prodi)
+		{
+			$kode = strtoupper(trim($prodi->kode));
+			$nama = strtoupper(trim($prodi->nama));
+
+			if ($kode_fakultas == '1') {
+				if ($kode == 'PAI' || strpos($nama, 'PENDIDIKAN AGAMA ISLAM') !== FALSE || strpos($nama, 'PAI') !== FALSE) return '1';
+				if ($kode == 'PBA' || strpos($nama, 'BAHASA ARAB') !== FALSE || strpos($nama, 'PBA') !== FALSE) return '2';
+				if ($kode == 'BKPI' || strpos($nama, 'BIMBINGAN') !== FALSE || strpos($nama, 'BKPI') !== FALSE) return '3';
+				if ($kode == 'PIAUD' || strpos($nama, 'ANAK USIA DINI') !== FALSE || strpos($nama, 'PIAUD') !== FALSE) return '4';
+			}
+			if ($kode_fakultas == '2') {
+				if ($kode == 'EKOS' || strpos($nama, 'EKONOMI') !== FALSE || strpos($nama, 'EKOS') !== FALSE) return '1';
+				if ($kode == 'HKI' || strpos($nama, 'HUKUM KELUARGA') !== FALSE || strpos($nama, 'HKI') !== FALSE) return '2';
+				if ($kode == 'MHU' || strpos($nama, 'HAJI') !== FALSE || strpos($nama, 'UMRAH') !== FALSE || strpos($nama, 'MHU') !== FALSE) return '3';
+			}
+			if ($kode_fakultas == '3') {
+				if ($kode == 'KPI' || strpos($nama, 'KOMUNIKASI') !== FALSE || strpos($nama, 'PENYIARAN') !== FALSE || strpos($nama, 'KPI') !== FALSE) return '1';
+			}
+			if ($kode_fakultas == '4') {
+				if ($kode == 'MPI' || strpos($nama, 'MANAJEMEN PENDIDIKAN') !== FALSE || strpos($nama, 'MPI') !== FALSE) return '1';
+				if ($kode == 'PBA' || strpos($nama, 'BAHASA ARAB') !== FALSE || strpos($nama, 'PBA') !== FALSE) return '2';
+			}
+
+			return FALSE;
+		}
+
+		public function pendaftaran_belum_nomor_ujian($id_thn_akademik)
 	{
 		$this->db->select('*');
 		$this->db->from('pendaftaran');
@@ -1791,7 +1946,7 @@ class Admin_model extends CI_Model {
 	public function diterima($id_thn_akademik)
 	{
 				
-		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.atas_regis,pendaftaran.bank_regis,pendaftaran.tgl_regis,pendaftaran.registrasi_ulang, pendaftaran.jenjang, pendaftaran.username, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.keterangan_sumber, pendaftaran.noujian, pendaftaran.keterangan_berkas, pendaftaran.fix,  pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.ipk,  pendaftaran.jenis, pendaftaran.program, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.atas_regis,pendaftaran.bank_regis,pendaftaran.tgl_regis,pendaftaran.registrasi_ulang, pendaftaran.jenjang, pendaftaran.username, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.keterangan_sumber, pendaftaran.nim, pendaftaran.noujian, pendaftaran.keterangan_berkas, pendaftaran.fix,  pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.ipk,  pendaftaran.jenis, pendaftaran.program, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
 		$this->db->where(array('tahun_akademik'=> $id_thn_akademik,
 							   'bayar' 		=> '1', 
@@ -1812,7 +1967,7 @@ class Admin_model extends CI_Model {
 
 		$fakultas  = $this->session->userdata('fakultas');
 				
-		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.registrasi_ulang, pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang, pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.keterangan_berkas, pendaftaran.ipk,  pendaftaran.fix, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi,  program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.registrasi_ulang, pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang, pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.keterangan_berkas, pendaftaran.ipk,  pendaftaran.fix, pendaftaran.nim, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi,  program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
 		$this->db->where(array('tahun_akademik'			=> $id_thn_akademik,
 							   'pendaftaran.fakultas' 	=> $fakultas,
@@ -1835,7 +1990,7 @@ class Admin_model extends CI_Model {
 		$gelombang = $this->input->post('gelombang');
 		$prodi = $this->input->post('prodi');
 				
-		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.registrasi_ulang, pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.ipk, pendaftaran.fix, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.registrasi_ulang, pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.ipk, pendaftaran.fix, pendaftaran.nim, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
 		$this->db->where(array('tahun_akademik'								=> $id_thn_akademik,
 							   'pendaftaran.gelombang' 						=> $gelombang,
@@ -1859,7 +2014,7 @@ class Admin_model extends CI_Model {
 	public function registrasi_ulang($id_thn_akademik)
 	{
 				
-		$this->db->select('pendaftaran.id, pendaftaran.registrasi_ulang, pendaftaran.bukti_regis, pendaftaran.atas_regis, pendaftaran.bank_regis, pendaftaran.tgl_regis,pendaftaran.jenjang, pendaftaran.username, pendaftaran.registrasi_ulang, pendaftaran.verifikasi_regis, pendaftaran.sumber, pendaftaran.keterangan_sumber, pendaftaran.noujian, pendaftaran.keterangan_berkas, pendaftaran.fix, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.ipk,  pendaftaran.jenis, pendaftaran.program, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->select('pendaftaran.id, pendaftaran.registrasi_ulang, pendaftaran.bukti_regis, pendaftaran.atas_regis, pendaftaran.bank_regis, pendaftaran.tgl_regis,pendaftaran.jenjang, pendaftaran.username, pendaftaran.registrasi_ulang, pendaftaran.verifikasi_regis, pendaftaran.sumber, pendaftaran.keterangan_sumber, pendaftaran.nim, pendaftaran.noujian, pendaftaran.keterangan_berkas, pendaftaran.fix, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.ipk,  pendaftaran.jenis, pendaftaran.program, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
 		$this->db->where(array('tahun_akademik'=> $id_thn_akademik,
 							   'bayar' 		=> '1', 
@@ -1880,7 +2035,7 @@ class Admin_model extends CI_Model {
 
 		$fakultas  = $this->session->userdata('fakultas');
 				
-		$this->db->select('pendaftaran.id, pendaftaran.registrasi_ulang, pendaftaran.bukti_regis, pendaftaran.atas_regis, pendaftaran.bank_regis, pendaftaran.tgl_regis,pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang, pendaftaran.verifikasi_regis, pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.keterangan_berkas,pendaftaran.ipk,  pendaftaran.fix, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi,  program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->select('pendaftaran.id, pendaftaran.registrasi_ulang, pendaftaran.bukti_regis, pendaftaran.atas_regis, pendaftaran.bank_regis, pendaftaran.tgl_regis,pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang, pendaftaran.verifikasi_regis, pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.keterangan_berkas,pendaftaran.ipk,  pendaftaran.fix, pendaftaran.nim, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi,  program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
 		$this->db->where(array('tahun_akademik'			=> $id_thn_akademik,
 							   'pendaftaran.fakultas' 	=> $fakultas,
@@ -1905,7 +2060,7 @@ class Admin_model extends CI_Model {
 		$registrasi_ulang = $this->input->post('registrasi_ulang');
 
 				
-		$this->db->select('pendaftaran.id, pendaftaran.registrasi_ulang, pendaftaran.bukti_regis, pendaftaran.atas_regis, pendaftaran.bank_regis, pendaftaran.tgl_regis, pendaftaran.verifikasi_regis,  pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.ipk, pendaftaran.fix, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		$this->db->select('pendaftaran.id, pendaftaran.registrasi_ulang, pendaftaran.bukti_regis, pendaftaran.atas_regis, pendaftaran.bank_regis, pendaftaran.tgl_regis, pendaftaran.verifikasi_regis,  pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.ipk, pendaftaran.fix, pendaftaran.nim, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
 		$this->db->where(array('tahun_akademik'								=> $id_thn_akademik,
 							   'pendaftaran.gelombang' 						=> $gelombang,

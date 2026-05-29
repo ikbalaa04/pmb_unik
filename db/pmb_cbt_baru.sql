@@ -943,6 +943,7 @@ CREATE TABLE `pendaftaran` (
   `jenis` char(11) DEFAULT NULL,
   `program` char(50) NOT NULL,
   `noujian` char(30) NOT NULL,
+  `nim` varchar(20) DEFAULT NULL,
   `jenjang` varchar(10) NOT NULL,
   `jurusan_pilihan` varchar(20) NOT NULL,
   `jurusan_pilihan2` char(11) NOT NULL,

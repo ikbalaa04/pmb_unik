@@ -68,11 +68,12 @@
           <div class="row">
             <div class="col-md-4">
               <div class="form-group">
-                <label>Sumber NIM</label>
-                <select name="sumber_nim" class="form-control">
-                  <option value="noujian">No. Ujian</option>
-                  <option value="username">Username</option>
-                </select>
+	                <label>Sumber NIM</label>
+	                <select name="sumber_nim" class="form-control">
+	                  <option value="nim">NIM PMB</option>
+	                  <option value="noujian">No. Ujian</option>
+	                  <option value="username">Username</option>
+	                </select>
               </div>
             </div>
           </div>
