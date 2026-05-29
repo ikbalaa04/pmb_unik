@@ -1,41 +1,71 @@
-name: Deploy to cPanel
+name: Deploy to CloudPanel
 
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
 
 concurrency:
-  group: cpanel-deploy
+  group: cloudpanel-deploy
   cancel-in-progress: true
 
 jobs:
   deploy:
-    name: Upload files
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_SERVER_DIR }}
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.github/**
-            **/.codex
-            **/.codex/**
-            db/**
-            user_guide/**
-            manual/**
-            Petunjuk update/**
-            panduan upload cpanel.txt
-            panduan upload local.txt
-            phpinfo.php
+          php-version: '7.4'
+
+      - name: Install Dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Deploy to Server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          source: ".,!/.git,!.github"
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 0
+          rm: false
+
+      - name: Fix Permissions
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            cd "${{ secrets.DEPLOY_PATH }}"
+
+            find . -type d -exec chmod 755 {} \;
+            find . -type f -exec chmod 644 {} \;
+
+            rm -f index.html
+
+            DEPLOY_OWNER="${{ secrets.DEPLOY_OWNER }}"
+            if [ -z "$DEPLOY_OWNER" ]; then
+              DEPLOY_OWNER="${{ secrets.SERVER_USER }}"
+            fi
+            chown -R "$DEPLOY_OWNER:$DEPLOY_OWNER" .
+
+            chmod -R 777 application/logs
+            if [ -d application/cache ]; then
+              chmod -R 777 application/cache
+            fi
+            if [ -d uploads ]; then
+              chmod -R 777 uploads
+            fi
+            if [ -d assets/upload ]; then
+              chmod -R 777 assets/upload
+            fi

@@ -4307,21 +4307,35 @@ class Admin_model extends CI_Model {
 		return $query->result();
     }
 
-    public function chart_pendaftar_bulanan_tahunan()
-    {
-    	$this->db->select('tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, MONTH(pendaftaran.tanggal_daftar) as bulan, COUNT(pendaftaran.id) as jumlah_pendaftar', FALSE);
-		$this->db->from('pendaftaran');
+	    public function chart_pendaftar_bulanan_tahunan()
+	    {
+	    	$this->db->select('tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, MONTH(pendaftaran.tanggal_daftar) as bulan, COUNT(pendaftaran.id) as jumlah_pendaftar', FALSE);
+			$this->db->from('pendaftaran');
 		$this->db->join('tahun_akademik', 'tahun_akademik.id_thn_akademik = pendaftaran.tahun_akademik', 'left');
 		$this->db->where('pendaftaran.tanggal_daftar IS NOT NULL', NULL, FALSE);
 		$this->db->group_by(array('tahun_akademik.id_thn_akademik', 'tahun_akademik.nama_thn_akademik', 'MONTH(pendaftaran.tanggal_daftar)'));
 		$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
 		$this->db->order_by('bulan', 'asc');
-		$query = $this->db->get();
-		return $query->result();
-    }
+			$query = $this->db->get();
+			return $query->result();
+	    }
 
-    public function chart_status_umum($id_thn_akademik)
-    {
+	    public function chart_referensi_pendaftar_tahunan()
+	    {
+	    	$sumber = "CASE WHEN pendaftaran.sumber IS NULL OR TRIM(pendaftaran.sumber) = '' THEN 'Tidak Diisi' ELSE pendaftaran.sumber END";
+	    	$this->db->select("tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, ".$sumber." as sumber_referensi, COUNT(pendaftaran.id) as jumlah_pendaftar", FALSE);
+			$this->db->from('pendaftaran');
+			$this->db->join('tahun_akademik', 'tahun_akademik.id_thn_akademik = pendaftaran.tahun_akademik', 'left');
+			$this->db->group_by("tahun_akademik.id_thn_akademik, tahun_akademik.nama_thn_akademik, ".$sumber, FALSE);
+			$this->db->order_by('tahun_akademik.id_thn_akademik', 'asc');
+			$this->db->order_by('jumlah_pendaftar', 'desc');
+			$this->db->order_by('sumber_referensi', 'asc');
+			$query = $this->db->get();
+			return $query->result();
+	    }
+
+	    public function chart_status_umum($id_thn_akademik)
+	    {
     	$this->db->select("
     		SUM(CASE WHEN bayar = '1' AND approve = '0' AND fix = '0' AND non_fix = '0' THEN 1 ELSE 0 END) as registrasi,
     		SUM(CASE WHEN bayar = '1' AND approve = '1' AND fix = '0' AND non_fix = '0' THEN 1 ELSE 0 END) as diverifikasi,

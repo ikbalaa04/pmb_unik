@@ -95,6 +95,34 @@ if (!empty($chart_pendaftar_bulanan_tahunan)) {
         }
     }
 }
+
+$chart_referensi_data_by_year = array();
+foreach ($chart_monthly_year_options as $year_option) {
+    $chart_referensi_data_by_year[(string) $year_option['id']] = array(
+        'labels' => array(),
+        'data'   => array(),
+    );
+}
+
+if (!empty($chart_referensi_pendaftar_tahunan)) {
+    foreach ($chart_referensi_pendaftar_tahunan as $row) {
+        $year_id = (string) $row->id_thn_akademik;
+
+        if (!isset($chart_referensi_data_by_year[$year_id])) {
+            $chart_monthly_year_options[] = array(
+                'id' => $year_id,
+                'label' => $row->nama_thn_akademik,
+            );
+            $chart_referensi_data_by_year[$year_id] = array(
+                'labels' => array(),
+                'data'   => array(),
+            );
+        }
+
+        $chart_referensi_data_by_year[$year_id]['labels'][] = $row->sumber_referensi;
+        $chart_referensi_data_by_year[$year_id]['data'][] = (int) $row->jumlah_pendaftar;
+    }
+}
 ?>
 
 <style type="text/css">
@@ -650,7 +678,7 @@ if (!empty($chart_pendaftar_bulanan_tahunan)) {
 </div>
 
 <div class="row">
-<div class="col-lg-12">
+<div class="col-lg-6 col-md-6">
 <div class="panel panel-default chart-panel chart-panel-tall">
 <div class="panel-heading">
     Trend Pendaftar per Bulan
@@ -668,6 +696,20 @@ if (!empty($chart_pendaftar_bulanan_tahunan)) {
 <div class="panel-body">
     <div class="chart-wrap">
         <canvas id="chartPendaftarBulanan"></canvas>
+    </div>
+</div>
+</div>
+</div>
+
+<div class="col-lg-6 col-md-6">
+<div class="panel panel-default chart-panel chart-panel-tall">
+<div class="panel-heading">
+    Referensi Pendaftar
+    <span class="panel-subtitle">Jumlah pendaftar berdasarkan sumber referensi pada formulir.</span>
+</div>
+<div class="panel-body">
+    <div class="chart-wrap">
+        <canvas id="chartReferensiPendaftar"></canvas>
     </div>
 </div>
 </div>
@@ -704,6 +746,7 @@ if (!empty($chart_pendaftar_bulanan_tahunan)) {
     var diterimaProdiSeries = <?php echo json_encode(array_values($chart_diterima_prodi_datasets_map)); ?>;
     var monthLabels = <?php echo json_encode($chart_month_labels); ?>;
     var monthlyDataByYear = <?php echo json_encode($chart_monthly_data_by_year); ?>;
+    var referenceDataByYear = <?php echo json_encode($chart_referensi_data_by_year); ?>;
 
     if (document.getElementById('chartPendaftarUmum') && yearLabels.length) {
         new Chart(document.getElementById('chartPendaftarUmum').getContext('2d')).Line({
@@ -804,6 +847,8 @@ if (!empty($chart_pendaftar_bulanan_tahunan)) {
     }
 
     var monthlyChart = null;
+    var referenceChart = null;
+
     function renderMonthlyChart(yearId) {
         var canvas = document.getElementById('chartPendaftarBulanan');
         if (!canvas) {
@@ -836,11 +881,44 @@ if (!empty($chart_pendaftar_bulanan_tahunan)) {
         });
     }
 
+    function renderReferenceChart(yearId) {
+        var canvas = document.getElementById('chartReferensiPendaftar');
+        if (!canvas) {
+            return;
+        }
+
+        var selectedData = referenceDataByYear[yearId] || {labels: [], data: []};
+        var labels = selectedData.labels && selectedData.labels.length ? selectedData.labels : ['Belum ada data'];
+        var data = selectedData.data && selectedData.data.length ? selectedData.data : [0];
+        if (referenceChart) {
+            referenceChart.destroy();
+        }
+
+        referenceChart = new Chart(canvas.getContext('2d')).Bar({
+            labels: labels,
+            datasets: [{
+                label: 'Jumlah Pendaftar',
+                fillColor: 'rgba(0,166,90,0.35)',
+                strokeColor: '#00a65a',
+                highlightFill: 'rgba(0,166,90,0.55)',
+                highlightStroke: '#008d4c',
+                data: data
+            }]
+        }, {
+            responsive: true,
+            maintainAspectRatio: false,
+            scaleBeginAtZero: true,
+            tooltipTemplate: '<%= label %>: <%= value %>'
+        });
+    }
+
     var monthlyYearFilter = document.getElementById('chartMonthlyYearFilter');
     if (monthlyYearFilter) {
         renderMonthlyChart(monthlyYearFilter.value);
+        renderReferenceChart(monthlyYearFilter.value);
         monthlyYearFilter.onchange = function () {
             renderMonthlyChart(this.value);
+            renderReferenceChart(this.value);
         };
     }
 })();
