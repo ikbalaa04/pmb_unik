@@ -2949,7 +2949,13 @@ class Home extends CI_CONTROLLER
         //validasi input
 	    $valid = $this->form_validation;
 
-        $step_simpan = $this->input->post('simpan_data_diri') ? 'data_diri' : 'orang_tua';
+        $form_step = $this->input->post('form_step');
+        if ($this->input->post('simpan_data_diri')) {
+            $form_step = 'data_diri';
+        } elseif ($this->input->post('simpan_orang_tua')) {
+            $form_step = 'orang_tua';
+        }
+        $step_simpan = $form_step == 'data_diri' ? 'data_diri' : 'orang_tua';
         $this->mahasiswa_profile->apply_validation_rules($valid, 'lanjutan', $detail_pendaftaran, $step_simpan);
 
 
@@ -2967,7 +2973,7 @@ class Home extends CI_CONTROLLER
 	    }else{
 	      $i=$this->input;
 
-          if ($this->input->post('simpan_data_diri')) {
+          if ($form_step == 'data_diri') {
               $data = array(
                   'id' => $detail_pendaftaran->id,
                   'nisn' => $this->post_or_existing('nisn', $detail_pendaftaran->nisn),

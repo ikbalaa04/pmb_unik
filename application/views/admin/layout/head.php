@@ -325,12 +325,16 @@ function showUser(str) {
         $('.form-step-indicator li').removeClass('active').filter('[data-step="ortu"]').addClass('active');
         $('.btn-next-step, .btn-back-utama').hide();
         $('.btn-prev-step, .btn-submit-step').show();
+        form.find('input[name="form_step"]').val('orang_tua');
+        form.data('submit-mode', 'orang-tua');
       } else {
         $('#settings').removeClass('active');
         $('#activity').addClass('active');
         $('.form-step-indicator li').removeClass('active').filter('[data-step="diri"]').addClass('active');
         $('.btn-prev-step, .btn-submit-step').hide();
         $('.btn-next-step, .btn-back-utama').show();
+        form.find('input[name="form_step"]').val('data_diri');
+        form.data('submit-mode', 'data-diri');
       }
 
       $('html, body').animate({scrollTop: $('.form-lanjutan-wizard').offset().top - 80}, 200);
@@ -366,12 +370,19 @@ function showUser(str) {
     $(document).on('click', '.btn-next-step', function(e){
       var form = $(this).closest('form');
       form.data('submit-mode', 'data-diri');
+      form.find('input[name="form_step"]').val('data_diri');
       if (!validateRequired(form, true)) {
         e.preventDefault();
         return false;
       }
 
       return true;
+    });
+
+    $(document).on('click', '.btn-submit-step', function(){
+      var form = $(this).closest('form');
+      form.data('submit-mode', 'orang-tua');
+      form.find('input[name="form_step"]').val('orang_tua');
     });
 
     $(document).on('click', '.btn-prev-step', function(){

@@ -22,7 +22,8 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
 <section class="content">
 <div class="row">
-<?php echo form_open(base_url('admin/home/form_lanjutan'),'class="form-horizontal form-lanjutan-wizard" novalidate="novalidate" data-initial-step="'.($this->input->get('step') == 'ortu' || $this->input->post('simpan_orang_tua') ? 'ortu' : 'diri').'"'); ?>
+<?php echo form_open(base_url('admin/home/form_lanjutan'),'class="form-horizontal form-lanjutan-wizard" novalidate="novalidate" data-initial-step="'.($this->input->get('step') == 'ortu' ? 'ortu' : 'diri').'"'); ?>
+<input type="hidden" name="form_step" value="data_diri">
 
  <div class="col-md-12">
       <div class="nav-tabs-custom">
@@ -854,8 +855,8 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 		<div class="col-md-12" style="text-align: right;">
 			<a href="<?php echo base_url('admin/home/form_utama') ?>" class="btn btn-default btn-back-utama"><i class="fa fa-arrow-left"></i> Kembali ke Data Utama</a>
 			<button class="btn btn-default btn-prev-step" type="button" style="display:none"><i class="fa fa-arrow-left"></i> Kembali ke Data Diri</button>
-			<button class="btn btn-primary btn-next-step" name="simpan_data_diri" value="1" type="submit"><i class="fa fa-arrow-right"></i> Simpan Data Diri & Lanjutkan</button>
-			<button class="btn btn-success btn-submit-step" name="simpan_orang_tua" value="1" type="submit" style="display:none"><i class="fa fa-save"></i> Simpan Data</button>
+				<button class="btn btn-primary btn-next-step" name="simpan_data_diri" value="1" type="submit"><i class="fa fa-arrow-right"></i> Simpan Data Diri & Lanjutkan</button>
+				<button class="btn btn-success btn-submit-step" name="simpan_orang_tua" value="1" type="submit" style="display:none"><i class="fa fa-save"></i> Simpan Data</button>
 			<button class="btn btn-danger" name="reset" type="reset"><i class="fa fa-times"></i> Reset</button>
 			
 		</div>
