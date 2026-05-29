@@ -21,7 +21,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 <?php $this->load->view('admin/mahasiswa/required_alert'); ?>
 
 <div class="row">
-<?php echo form_open_multipart(base_url('admin/home/form_utama/'),'class="form-horizontal"'); ?>
+<?php echo form_open_multipart(base_url('admin/home/form_utama/'),'class="form-horizontal" novalidate="novalidate"'); ?>
 
 <?php 
 $program = $detail->program;

@@ -134,6 +134,30 @@ function showUser(str) {
       font-size: 12px;
       margin-top: 5px;
     }
+
+    .form-step-indicator {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .form-step-indicator li {
+      display: table-cell;
+      padding: 10px;
+      text-align: center;
+      background: #f4f4f4;
+      border-right: 1px solid #fff;
+      color: #777;
+      font-weight: bold;
+    }
+
+    .form-step-indicator li.active {
+      background: #00a65a;
+      color: #fff;
+    }
   </style>
 
   <style type="text/css">
@@ -194,11 +218,34 @@ function showUser(str) {
       return $.trim(label.text()) || 'Field ini';
     }
 
+    function fieldErrorMessage(field) {
+      var label = fieldLabel(field);
+      if (field.validity) {
+        if (field.validity.valueMissing) {
+          return label+' harus diisi.';
+        }
+        if (field.validity.typeMismatch) {
+          return label+' tidak valid.';
+        }
+        if (field.validity.patternMismatch) {
+          return label+' tidak sesuai format yang diminta.';
+        }
+        if (field.validity.tooShort) {
+          return label+' terlalu pendek.';
+        }
+        if (field.validity.tooLong) {
+          return label+' terlalu panjang.';
+        }
+      }
+
+      return label+' harus diisi.';
+    }
+
     function showRequiredError(field) {
       var group = $(field).closest('.form-group');
       group.addClass('has-required-error');
       group.find('.required-error-message').remove();
-      $(field).after('<span class="required-error-message">'+fieldLabel(field)+' harus diisi.</span>');
+      $(field).after('<span class="required-error-message">'+fieldErrorMessage(field)+'</span>');
     }
 
     function clearRequiredError(field) {
@@ -207,7 +254,49 @@ function showUser(str) {
       group.find('.required-error-message').remove();
     }
 
-    $(document).on('invalid', ':input[required]', function(e){
+    function validateVisibleRequired(form) {
+      var firstError = null;
+      $(form).find(':input[required]:visible').each(function(){
+        if (!this.checkValidity()) {
+          showRequiredError(this);
+          if (firstError === null) {
+            firstError = this;
+          }
+        }
+      });
+
+      if (firstError !== null) {
+        firstError.focus();
+        return false;
+      }
+
+      return true;
+    }
+
+    function showFormStep(step) {
+      var form = $('.form-lanjutan-wizard');
+      if (!form.length) {
+        return;
+      }
+
+      if (step === 'ortu') {
+        $('#activity').removeClass('active');
+        $('#settings').addClass('active');
+        $('.form-step-indicator li').removeClass('active').filter('[data-step="ortu"]').addClass('active');
+        $('.btn-next-step').hide();
+        $('.btn-prev-step, .btn-submit-step').show();
+      } else {
+        $('#settings').removeClass('active');
+        $('#activity').addClass('active');
+        $('.form-step-indicator li').removeClass('active').filter('[data-step="diri"]').addClass('active');
+        $('.btn-prev-step, .btn-submit-step').hide();
+        $('.btn-next-step').show();
+      }
+
+      $('html, body').animate({scrollTop: $('.form-lanjutan-wizard').offset().top - 80}, 200);
+    }
+
+    $(document).on('invalid', ':input[required]:visible', function(e){
       e.preventDefault();
       showRequiredError(this);
     });
@@ -219,21 +308,25 @@ function showUser(str) {
     });
 
     $(document).on('submit', '.form-horizontal', function(e){
-      var firstError = null;
-      $(this).find(':input[required]').each(function(){
-        if (!this.value) {
-          showRequiredError(this);
-          if (firstError === null) {
-            firstError = this;
-          }
-        }
-      });
-
-      if (firstError !== null) {
+      if (!validateVisibleRequired(this)) {
         e.preventDefault();
-        firstError.focus();
       }
     });
+
+    $(document).on('click', '.btn-next-step', function(){
+      var form = $(this).closest('form');
+      if (validateVisibleRequired(form)) {
+        showFormStep('ortu');
+      }
+    });
+
+    $(document).on('click', '.btn-prev-step', function(){
+      showFormStep('diri');
+    });
+
+    if ($('.form-lanjutan-wizard').length) {
+      showFormStep($('.form-lanjutan-wizard').data('initial-step') || 'diri');
+    }
   });
   </script>
   
