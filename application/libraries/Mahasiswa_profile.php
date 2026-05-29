@@ -106,8 +106,16 @@ class Mahasiswa_profile
 		}
 
 		$jenis = isset($mahasiswa->jenis) ? $mahasiswa->jenis : '';
+		if ($field['condition'] === 'mb') {
+			return $jenis === 'MB';
+		}
+
 		if ($field['condition'] === 'pd') {
 			return $jenis === 'PD';
+		}
+
+		if ($field['condition'] === 'pindahan') {
+			return in_array($jenis, array('PD', 'AJ', 'LJ'));
 		}
 
 		if ($field['condition'] === 'bukan_pd') {

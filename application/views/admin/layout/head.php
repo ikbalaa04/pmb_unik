@@ -366,10 +366,9 @@ function showUser(str) {
     $(document).on('click', '.btn-next-step', function(){
       var form = $(this).closest('form');
       if (validateRequired(form, true)) {
-        form.data('submit-mode', 'data-diri');
         form.find('input[name="simpan_data_diri"]').remove();
         form.append('<input type="hidden" name="simpan_data_diri" value="1">');
-        form.trigger('submit');
+        HTMLFormElement.prototype.submit.call(form[0]);
       }
     });
 
