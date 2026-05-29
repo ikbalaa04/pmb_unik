@@ -28,20 +28,11 @@ if (!function_exists('mahasiswa_old_value')) {
     }
 }
 ?>
-	<?php echo form_open_multipart(base_url('admin/home/formulir'),'class="form-horizontal" novalidate="novalidate"'); ?>
-	<input type="hidden" name="form_step" value="utama">
-
-<div class="col-md-12">
-    <ul class="form-step-indicator">
-        <li class="active">1. Data Utama</li>
-        <li>2. Data Diri</li>
-        <li>3. Orang Tua / Wali</li>
-    </ul>
-</div>
-
-<?php 
+	<?php 
 $program = $detail->program;
 $detail_program  = $this->admin_model->kartu_program($program);  
+$konfigurasi_formulir = $this->admin_model->detail_institusi();
+$link_wa_group = isset($konfigurasi_formulir->wa_group) ? trim($konfigurasi_formulir->wa_group) : '';
 
 if ($detail->fix == 1) {
     // Jika sudah dinyatakan lulus
@@ -53,12 +44,14 @@ if ($detail->fix == 1) {
 	                Selamat anda dinyatakan <b>LULUS</b> tes seleksi ujian saringan masuk,<br>
 	                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
 	                dan lengkapi berkas persyaratan.<br>
+	                <?php if($link_wa_group != '') { ?>
 	                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
 	                <b>
-	                    <a style="color:#008d4c" href="https://chat.whatsapp.com/HigAYzp8Xq7DXCnudC3P95" target="_blank">
+	                    <a style="color:#008d4c" href="<?php echo $link_wa_group; ?>" target="_blank">
 	                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
 	                    </a>
 	                </b>
+	                <?php } ?>
 	            </center>
 	            </div>
 	        </div>
@@ -119,8 +112,19 @@ if ($detail->fix == 1) {
 <?php $this->load->view('admin/mahasiswa/required_alert'); ?>
 </div>
 
+	<?php echo form_open_multipart(base_url('admin/home/formulir'),'class="form-horizontal" novalidate="novalidate"'); ?>
+	<input type="hidden" name="form_step" value="utama">
 
-<div class="col-md-12"><center><h2><b>Data Utama</b></h2></center></div>
+	<div class="col-md-12">
+	    <ul class="form-step-indicator">
+	        <li class="active">1. Data Utama</li>
+	        <li>2. Data Diri</li>
+	        <li>3. Orang Tua / Wali</li>
+	    </ul>
+	</div>
+
+
+	<div class="col-md-12"><center><h2><b>Data Utama</b></h2></center></div>
 <div class="col-md-12"><p class="required-note">Field dengan tanda <span class="required-star">*</span> wajib diisi.</p></div>
 <div class="col-md-12"><hr></div>
 <div class="col-md-1"></div>

@@ -5,7 +5,7 @@
     ?>
     <!-- Logo -->
     <?php if($this->session->userdata('id_level') == '3') { ?>
-    <a href="<?php echo base_url('admin/home/form_utama')?>" class="logo">
+    <a href="<?php echo base_url('admin/home/formulir')?>" class="logo">
     <?php }else{ ?>
     <a href="<?php echo base_url('admin/home/kalkulasi_pendaftar')?>" class="logo">
     <?php } ?>

@@ -141,6 +141,14 @@ class Mahasiswa_profile
 		$name = $field['name'];
 		$value = isset($mahasiswa->$name) ? $mahasiswa->$name : '';
 
+		if ($value === '' && isset($field['legacy_name'], $field['legacy_index'])) {
+			$legacy_name = $field['legacy_name'];
+			$legacy_value = isset($mahasiswa->$legacy_name) ? $mahasiswa->$legacy_name : '';
+			$legacy_separator = isset($field['legacy_separator']) ? $field['legacy_separator'] : ',';
+			$legacy_parts = explode($legacy_separator, (string) $legacy_value);
+			$value = isset($legacy_parts[$field['legacy_index']]) ? $legacy_parts[$field['legacy_index']] : '';
+		}
+
 		if (isset($field['index'])) {
 			$parts = explode(',', (string) $value);
 			$value = isset($parts[$field['index']]) ? $parts[$field['index']] : '';

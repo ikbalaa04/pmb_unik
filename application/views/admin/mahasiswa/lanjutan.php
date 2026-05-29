@@ -40,6 +40,11 @@ if (!function_exists('mahasiswa_old_array_value')) {
 		$posted = $CI->input->post($name);
 		return is_array($posted) && array_key_exists($index, $posted) ? $posted[$index] : $fallback;
 	}
+
+	function mahasiswa_detail_value($detail, $column, $legacy_value = '')
+	{
+		return isset($detail->$column) && trim((string) $detail->$column) !== '' ? $detail->$column : $legacy_value;
+	}
 }
 $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input->get('step') == 'ortu' ? 'ortu' : 'diri');
 ?>
@@ -557,50 +562,58 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="col-md-12"><center><h2><b>Data Orang Tua</b></h2></center></div>
 			<div class="col-md-12"><hr></div>
 			<div class="col-md-6">
+				<?php
+					$ortu_nama = explode(",", $detail->ortu_nama);
+					$ortu_nik = explode(",", isset($detail->ortu_nik) ? $detail->ortu_nik : ',,');
+					$ortu_tempat_lahir = explode("|", $detail->ortu_tempat_lahir);
+					$ortu_tgl_lahir = explode("|", $detail->ortu_tgl_lahir);
+					$agama_ortu = explode(",", $detail->ortu_agama);
+					$pendidikan_ortu = explode(",", $detail->ortu_pendidikan);
+					$hp_ortu = explode(",", $detail->ortu_hp);
+					$pekerjaan_ortu = explode(",", $detail->ortu_pekerjaan);
+					$penghasilan = explode(",", $detail->ortu_penghasilan);
+					$ortu_alamat = explode("|", $detail->ortu_alamat);
+				?>
 				<div class="form-group">
 					<label class="col-md-3 control-label">Nama Ayah</label>
 					<div class="col-md-9">
-						<?php $ortu_nama = explode(",", $detail->ortu_nama ); ?>
-						<input type="text" name="ortu_nama[0]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_nama', 0, isset($ortu_nama[0]) ? $ortu_nama[0] : '') ?>" required="">
+						<input type="text" name="nama_ayah" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'nama_ayah', mahasiswa_detail_value($detail, 'nama_ayah', isset($ortu_nama[0]) ? $ortu_nama[0] : '')) ?>" required="">
 					</div>
 				</div>
 
 				<div class="form-group">
 					<label class="col-md-3 control-label">NIK Ayah</label>
 					<div class="col-md-9">
-						<?php $ortu_nik = explode(",", isset($detail->ortu_nik) ? $detail->ortu_nik : ',,'); ?>
-						<input type="text" inputmode="numeric" pattern="[0-9]{16}" name="ortu_nik[0]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_nik', 0, isset($ortu_nik[0]) ? $ortu_nik[0] : '') ?>" required="" minlength="16" maxlength="16">
+						<input type="text" inputmode="numeric" pattern="[0-9]{16}" name="nik_ayah" class="form-control" value="<?php echo mahasiswa_old_value($this, 'nik_ayah', mahasiswa_detail_value($detail, 'nik_ayah', isset($ortu_nik[0]) ? $ortu_nik[0] : '')) ?>" required="" minlength="16" maxlength="16">
 					</div>
 				</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Ayah</label>
 				<div class="col-md-9">
-					<?php $ortu_tempat_lahir = explode("|", $detail->ortu_tempat_lahir ); ?>
-						<input type="text" name="ortu_tempat_lahir[0]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_tempat_lahir', 0, isset($ortu_tempat_lahir[0]) ? $ortu_tempat_lahir[0] : '') ?>">
+						<input type="text" name="tempat_lahir_ayah" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'tempat_lahir_ayah', mahasiswa_detail_value($detail, 'tempat_lahir_ayah', isset($ortu_tempat_lahir[0]) ? $ortu_tempat_lahir[0] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tanggal Ayah</label>
 				<div class="col-md-9">
-					<?php $ortu_tgl_lahir = explode("|", $detail->ortu_tgl_lahir ); ?>
-						<input type="text" id="tanggal" name="ortu_tgl_lahir[0]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_tgl_lahir', 0, isset($ortu_tgl_lahir[0]) ? $ortu_tgl_lahir[0] : '') ?>">
+						<input type="text" id="tanggal" name="tanggal_lahir_ayah" class="form-control" value="<?php echo mahasiswa_old_value($this, 'tanggal_lahir_ayah', mahasiswa_detail_value($detail, 'tanggal_lahir_ayah', isset($ortu_tgl_lahir[0]) ? $ortu_tgl_lahir[0] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Agama Ayah</label>
 				<div class="col-md-9">
-					<?php $agama_ortu = explode(",", $detail->ortu_agama); ?>
-						<select name="ortu_agama[0]" class="form-control">
+					<?php $agama_ayah = mahasiswa_old_value($this, 'agama_ayah', mahasiswa_detail_value($detail, 'agama_ayah', isset($agama_ortu[0]) ? $agama_ortu[0] : '')); ?>
+						<select name="agama_ayah" class="form-control">
 						<option value="-">-Pilih-</option>
-						<option value="Islam" <?php if($agama_ortu[0]=="Islam"){echo "selected";} ?>>Islam</option>
-						<option value="Hindu" <?php if($agama_ortu[0]=="Hindu"){echo "selected";} ?>>Hindu</option>
-						<option value="Budha" <?php if($agama_ortu[0]=="Budha"){echo "selected";} ?>>Budha</option>
-						<option value="Katolik" <?php if($agama_ortu[0]=="Katolik"){echo "selected";} ?>>Katolik</option>
-						<option value="Kristen" <?php if($agama_ortu[0]=="Kristen"){echo "selected";} ?>>Kristen</option>
-						<option value="Lain-Lain" <?php if($agama_ortu[0]=="Lain-Lain"){echo "selected";} ?>>Lain-Lain</option>
+						<option value="Islam" <?php if($agama_ayah=="Islam"){echo "selected";} ?>>Islam</option>
+						<option value="Hindu" <?php if($agama_ayah=="Hindu"){echo "selected";} ?>>Hindu</option>
+						<option value="Budha" <?php if($agama_ayah=="Budha"){echo "selected";} ?>>Budha</option>
+						<option value="Katolik" <?php if($agama_ayah=="Katolik"){echo "selected";} ?>>Katolik</option>
+						<option value="Kristen" <?php if($agama_ayah=="Kristen"){echo "selected";} ?>>Kristen</option>
+						<option value="Lain-Lain" <?php if($agama_ayah=="Lain-Lain"){echo "selected";} ?>>Lain-Lain</option>
 					</select>
 				</div>
 			</div>
@@ -608,22 +621,22 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pendidikan Terakhir Ayah</label>
 				<div class="col-md-9">
-					<?php $pendidikan_ortu = explode(",", $detail->ortu_pendidikan); ?>
-						<select name="ortu_pendidikan[0]" class="form-control">
+					<?php $pendidikan_ayah = mahasiswa_old_value($this, 'pendidikan_ayah', mahasiswa_detail_value($detail, 'pendidikan_ayah', isset($pendidikan_ortu[0]) ? $pendidikan_ortu[0] : '')); ?>
+						<select name="pendidikan_ayah" class="form-control">
 						<option value="-">-Pilih-</option>
-						<option value="S3" <?php if($pendidikan_ortu[0] == "S3"){echo "selected";} ?>>S-3</option>
-						<option value="S2" <?php if($pendidikan_ortu[0] == "S2"){echo "selected";} ?>>S-2</option>
-						<option value="S1" <?php if($pendidikan_ortu[0] == "S1"){echo "selected";} ?>>S-1</option>
-						<option value="D4" <?php if($pendidikan_ortu[0] == "D4"){echo "selected";} ?>>D-4</option>
-						<option value="D3" <?php if($pendidikan_ortu[0] == "D3"){echo "selected";} ?>>D-3</option>
-						<option value="D2" <?php if($pendidikan_ortu[0] == "D2"){echo "selected";} ?>>D-2</option>
-						<option value="D1" <?php if($pendidikan_ortu[0] == "D1"){echo "selected";} ?>>D-1</option>
-						<option value="Profesi" <?php if($pendidikan_ortu[0] == "Profesi"){echo "selected";} ?>>Profesi</option>
-						<option value="SMA" <?php if($pendidikan_ortu[0] == "SMA"){echo "selected";} ?>>SMA/SMK Sederajat</option>
-						<option value="SMP" <?php if($pendidikan_ortu[0] == "SMP"){echo "selected";} ?>>SMP</option>
-						<option value="SD" <?php if($pendidikan_ortu[0] == "SD"){echo "selected";} ?>>SD</option>
-						<option value="TTS" <?php if($pendidikan_ortu[0] == "TTS"){echo "selected";} ?>>Tidak Tamat SD</option>
-						<option value="NA" <?php if($pendidikan_ortu[0] == "NA"){echo "selected";} ?>>Non Akademik</option>
+						<option value="S3" <?php if($pendidikan_ayah == "S3"){echo "selected";} ?>>S-3</option>
+						<option value="S2" <?php if($pendidikan_ayah == "S2"){echo "selected";} ?>>S-2</option>
+						<option value="S1" <?php if($pendidikan_ayah == "S1"){echo "selected";} ?>>S-1</option>
+						<option value="D4" <?php if($pendidikan_ayah == "D4"){echo "selected";} ?>>D-4</option>
+						<option value="D3" <?php if($pendidikan_ayah == "D3"){echo "selected";} ?>>D-3</option>
+						<option value="D2" <?php if($pendidikan_ayah == "D2"){echo "selected";} ?>>D-2</option>
+						<option value="D1" <?php if($pendidikan_ayah == "D1"){echo "selected";} ?>>D-1</option>
+						<option value="Profesi" <?php if($pendidikan_ayah == "Profesi"){echo "selected";} ?>>Profesi</option>
+						<option value="SMA" <?php if($pendidikan_ayah == "SMA"){echo "selected";} ?>>SMA/SMK Sederajat</option>
+						<option value="SMP" <?php if($pendidikan_ayah == "SMP"){echo "selected";} ?>>SMP</option>
+						<option value="SD" <?php if($pendidikan_ayah == "SD"){echo "selected";} ?>>SD</option>
+						<option value="TTS" <?php if($pendidikan_ayah == "TTS"){echo "selected";} ?>>Tidak Tamat SD</option>
+						<option value="NA" <?php if($pendidikan_ayah == "NA"){echo "selected";} ?>>Non Akademik</option>
 					</select>
 				</div>
 			</div>
@@ -631,27 +644,25 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">No. HP Ayah</label>
 				<div class="col-md-9">
-					<?php $hp_ortu = explode(",", $detail->ortu_hp); ?>
-							<input type="number" name="ortu_hp[0]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_hp', 0, isset($hp_ortu[0]) ? $hp_ortu[0] : '') ?>">
+							<input type="number" name="hp_ayah" class="form-control" value="<?php echo mahasiswa_old_value($this, 'hp_ayah', mahasiswa_detail_value($detail, 'hp_ayah', isset($hp_ortu[0]) ? $hp_ortu[0] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Ayah</label>
 				<div class="col-md-9">
-					<?php $pekerjaan_ortu = explode(",", $detail->ortu_pekerjaan); ?>
-							<input type="text" name="ortu_pekerjaan[0]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_pekerjaan', 0, isset($pekerjaan_ortu[0]) ? $pekerjaan_ortu[0] : '') ?>">
+							<input type="text" name="pekerjaan_ayah" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'pekerjaan_ayah', mahasiswa_detail_value($detail, 'pekerjaan_ayah', isset($pekerjaan_ortu[0]) ? $pekerjaan_ortu[0] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Penghasilan Ayah</label>
 				<div class="col-md-9">
-				<?php $penghasilan = explode(",", $detail->ortu_penghasilan ); ?>
-					<select name="ortu_penghasilan[0]" class="form-control">
+				<?php $penghasilan_ayah = mahasiswa_old_value($this, 'penghasilan_ayah', mahasiswa_detail_value($detail, 'penghasilan_ayah', isset($penghasilan[0]) ? $penghasilan[0] : '')); ?>
+					<select name="penghasilan_ayah" class="form-control">
 			        <option value="-">-Pilih-</option>
 			            <?php foreach($list_penghasilan as $list_penghasilan) {?>
-			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan[0] == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
+			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan_ayah == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
 			            <?php } ?>
 			        </select>
 				</div>
@@ -659,9 +670,8 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Alamat Orang Tua</label>
-				<?php $ortu_alamat = explode("|", $detail->ortu_alamat ); ?>
 				<div class="col-md-9">
-							<textarea class="form-control" name="ortu_alamat[0]"><?php echo mahasiswa_old_array_value($this, 'ortu_alamat', 0, isset($ortu_alamat[0]) ? $ortu_alamat[0] : '') ?></textarea>
+							<textarea class="form-control" name="alamat_orang_tua"><?php echo mahasiswa_old_value($this, 'alamat_orang_tua', mahasiswa_detail_value($detail, 'alamat_orang_tua', isset($ortu_alamat[0]) ? $ortu_alamat[0] : '')) ?></textarea>
 				</div>
 			</div>
 
@@ -671,43 +681,44 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 				<div class="form-group">
 					<label class="col-md-3 control-label">Nama Ibu</label>
 					<div class="col-md-9">
-						<input type="text" name="ortu_nama[1]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_nama', 1, isset($ortu_nama[1]) ? $ortu_nama[1] : '') ?>" required="">
+						<input type="text" name="nama_ibu" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'nama_ibu', mahasiswa_detail_value($detail, 'nama_ibu', isset($ortu_nama[1]) ? $ortu_nama[1] : '')) ?>" required="">
 					</div>
 				</div>
 
 				<div class="form-group">
 					<label class="col-md-3 control-label">NIK Ibu</label>
 					<div class="col-md-9">
-						<input type="text" inputmode="numeric" pattern="[0-9]{16}" name="ortu_nik[1]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_nik', 1, isset($ortu_nik[1]) ? $ortu_nik[1] : '') ?>" required="" minlength="16" maxlength="16">
-						<input type="hidden" name="ortu_nik[2]" value="<?php echo isset($ortu_nik[2]) ? $ortu_nik[2] : '' ?>">
+						<input type="text" inputmode="numeric" pattern="[0-9]{16}" name="nik_ibu" class="form-control" value="<?php echo mahasiswa_old_value($this, 'nik_ibu', mahasiswa_detail_value($detail, 'nik_ibu', isset($ortu_nik[1]) ? $ortu_nik[1] : '')) ?>" required="" minlength="16" maxlength="16">
+						<input type="hidden" name="nik_wali" value="<?php echo mahasiswa_old_value($this, 'nik_wali', mahasiswa_detail_value($detail, 'nik_wali', isset($ortu_nik[2]) ? $ortu_nik[2] : '')) ?>">
 					</div>
 				</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Ibu</label>
 				<div class="col-md-9">
-							<input type="text" name="ortu_tempat_lahir[1]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_tempat_lahir', 1, isset($ortu_tempat_lahir[1]) ? $ortu_tempat_lahir[1] : '') ?>">
+							<input type="text" name="tempat_lahir_ibu" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'tempat_lahir_ibu', mahasiswa_detail_value($detail, 'tempat_lahir_ibu', isset($ortu_tempat_lahir[1]) ? $ortu_tempat_lahir[1] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tanggal Lahir Ibu</label>
 				<div class="col-md-9">
-							<input type="text" id="tanggal2"  name="ortu_tgl_lahir[1]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_tgl_lahir', 1, isset($ortu_tgl_lahir[1]) ? $ortu_tgl_lahir[1] : '') ?>">
+							<input type="text" id="tanggal2"  name="tanggal_lahir_ibu" class="form-control" value="<?php echo mahasiswa_old_value($this, 'tanggal_lahir_ibu', mahasiswa_detail_value($detail, 'tanggal_lahir_ibu', isset($ortu_tgl_lahir[1]) ? $ortu_tgl_lahir[1] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Agama Ibu</label>
 				<div class="col-md-9">
-						<select name="ortu_agama[1]" class="form-control">
+						<?php $agama_ibu = mahasiswa_old_value($this, 'agama_ibu', mahasiswa_detail_value($detail, 'agama_ibu', isset($agama_ortu[1]) ? $agama_ortu[1] : '')); ?>
+						<select name="agama_ibu" class="form-control">
 						<option value="-">-Pilih-</option>
-						<option value="Islam" <?php if($agama_ortu[1]=="Islam"){echo "selected";} ?>>Islam</option>
-						<option value="Hindu" <?php if($agama_ortu[1]=="Hindu"){echo "selected";} ?>>Hindu</option>
-						<option value="Budha" <?php if($agama_ortu[1]=="Budha"){echo "selected";} ?>>Budha</option>
-						<option value="Katolik" <?php if($agama_ortu[1]=="Katolik"){echo "selected";} ?>>Katolik</option>
-						<option value="Kristen" <?php if($agama_ortu[1]=="Kristen"){echo "selected";} ?>>Kristen</option>
-						<option value="Lain-Lain" <?php if($agama_ortu[1]=="Lain-Lain"){echo "selected";} ?>>Lain-Lain</option>
+						<option value="Islam" <?php if($agama_ibu=="Islam"){echo "selected";} ?>>Islam</option>
+						<option value="Hindu" <?php if($agama_ibu=="Hindu"){echo "selected";} ?>>Hindu</option>
+						<option value="Budha" <?php if($agama_ibu=="Budha"){echo "selected";} ?>>Budha</option>
+						<option value="Katolik" <?php if($agama_ibu=="Katolik"){echo "selected";} ?>>Katolik</option>
+						<option value="Kristen" <?php if($agama_ibu=="Kristen"){echo "selected";} ?>>Kristen</option>
+						<option value="Lain-Lain" <?php if($agama_ibu=="Lain-Lain"){echo "selected";} ?>>Lain-Lain</option>
 					</select>
 				</div>
 			</div>
@@ -715,21 +726,22 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pendidikan Terakhir Ibu</label>
 				<div class="col-md-9">
-						<select name="ortu_pendidikan[1]" class="form-control">
+						<?php $pendidikan_ibu = mahasiswa_old_value($this, 'pendidikan_ibu', mahasiswa_detail_value($detail, 'pendidikan_ibu', isset($pendidikan_ortu[1]) ? $pendidikan_ortu[1] : '')); ?>
+						<select name="pendidikan_ibu" class="form-control">
 						<option value="-">-Pilih-</option>
-						<option value="S3" <?php if($pendidikan_ortu[1] == "S3"){echo "selected";} ?>>S-3</option>
-						<option value="S2" <?php if($pendidikan_ortu[1] == "S2"){echo "selected";} ?>>S-2</option>
-						<option value="S1" <?php if($pendidikan_ortu[1] == "S1"){echo "selected";} ?>>S-1</option>
-						<option value="D4" <?php if($pendidikan_ortu[1] == "D4"){echo "selected";} ?>>D-4</option>
-						<option value="D3" <?php if($pendidikan_ortu[1] == "D3"){echo "selected";} ?>>D-3</option>
-						<option value="D2" <?php if($pendidikan_ortu[1] == "D2"){echo "selected";} ?>>D-2</option>
-						<option value="D1" <?php if($pendidikan_ortu[1] == "D1"){echo "selected";} ?>>D-1</option>
-						<option value="Profesi" <?php if($pendidikan_ortu[1] == "Profesi"){echo "selected";} ?>>Profesi</option>
-						<option value="SMA" <?php if($pendidikan_ortu[1] == "SMA"){echo "selected";} ?>>SMA/SMK Sederajat</option>
-						<option value="SMP" <?php if($pendidikan_ortu[1] == "SMP"){echo "selected";} ?>>SMP</option>
-						<option value="SD" <?php if($pendidikan_ortu[1] == "SD"){echo "selected";} ?>>SD</option>
-						<option value="TTS" <?php if($pendidikan_ortu[1] == "TTS"){echo "selected";} ?>>Tidak Tamat SD</option>
-						<option value="NA" <?php if($pendidikan_ortu[1] == "NA"){echo "selected";} ?>>Non Akademik</option>
+						<option value="S3" <?php if($pendidikan_ibu == "S3"){echo "selected";} ?>>S-3</option>
+						<option value="S2" <?php if($pendidikan_ibu == "S2"){echo "selected";} ?>>S-2</option>
+						<option value="S1" <?php if($pendidikan_ibu == "S1"){echo "selected";} ?>>S-1</option>
+						<option value="D4" <?php if($pendidikan_ibu == "D4"){echo "selected";} ?>>D-4</option>
+						<option value="D3" <?php if($pendidikan_ibu == "D3"){echo "selected";} ?>>D-3</option>
+						<option value="D2" <?php if($pendidikan_ibu == "D2"){echo "selected";} ?>>D-2</option>
+						<option value="D1" <?php if($pendidikan_ibu == "D1"){echo "selected";} ?>>D-1</option>
+						<option value="Profesi" <?php if($pendidikan_ibu == "Profesi"){echo "selected";} ?>>Profesi</option>
+						<option value="SMA" <?php if($pendidikan_ibu == "SMA"){echo "selected";} ?>>SMA/SMK Sederajat</option>
+						<option value="SMP" <?php if($pendidikan_ibu == "SMP"){echo "selected";} ?>>SMP</option>
+						<option value="SD" <?php if($pendidikan_ibu == "SD"){echo "selected";} ?>>SD</option>
+						<option value="TTS" <?php if($pendidikan_ibu == "TTS"){echo "selected";} ?>>Tidak Tamat SD</option>
+						<option value="NA" <?php if($pendidikan_ibu == "NA"){echo "selected";} ?>>Non Akademik</option>
 					</select>
 				</div>
 			</div>
@@ -737,24 +749,25 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">No. HP Ibu</label>
 				<div class="col-md-9">
-							<input type="number" name="ortu_hp[1]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_hp', 1, isset($hp_ortu[1]) ? $hp_ortu[1] : '') ?>">
+							<input type="number" name="hp_ibu" class="form-control" value="<?php echo mahasiswa_old_value($this, 'hp_ibu', mahasiswa_detail_value($detail, 'hp_ibu', isset($hp_ortu[1]) ? $hp_ortu[1] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Ibu</label>
 				<div class="col-md-9">
-							<input type="text" name="ortu_pekerjaan[1]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_pekerjaan', 1, isset($pekerjaan_ortu[1]) ? $pekerjaan_ortu[1] : '') ?>">
+							<input type="text" name="pekerjaan_ibu" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'pekerjaan_ibu', mahasiswa_detail_value($detail, 'pekerjaan_ibu', isset($pekerjaan_ortu[1]) ? $pekerjaan_ortu[1] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Penghasilan Ibu</label>
 				<div class="col-md-9">
-				<select name="ortu_penghasilan[1]" class="form-control">
+				<?php $penghasilan_ibu = mahasiswa_old_value($this, 'penghasilan_ibu', mahasiswa_detail_value($detail, 'penghasilan_ibu', isset($penghasilan[1]) ? $penghasilan[1] : '')); ?>
+				<select name="penghasilan_ibu" class="form-control">
 			        <option value="-">-Pilih-</option>
 			            <?php foreach($list_penghasilan1 as $list_penghasilan) {?>
-			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan[1] == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
+			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan_ibu == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
 			            <?php } ?>
 			        </select>
 				</div>
@@ -768,35 +781,36 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">Nama Wali</label>
 				<div class="col-md-9">
-						<input type="text" name="ortu_nama[2]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_nama', 2, isset($ortu_nama[2]) ? $ortu_nama[2] : '') ?>">
+						<input type="text" name="nama_wali" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'nama_wali', mahasiswa_detail_value($detail, 'nama_wali', isset($ortu_nama[2]) ? $ortu_nama[2] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Wali</label>
 				<div class="col-md-9">
-						<input type="text" name="ortu_tempat_lahir[2]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_tempat_lahir', 2, isset($ortu_tempat_lahir[2]) ? $ortu_tempat_lahir[2] : '') ?>">
+						<input type="text" name="tempat_lahir_wali" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'tempat_lahir_wali', mahasiswa_detail_value($detail, 'tempat_lahir_wali', isset($ortu_tempat_lahir[2]) ? $ortu_tempat_lahir[2] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tanggal Lahir Wali</label>
 				<div class="col-md-9">
-						<input type="text" id="tanggal3" name="ortu_tgl_lahir[2]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_tgl_lahir', 2, isset($ortu_tgl_lahir[2]) ? $ortu_tgl_lahir[2] : '') ?>">
+						<input type="text" id="tanggal3" name="tanggal_lahir_wali" class="form-control" value="<?php echo mahasiswa_old_value($this, 'tanggal_lahir_wali', mahasiswa_detail_value($detail, 'tanggal_lahir_wali', isset($ortu_tgl_lahir[2]) ? $ortu_tgl_lahir[2] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Agama Wali</label>
 				<div class="col-md-9">
-						<select name="ortu_agama[2]" class="form-control">
+						<?php $agama_wali = mahasiswa_old_value($this, 'agama_wali', mahasiswa_detail_value($detail, 'agama_wali', isset($agama_ortu[2]) ? $agama_ortu[2] : '')); ?>
+						<select name="agama_wali" class="form-control">
 						<option value="-">-Pilih-</option>
-						<option value="Islam" <?php if($agama_ortu[2]=="Islam"){echo "selected";} ?>>Islam</option>
-						<option value="Hindu" <?php if($agama_ortu[2]=="Hindu"){echo "selected";} ?>>Hindu</option>
-						<option value="Budha" <?php if($agama_ortu[2]=="Budha"){echo "selected";} ?>>Budha</option>
-						<option value="Katolik" <?php if($agama_ortu[2]=="Katolik"){echo "selected";} ?>>Katolik</option>
-						<option value="Kristen" <?php if($agama_ortu[2]=="Kristen"){echo "selected";} ?>>Kristen</option>
-						<option value="Lain-Lain" <?php if($agama_ortu[2]=="Lain-Lain"){echo "selected";} ?>>Lain-Lain</option>
+						<option value="Islam" <?php if($agama_wali=="Islam"){echo "selected";} ?>>Islam</option>
+						<option value="Hindu" <?php if($agama_wali=="Hindu"){echo "selected";} ?>>Hindu</option>
+						<option value="Budha" <?php if($agama_wali=="Budha"){echo "selected";} ?>>Budha</option>
+						<option value="Katolik" <?php if($agama_wali=="Katolik"){echo "selected";} ?>>Katolik</option>
+						<option value="Kristen" <?php if($agama_wali=="Kristen"){echo "selected";} ?>>Kristen</option>
+						<option value="Lain-Lain" <?php if($agama_wali=="Lain-Lain"){echo "selected";} ?>>Lain-Lain</option>
 					</select>
 				</div>
 			</div>
@@ -804,21 +818,22 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pendidikan Terakhir Wali</label>
 				<div class="col-md-9">
-						<select name="ortu_pendidikan[2]" class="form-control">
+						<?php $pendidikan_wali = mahasiswa_old_value($this, 'pendidikan_wali', mahasiswa_detail_value($detail, 'pendidikan_wali', isset($pendidikan_ortu[2]) ? $pendidikan_ortu[2] : '')); ?>
+						<select name="pendidikan_wali" class="form-control">
 						<option value="-">-Pilih-</option>
-						<option value="S3" <?php if($pendidikan_ortu[2] == "S3"){echo "selected";} ?>>S-3</option>
-						<option value="S2" <?php if($pendidikan_ortu[2] == "S2"){echo "selected";} ?>>S-2</option>
-						<option value="S1" <?php if($pendidikan_ortu[2] == "S1"){echo "selected";} ?>>S-1</option>
-						<option value="D4" <?php if($pendidikan_ortu[2] == "D4"){echo "selected";} ?>>D-4</option>
-						<option value="D3" <?php if($pendidikan_ortu[2] == "D3"){echo "selected";} ?>>D-3</option>
-						<option value="D2" <?php if($pendidikan_ortu[2] == "D2"){echo "selected";} ?>>D-2</option>
-						<option value="D1" <?php if($pendidikan_ortu[2] == "D1"){echo "selected";} ?>>D-1</option>
-						<option value="Profesi" <?php if($pendidikan_ortu[2] == "Profesi"){echo "selected";} ?>>Profesi</option>
-						<option value="SMA" <?php if($pendidikan_ortu[2] == "SMA"){echo "selected";} ?>>SMA/SMK Sederajat</option>
-						<option value="SMP" <?php if($pendidikan_ortu[2] == "SMP"){echo "selected";} ?>>SMP</option>
-						<option value="SD" <?php if($pendidikan_ortu[2] == "SD"){echo "selected";} ?>>SD</option>
-						<option value="TTS" <?php if($pendidikan_ortu[2] == "TTS"){echo "selected";} ?>>Tidak Tamat SD</option>
-						<option value="NA" <?php if($pendidikan_ortu[2] == "NA"){echo "selected";} ?>>Non Akademik</option>
+						<option value="S3" <?php if($pendidikan_wali == "S3"){echo "selected";} ?>>S-3</option>
+						<option value="S2" <?php if($pendidikan_wali == "S2"){echo "selected";} ?>>S-2</option>
+						<option value="S1" <?php if($pendidikan_wali == "S1"){echo "selected";} ?>>S-1</option>
+						<option value="D4" <?php if($pendidikan_wali == "D4"){echo "selected";} ?>>D-4</option>
+						<option value="D3" <?php if($pendidikan_wali == "D3"){echo "selected";} ?>>D-3</option>
+						<option value="D2" <?php if($pendidikan_wali == "D2"){echo "selected";} ?>>D-2</option>
+						<option value="D1" <?php if($pendidikan_wali == "D1"){echo "selected";} ?>>D-1</option>
+						<option value="Profesi" <?php if($pendidikan_wali == "Profesi"){echo "selected";} ?>>Profesi</option>
+						<option value="SMA" <?php if($pendidikan_wali == "SMA"){echo "selected";} ?>>SMA/SMK Sederajat</option>
+						<option value="SMP" <?php if($pendidikan_wali == "SMP"){echo "selected";} ?>>SMP</option>
+						<option value="SD" <?php if($pendidikan_wali == "SD"){echo "selected";} ?>>SD</option>
+						<option value="TTS" <?php if($pendidikan_wali == "TTS"){echo "selected";} ?>>Tidak Tamat SD</option>
+						<option value="NA" <?php if($pendidikan_wali == "NA"){echo "selected";} ?>>Non Akademik</option>
 					</select>
 				</div>
 			</div>
@@ -826,24 +841,25 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">No. HP Wali</label>
 				<div class="col-md-9">
-						<input type="number" name="ortu_hp[2]" class="form-control" value="<?php echo mahasiswa_old_array_value($this, 'ortu_hp', 2, isset($hp_ortu[2]) ? $hp_ortu[2] : '') ?>">
+						<input type="number" name="hp_wali" class="form-control" value="<?php echo mahasiswa_old_value($this, 'hp_wali', mahasiswa_detail_value($detail, 'hp_wali', isset($hp_ortu[2]) ? $hp_ortu[2] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Wali</label>
 				<div class="col-md-9">
-						<input type="text" name="ortu_pekerjaan[2]" class="form-control title-case-input" value="<?php echo mahasiswa_old_array_value($this, 'ortu_pekerjaan', 2, isset($pekerjaan_ortu[2]) ? $pekerjaan_ortu[2] : '') ?>">
+						<input type="text" name="pekerjaan_wali" class="form-control title-case-input" value="<?php echo mahasiswa_old_value($this, 'pekerjaan_wali', mahasiswa_detail_value($detail, 'pekerjaan_wali', isset($pekerjaan_ortu[2]) ? $pekerjaan_ortu[2] : '')) ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Penghasilan Wali</label>
 				<div class="col-md-9">
-				<select name="ortu_penghasilan[2]" class="form-control">
+				<?php $penghasilan_wali = mahasiswa_old_value($this, 'penghasilan_wali', mahasiswa_detail_value($detail, 'penghasilan_wali', isset($penghasilan[2]) ? $penghasilan[2] : '')); ?>
+				<select name="penghasilan_wali" class="form-control">
 			        <option value="-">-Pilih-</option>
 			            <?php foreach($list_penghasilan2 as $list_penghasilan) {?>
-			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan[2] == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
+			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan_wali == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
 			            <?php } ?>
 			        </select>
 				</div>
@@ -852,7 +868,7 @@ $initial_step = isset($form_lanjutan_step) ? $form_lanjutan_step : ($this->input
 			<div class="form-group">
 				<label class="col-md-3 control-label">Alamat Wali</label>
 				<div class="col-md-9">
-						<textarea class="form-control" name="ortu_alamat[1]"><?php echo mahasiswa_old_array_value($this, 'ortu_alamat', 1, isset($ortu_alamat[1]) ? $ortu_alamat[1] : '') ?></textarea>
+						<textarea class="form-control" name="alamat_wali"><?php echo mahasiswa_old_value($this, 'alamat_wali', mahasiswa_detail_value($detail, 'alamat_wali', isset($ortu_alamat[1]) ? $ortu_alamat[1] : '')) ?></textarea>
 				</div>
 			</div>
 

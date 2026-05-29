@@ -111,6 +111,34 @@ class Home extends CI_CONTROLLER
         return implode($separator, $result);
     }
 
+    private function clean_form_value($value, $capital_each_word = FALSE)
+    {
+        $value = trim((string) $value);
+        if ($this->is_empty_form_value($value)) {
+            return '';
+        }
+
+        return $capital_each_word ? $this->capital_each_word($value) : $value;
+    }
+
+    private function form_value_or_legacy($name, $legacy, $separator, $index, $capital_each_word = FALSE)
+    {
+        $value = $this->input->post($name);
+        if ($this->is_empty_form_value($value)) {
+            $parts = explode($separator, (string) $legacy);
+            $value = isset($parts[$index]) ? $parts[$index] : '';
+        }
+
+        return $this->clean_form_value($value, $capital_each_word);
+    }
+
+    private function set_if_column_exists(&$data, $column, $value, $table = 'pendaftaran')
+    {
+        if ($this->db->field_exists($column, $table)) {
+            $data[$column] = $value;
+        }
+    }
+
     private function required_post_array_errors($fields)
     {
         $errors = array();
@@ -3054,38 +3082,46 @@ class Home extends CI_CONTROLLER
 	              redirect(base_url('admin/home/formulir?step=ortu'), 'refresh');
 	          }
 
-	          $manual_errors = $this->required_post_array_errors(array(
-	              array('name' => 'ortu_nama', 'index' => 0, 'label' => 'Nama Ayah'),
-	              array('name' => 'ortu_nama', 'index' => 1, 'label' => 'Nama Ibu'),
-	              array('name' => 'ortu_nik', 'index' => 0, 'label' => 'NIK Ayah'),
-	              array('name' => 'ortu_nik', 'index' => 1, 'label' => 'NIK Ibu'),
-	          ));
-	          if (count($manual_errors) > 0) {
-	              $data = array(
-	                  'title' => 'Halaman Formulir',
-	                  'detail' => $detail_pendaftaran,
-	                  'manual_validation_errors' => $manual_errors,
-	                  'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
-	                  'form_lanjutan_step' => 'ortu',
-	                  'list_penghasilan' => $list_penghasilan,
-	                  'list_penghasilan1'=> $list_penghasilan1,
-	                  'list_penghasilan2'=> $list_penghasilan2,
-	                  'isi' => 'admin/mahasiswa/lanjutan'
-	              );
-	              $this->load->view('admin/layout/wrapper', $data, FALSE);
-	              return;
-	          }
+	      $nama_ayah = $this->form_value_or_legacy('nama_ayah', $detail_pendaftaran->ortu_nama, ',', 0, TRUE);
+	      $nama_ibu = $this->form_value_or_legacy('nama_ibu', $detail_pendaftaran->ortu_nama, ',', 1, TRUE);
+	      $nama_wali = $this->form_value_or_legacy('nama_wali', $detail_pendaftaran->ortu_nama, ',', 2, TRUE);
+	      $nik_ayah = $this->form_value_or_legacy('nik_ayah', isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : ',,', ',', 0);
+	      $nik_ibu = $this->form_value_or_legacy('nik_ibu', isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : ',,', ',', 1);
+	      $nik_wali = $this->form_value_or_legacy('nik_wali', isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : ',,', ',', 2);
+	      $tempat_lahir_ayah = $this->form_value_or_legacy('tempat_lahir_ayah', $detail_pendaftaran->ortu_tempat_lahir, '|', 0, TRUE);
+	      $tempat_lahir_ibu = $this->form_value_or_legacy('tempat_lahir_ibu', $detail_pendaftaran->ortu_tempat_lahir, '|', 1, TRUE);
+	      $tempat_lahir_wali = $this->form_value_or_legacy('tempat_lahir_wali', $detail_pendaftaran->ortu_tempat_lahir, '|', 2, TRUE);
+	      $tanggal_lahir_ayah = $this->form_value_or_legacy('tanggal_lahir_ayah', $detail_pendaftaran->ortu_tgl_lahir, '|', 0);
+	      $tanggal_lahir_ibu = $this->form_value_or_legacy('tanggal_lahir_ibu', $detail_pendaftaran->ortu_tgl_lahir, '|', 1);
+	      $tanggal_lahir_wali = $this->form_value_or_legacy('tanggal_lahir_wali', $detail_pendaftaran->ortu_tgl_lahir, '|', 2);
+	      $agama_ayah = $this->form_value_or_legacy('agama_ayah', $detail_pendaftaran->ortu_agama, ',', 0);
+	      $agama_ibu = $this->form_value_or_legacy('agama_ibu', $detail_pendaftaran->ortu_agama, ',', 1);
+	      $agama_wali = $this->form_value_or_legacy('agama_wali', $detail_pendaftaran->ortu_agama, ',', 2);
+	      $pendidikan_ayah = $this->form_value_or_legacy('pendidikan_ayah', $detail_pendaftaran->ortu_pendidikan, ',', 0);
+	      $pendidikan_ibu = $this->form_value_or_legacy('pendidikan_ibu', $detail_pendaftaran->ortu_pendidikan, ',', 1);
+	      $pendidikan_wali = $this->form_value_or_legacy('pendidikan_wali', $detail_pendaftaran->ortu_pendidikan, ',', 2);
+	      $hp_ayah = $this->form_value_or_legacy('hp_ayah', $detail_pendaftaran->ortu_hp, ',', 0);
+	      $hp_ibu = $this->form_value_or_legacy('hp_ibu', $detail_pendaftaran->ortu_hp, ',', 1);
+	      $hp_wali = $this->form_value_or_legacy('hp_wali', $detail_pendaftaran->ortu_hp, ',', 2);
+	      $pekerjaan_ayah = $this->form_value_or_legacy('pekerjaan_ayah', $detail_pendaftaran->ortu_pekerjaan, ',', 0, TRUE);
+	      $pekerjaan_ibu = $this->form_value_or_legacy('pekerjaan_ibu', $detail_pendaftaran->ortu_pekerjaan, ',', 1, TRUE);
+	      $pekerjaan_wali = $this->form_value_or_legacy('pekerjaan_wali', $detail_pendaftaran->ortu_pekerjaan, ',', 2, TRUE);
+	      $penghasilan_ayah = $this->form_value_or_legacy('penghasilan_ayah', $detail_pendaftaran->ortu_penghasilan, ',', 0);
+	      $penghasilan_ibu = $this->form_value_or_legacy('penghasilan_ibu', $detail_pendaftaran->ortu_penghasilan, ',', 1);
+	      $penghasilan_wali = $this->form_value_or_legacy('penghasilan_wali', $detail_pendaftaran->ortu_penghasilan, ',', 2);
+	      $alamat_orang_tua = $this->form_value_or_legacy('alamat_orang_tua', $detail_pendaftaran->ortu_alamat, '|', 0);
+	      $alamat_wali = $this->form_value_or_legacy('alamat_wali', $detail_pendaftaran->ortu_alamat, '|', 1);
 
-	      $ortu_nama = $this->post_array_or_existing('ortu_nama', $detail_pendaftaran->ortu_nama, ',', TRUE);
-	      $ortu_tempat_lahir = $this->post_array_or_existing('ortu_tempat_lahir', $detail_pendaftaran->ortu_tempat_lahir, '|', TRUE);
-	      $ortu_tgl_lahir = $this->post_array_or_existing('ortu_tgl_lahir', $detail_pendaftaran->ortu_tgl_lahir, '|');
-	      $ortu_agama = $this->post_array_or_existing('ortu_agama', $detail_pendaftaran->ortu_agama, ',');
-	      $ortu_nik = $this->post_array_or_existing('ortu_nik', isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : ',,', ',');
-	      $ortu_pendidikan = $this->post_array_or_existing('ortu_pendidikan', $detail_pendaftaran->ortu_pendidikan, ',');
-	      $ortu_hp = $this->post_array_or_existing('ortu_hp', $detail_pendaftaran->ortu_hp, ',');
-	      $ortu_pekerjaan = $this->post_array_or_existing('ortu_pekerjaan', $detail_pendaftaran->ortu_pekerjaan, ',', TRUE);
-	      $ortu_penghasilan = $this->post_array_or_existing('ortu_penghasilan', $detail_pendaftaran->ortu_penghasilan, ',');
-	      $ortu_alamat = $this->post_array_or_existing('ortu_alamat', $detail_pendaftaran->ortu_alamat, '|');
+	      $ortu_nama = implode(',', array($nama_ayah, $nama_ibu, $nama_wali));
+	      $ortu_tempat_lahir = implode('|', array($tempat_lahir_ayah, $tempat_lahir_ibu, $tempat_lahir_wali));
+	      $ortu_tgl_lahir = implode('|', array($tanggal_lahir_ayah, $tanggal_lahir_ibu, $tanggal_lahir_wali));
+	      $ortu_agama = implode(',', array($agama_ayah, $agama_ibu, $agama_wali));
+	      $ortu_nik = implode(',', array($nik_ayah, $nik_ibu, $nik_wali));
+	      $ortu_pendidikan = implode(',', array($pendidikan_ayah, $pendidikan_ibu, $pendidikan_wali));
+	      $ortu_hp = implode(',', array($hp_ayah, $hp_ibu, $hp_wali));
+	      $ortu_pekerjaan = implode(',', array($pekerjaan_ayah, $pekerjaan_ibu, $pekerjaan_wali));
+	      $ortu_penghasilan = implode(',', array($penghasilan_ayah, $penghasilan_ibu, $penghasilan_wali));
+	      $ortu_alamat = implode('|', array($alamat_orang_tua, $alamat_wali));
 
 	      $data = array(    'id'                => $detail_pendaftaran->id,
 	                        'ortu_nama'   		=> $ortu_nama,
@@ -3099,6 +3135,35 @@ class Home extends CI_CONTROLLER
 	                        'ortu_penghasilan'  => $ortu_penghasilan,
 	                        'ortu_alamat'      	=> $ortu_alamat
 	      );
+	      $this->set_if_column_exists($data, 'nama_ayah', $nama_ayah);
+	      $this->set_if_column_exists($data, 'nik_ayah', $nik_ayah);
+	      $this->set_if_column_exists($data, 'tempat_lahir_ayah', $tempat_lahir_ayah);
+	      $this->set_if_column_exists($data, 'tanggal_lahir_ayah', $tanggal_lahir_ayah);
+	      $this->set_if_column_exists($data, 'agama_ayah', $agama_ayah);
+	      $this->set_if_column_exists($data, 'pendidikan_ayah', $pendidikan_ayah);
+	      $this->set_if_column_exists($data, 'hp_ayah', $hp_ayah);
+	      $this->set_if_column_exists($data, 'pekerjaan_ayah', $pekerjaan_ayah);
+	      $this->set_if_column_exists($data, 'penghasilan_ayah', $penghasilan_ayah);
+	      $this->set_if_column_exists($data, 'nama_ibu', $nama_ibu);
+	      $this->set_if_column_exists($data, 'nik_ibu', $nik_ibu);
+	      $this->set_if_column_exists($data, 'tempat_lahir_ibu', $tempat_lahir_ibu);
+	      $this->set_if_column_exists($data, 'tanggal_lahir_ibu', $tanggal_lahir_ibu);
+	      $this->set_if_column_exists($data, 'agama_ibu', $agama_ibu);
+	      $this->set_if_column_exists($data, 'pendidikan_ibu', $pendidikan_ibu);
+	      $this->set_if_column_exists($data, 'hp_ibu', $hp_ibu);
+	      $this->set_if_column_exists($data, 'pekerjaan_ibu', $pekerjaan_ibu);
+	      $this->set_if_column_exists($data, 'penghasilan_ibu', $penghasilan_ibu);
+	      $this->set_if_column_exists($data, 'alamat_orang_tua', $alamat_orang_tua);
+	      $this->set_if_column_exists($data, 'nama_wali', $nama_wali);
+	      $this->set_if_column_exists($data, 'nik_wali', $nik_wali);
+	      $this->set_if_column_exists($data, 'tempat_lahir_wali', $tempat_lahir_wali);
+	      $this->set_if_column_exists($data, 'tanggal_lahir_wali', $tanggal_lahir_wali);
+	      $this->set_if_column_exists($data, 'agama_wali', $agama_wali);
+	      $this->set_if_column_exists($data, 'pendidikan_wali', $pendidikan_wali);
+	      $this->set_if_column_exists($data, 'hp_wali', $hp_wali);
+	      $this->set_if_column_exists($data, 'pekerjaan_wali', $pekerjaan_wali);
+	      $this->set_if_column_exists($data, 'penghasilan_wali', $penghasilan_wali);
+	      $this->set_if_column_exists($data, 'alamat_wali', $alamat_wali);
 	      $this->admin_model->edit_pendaftaran($data);
 
 		      $this->session->set_flashdata('success', 'Data orang tua/wali telah disimpan');
