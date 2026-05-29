@@ -363,16 +363,15 @@ function showUser(str) {
       }
     });
 
-    $(document).on('click', '.btn-next-step', function(){
+    $(document).on('click', '.btn-next-step', function(e){
       var form = $(this).closest('form');
-      if (validateRequired(form, true)) {
-        form.data('submit-mode', 'data-diri');
-        form.find('input[name="simpan_data_diri"]').remove();
-        form.find('.js-submit-data-diri').remove();
-        form.append('<input type="hidden" name="simpan_data_diri" value="1">');
-        form.append('<button type="submit" class="js-submit-data-diri" style="display:none"></button>');
-        form.find('.js-submit-data-diri')[0].click();
+      form.data('submit-mode', 'data-diri');
+      if (!validateRequired(form, true)) {
+        e.preventDefault();
+        return false;
       }
+
+      return true;
     });
 
     $(document).on('click', '.btn-prev-step', function(){
