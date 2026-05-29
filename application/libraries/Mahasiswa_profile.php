@@ -85,8 +85,9 @@ class Mahasiswa_profile
 		foreach ($this->fields($group, $mahasiswa) as $field) {
 			$name = isset($field['rule_name']) ? $field['rule_name'] : $field['name'];
 			$rules = isset($field['rules']) ? $field['rules'] : 'required';
+			$rules = preg_replace('/(^|\|)required(\||$)/', '$1callback_required_value$2', $rules);
 			$form_validation->set_rules($name, $field['label'], $rules, array(
-				'required' => '%s harus diisi',
+				'required_value' => '%s harus diisi',
 				'valid_email' => '%s tidak valid',
 				'min_length' => '%s minimal %s karakter',
 				'max_length' => '%s maksimal %s karakter',

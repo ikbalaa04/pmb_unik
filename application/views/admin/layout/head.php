@@ -220,6 +220,10 @@ function showUser(str) {
 
     function fieldErrorMessage(field) {
       var label = fieldLabel(field);
+      if (isRequiredEmpty(field)) {
+        return label+' harus diisi.';
+      }
+
       if (field.validity) {
         if (field.validity.valueMissing) {
           return label+' harus diisi.';
@@ -241,6 +245,15 @@ function showUser(str) {
       return label+' harus diisi.';
     }
 
+    function isRequiredEmpty(field) {
+      if (!$(field).is('[required]')) {
+        return false;
+      }
+
+      var value = $.trim($(field).val());
+      return value === '' || value === '-' || value === '0';
+    }
+
     function showRequiredError(field) {
       var group = $(field).closest('.form-group');
       group.addClass('has-required-error');
@@ -260,10 +273,28 @@ function showUser(str) {
       });
     }
 
-    function validateVisibleRequired(form) {
+    function normalizeTitleCase(form) {
+      $(form).find('.title-case-input').each(function(){
+        this.value = capitalEachWord(this.value);
+      });
+    }
+
+    function goToFieldStep(field) {
+      if ($(field).closest('#settings').length) {
+        showFormStep('ortu');
+      } else if ($(field).closest('#activity').length) {
+        showFormStep('diri');
+      }
+    }
+
+    function validateRequired(form, visibleOnly) {
       var firstError = null;
-      $(form).find(':input[required]:visible').each(function(){
-        if (!this.checkValidity()) {
+      var selector = visibleOnly ? ':input[required]:visible' : ':input[required]';
+
+      normalizeTitleCase(form);
+
+      $(form).find(selector).each(function(){
+        if (isRequiredEmpty(this) || !this.checkValidity()) {
           showRequiredError(this);
           if (firstError === null) {
             firstError = this;
@@ -272,7 +303,10 @@ function showUser(str) {
       });
 
       if (firstError !== null) {
-        firstError.focus();
+        goToFieldStep(firstError);
+        setTimeout(function(){
+          firstError.focus();
+        }, 250);
         return false;
       }
 
@@ -318,14 +352,15 @@ function showUser(str) {
     });
 
     $(document).on('submit', '.form-horizontal', function(e){
-      if (!validateVisibleRequired(this)) {
+      var validateAll = $(this).hasClass('form-lanjutan-wizard');
+      if (!validateRequired(this, !validateAll)) {
         e.preventDefault();
       }
     });
 
     $(document).on('click', '.btn-next-step', function(){
       var form = $(this).closest('form');
-      if (validateVisibleRequired(form)) {
+      if (validateRequired(form, true)) {
         showFormStep('ortu');
       }
     });

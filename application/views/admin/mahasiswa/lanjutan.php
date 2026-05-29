@@ -355,9 +355,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">NIK</label>
 				<div class="col-md-9">
 					<?php if($detail->nik==''){?>
-					<input type="number" required="" name="nik" class="form-control" value="<?php echo set_value('nik') ?>" >
+					<input type="text" inputmode="numeric" pattern="[0-9]{16}" minlength="16" maxlength="16" required="" name="nik" class="form-control" value="<?php echo set_value('nik') ?>" >
 					<?php }else{?>
-						<input type="number" required="" name="nik" class="form-control"  value="<?php echo $detail->nik ?>">
+						<input type="text" inputmode="numeric" pattern="[0-9]{16}" minlength="16" maxlength="16" required="" name="nik" class="form-control"  value="<?php echo $detail->nik ?>">
 					<?php } ?>
 				</div>
 			</div>

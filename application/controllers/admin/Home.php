@@ -64,6 +64,12 @@ class Home extends CI_CONTROLLER
         return $result;
     }
 
+    public function required_value($value)
+    {
+        $value = trim((string) $value);
+        return $value !== '' && $value !== '-' && $value !== '0';
+    }
+
     //Menu Dasbor
     public function dasbor(){
         $detail_pendaftaran 		= $this->admin_model->detail_pendaftaran_mahasiswa();
