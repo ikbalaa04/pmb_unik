@@ -38,10 +38,8 @@
   <!-- Template Main JS File -->
   <script src="<?php echo base_url()?>assets/bethany/assets/js/main.js"></script>
 
-  <script src="<?php echo base_url()?>assets/front/js/script.js"></script>
-
   <script src="<?php echo base_url()?>assets/front/js/comobox/jquery-3.3.1.js"></script>
-  <script src="<?php echo base_url()?>assets/front/js/comobox/jquery.min.js"></script>
+  <script src="<?php echo base_url()?>assets/front/js/script.js"></script>
    <script>
 
          $("#fakultas").change(function(){
@@ -179,7 +177,5 @@
 </body>
 
 </html>
-
-
 
 

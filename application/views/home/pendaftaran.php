@@ -21,6 +21,7 @@
                               }  
 
                             ?>
+                            <form method="post" action="<?php echo base_url('home/pendaftaran') ?>">
 
                           <div class="table-responsive" >
                             <div class="row">
@@ -30,7 +31,7 @@
 
                               <?php if($this->input->post('fakultas')==''){?>
                               <label><b>Fakultas  </b></label>
-                              <select required="" class="form-control" name="fakultas" id="fakultas"  onchange="ubah_fak()">
+                              <select required="" class="form-control" name="fakultas" id="fakultas">
                                       <option value="">-Pilih-</option>
                                         <?php foreach ($fakultas as $fakultas) { ?>
                                             <option  value="<?php echo $fakultas->id ?>" <?php if($this->input->post('fakultas')== $fakultas->id){echo "selected";}?>><?php echo $fakultas->nama_fakultas ?></option>
@@ -79,7 +80,7 @@
 
                               <?php if($this->input->post('fakultas2')==''){?>
                               <label><b>Fakultas  </b></label>
-                              <select required="" class="form-control" name="fakultas2" id="fakultas2"  onchange="ubah_fak()">
+                              <select required="" class="form-control" name="fakultas2" id="fakultas2">
                                       <option value="">-Pilih-</option>
                                         <?php foreach ($fakultas2 as $fakultas) { ?>
                                             <option  value="<?php echo $fakultas->id ?>" <?php if($this->input->post('fakultas2')== $fakultas->id){echo "selected";}?>><?php echo $fakultas->nama_fakultas ?></option>
