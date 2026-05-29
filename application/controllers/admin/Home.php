@@ -2644,23 +2644,26 @@ class Home extends CI_CONTROLLER
 	    }
     }
 
-    public function form_utama(){
+	    public function form_utama(){
 
-  		$detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();
-  		$list_jenis 		= $this->admin_model->list_jenis();
-  		$jenjang 			= $this->admin_model->list_jenjang_aktif();
-  		$sumber         	= $this->admin_model->list_sumber_aktif();
-  		$id 				= $detail_pendaftaran->id;
-  		$fakultas 			= $detail_pendaftaran->fakultas;
-  		$select_fakultas	= $this->admin_model->select_fakultas($fakultas);
-  		
-  		$id_gelombang = $detail_pendaftaran->gelombang_2;
-    	$detail_gelombang = $this->admin_model->detail_gelombang_id($id_gelombang);
-    	$fakultas2 = $detail_gelombang->fakultas;
-    	$select_fakultas2	= $this->admin_model->select_fakultas2($fakultas2);
+	  		$detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();
+	  		$list_jenis 		= $this->admin_model->list_jenis();
+	  		$jenjang 			= $this->admin_model->list_jenjang_aktif();
+	  		$sumber         	= $this->admin_model->list_sumber_aktif();
+	  		$fakultas_aktif     = $this->admin_model->get_fakultas_aktif();
+	  		$kuota_ubah_prodi   = isset($detail_pendaftaran->kuota_ubah_prodi) ? (int) $detail_pendaftaran->kuota_ubah_prodi : 0;
+	  		$sisa_ubah_prodi    = max(0, 1 - $kuota_ubah_prodi);
+	  		$id 				= $detail_pendaftaran->id;
+	  		$fakultas 			= $detail_pendaftaran->fakultas;
+	  		$select_fakultas	= $this->admin_model->select_fakultas($fakultas);
+	  		
+	  		$id_gelombang = $detail_pendaftaran->gelombang_2;
+	    	$detail_gelombang = $this->admin_model->detail_gelombang_id($id_gelombang);
+	    	$fakultas2 = $detail_gelombang ? $detail_gelombang->fakultas : $fakultas;
+	    	$select_fakultas2	= $this->admin_model->select_fakultas2($fakultas2);
 
-  		$list_program 		= $this->admin_model->list_program_fakultas_pendaftar($fakultas);
-  		$pilih_gelombang 	  = $this->admin_model->pilih_gelombang_user($fakultas);
+	  		$list_program 		= $this->admin_model->list_program_fakultas_pendaftar($fakultas);
+	  		$pilih_gelombang 	  = $this->admin_model->pilih_gelombang_user($fakultas);
   		$pilih_gelombang_2 	  = $this->admin_model->pilih_gelombang_user2($fakultas2);
         $prodi				  = $this->admin_model->admin_prodi($fakultas);
         $prodi1				  = $this->admin_model->admin_prodi2($fakultas2);
@@ -2677,32 +2680,119 @@ class Home extends CI_CONTROLLER
 	    $data = array( 'title'            => 'Halaman Form Utama',          
                        'detail'     	  => $detail_pendaftaran,
                        'list_jenis'		  => $list_jenis,
-                       'prodi'		      => $prodi,
-                       'prodi1'		      => $prodi1,
-                       'jenjang'		  => $jenjang,
-                       'sumber'			  => $sumber,
-                       'list_program'	  => $list_program,
-                       'pilih_gelombang'  => $pilih_gelombang,
-                       'pilih_gelombang_2'  => $pilih_gelombang_2,
-                       'select_fakultas'  => $select_fakultas,
+	                       'prodi'		      => $prodi,
+	                       'prodi1'		      => $prodi1,
+	                       'jenjang'		  => $jenjang,
+	                       'sumber'			  => $sumber,
+	                       'fakultas_aktif'  => $fakultas_aktif,
+	                       'fakultas2'       => $fakultas2,
+	                       'sisa_ubah_prodi' => $sisa_ubah_prodi,
+	                       'list_program'	  => $list_program,
+	                       'pilih_gelombang'  => $pilih_gelombang,
+	                       'pilih_gelombang_2'  => $pilih_gelombang_2,
+	                       'select_fakultas'  => $select_fakultas,
                        'select_fakultas2'  => $select_fakultas2,
                        'berkas'			  => $this->admin_model->view($id),
                        'isi'              => 'admin/mahasiswa/utama');
         $this->load->view('admin/layout/wrapper', $data, FALSE);
-	    }else{
-	      $i=$this->input;
+		    }else{
+		      $i=$this->input;
+		      $fakultas_baru = $i->post('fakultas') != '' ? $i->post('fakultas') : $detail_pendaftaran->fakultas;
+		      $gelombang_baru = $i->post('gelombang') != '' ? $i->post('gelombang') : $detail_pendaftaran->gelombang;
+		      $prodi_baru = $i->post('jurusan_pilihan') != '' ? $i->post('jurusan_pilihan') : $detail_pendaftaran->jurusan_pilihan;
+		      $gelombang_2_baru = $i->post('gelombang_2') != '' ? $i->post('gelombang_2') : $detail_pendaftaran->gelombang_2;
+		      $prodi_2_baru = $i->post('jurusan_pilihan2') != '' ? $i->post('jurusan_pilihan2') : $detail_pendaftaran->jurusan_pilihan2;
+		      $prodi_diubah = (
+		      	$fakultas_baru != $detail_pendaftaran->fakultas ||
+		      	$gelombang_baru != $detail_pendaftaran->gelombang ||
+		      	$prodi_baru != $detail_pendaftaran->jurusan_pilihan ||
+		      	$gelombang_2_baru != $detail_pendaftaran->gelombang_2 ||
+		      	$prodi_2_baru != $detail_pendaftaran->jurusan_pilihan2
+		      );
 
-	      $data = array(    'id'                => $detail_pendaftaran->id,
-	                        'jenis'				=> $i->post('jenis'),
-	                        'program'			=> $i->post('program'),
-							'keterangan_sumber'	=> $i->post('keterangan_sumber'),
-							'valid_lanjutan'	=> "1"
-	      );
-	      $this->admin_model->edit_pendaftaran($data);
-	      $this->session->set_flashdata('success', 'Data telah diedit');
-	      redirect(base_url('admin/home/form_lanjutan'),'refresh');
+		      if($prodi_diubah && $sisa_ubah_prodi <= 0){
+		        $this->session->set_flashdata('warning', 'Kuota perubahan pilihan program studi sudah habis. Mahasiswa hanya bisa mengubah pilihan 1 kali.');
+		        redirect(base_url('admin/home/form_utama'),'refresh');
+		      }
+
+		      if($prodi_diubah){
+		        $detail_prodi_baru = $this->admin_model->detail_prodi_kode($prodi_baru);
+		        $detail_prodi_2_baru = $this->admin_model->detail_prodi_kode2($prodi_2_baru);
+		        $detail_gelombang_baru = $this->admin_model->detail_gelombang_id($gelombang_baru);
+		        $detail_gelombang_2_baru = $this->admin_model->detail_gelombang_id($gelombang_2_baru);
+
+		        if(empty($detail_prodi_baru) || empty($detail_prodi_2_baru) || empty($detail_gelombang_baru) || empty($detail_gelombang_2_baru)){
+		          $this->session->set_flashdata('warning', 'Pilihan fakultas, gelombang, atau program studi tidak valid.');
+		          redirect(base_url('admin/home/form_utama'),'refresh');
+		        }
+
+		        $jenjang_aktif = array();
+		        foreach($jenjang as $item_jenjang){
+		          $jenjang_aktif[$item_jenjang->nama] = true;
+		        }
+
+		        if(!isset($jenjang_aktif[$detail_prodi_baru->jenjang]) || !isset($jenjang_aktif[$detail_prodi_2_baru->jenjang])){
+		          $this->session->set_flashdata('warning', 'Program studi yang dipilih tidak tersedia karena jenjangnya sedang tidak aktif.');
+		          redirect(base_url('admin/home/form_utama'),'refresh');
+		        }
+
+		        if($detail_prodi_baru->fakultas != $fakultas_baru || $detail_gelombang_baru->fakultas != $fakultas_baru){
+		          $this->session->set_flashdata('warning', 'Pilihan pertama tidak sesuai dengan fakultas yang dipilih.');
+		          redirect(base_url('admin/home/form_utama'),'refresh');
+		        }
+
+		        if($detail_prodi_2_baru->fakultas != $detail_gelombang_2_baru->fakultas){
+		          $this->session->set_flashdata('warning', 'Pilihan kedua tidak sesuai dengan fakultas yang dipilih.');
+		          redirect(base_url('admin/home/form_utama'),'refresh');
+		        }
+
+		        if(
+		          ($detail_prodi_baru->jenjang == 'S2' && $detail_prodi_2_baru->jenjang != 'S2') ||
+		          ($detail_prodi_baru->jenjang != 'S2' && $detail_prodi_2_baru->jenjang == 'S2') ||
+		          ($detail_prodi_baru->jenjang == 'Profesi' && $detail_prodi_2_baru->jenjang != 'Profesi') ||
+		          ($detail_prodi_baru->jenjang != 'Profesi' && $detail_prodi_2_baru->jenjang == 'Profesi')
+		        ){
+		          $this->session->set_flashdata('warning', 'Jenjang pilihan pertama dan pilihan kedua tidak boleh dicampur antara S2/Profesi dan jenjang lain.');
+		          redirect(base_url('admin/home/form_utama'),'refresh');
+		        }
+		      }
+
+		      $data = array(    'id'                => $detail_pendaftaran->id,
+		                        'jenis'				=> $i->post('jenis'),
+		                        'program'			=> $i->post('program'),
+								'keterangan_sumber'	=> $i->post('keterangan_sumber'),
+								'valid_lanjutan'	=> "1"
+		      );
+
+		      if($prodi_diubah){
+		      	$data['fakultas'] = $fakultas_baru;
+		      	$data['gelombang'] = $gelombang_baru;
+		      	$data['gelombang_2'] = $gelombang_2_baru;
+		      	$data['jurusan_pilihan'] = $prodi_baru;
+		      	$data['jurusan_pilihan2'] = $prodi_2_baru;
+		      	$data['jenjang'] = $detail_prodi_baru->jenjang;
+		      	$data['kuota_ubah_prodi'] = $kuota_ubah_prodi + 1;
+		      }
+
+		      $this->admin_model->edit_pendaftaran($data);
+
+		      if($prodi_diubah){
+		      	$pengguna = $this->admin_model->detail_pengguna_verifikasi($detail_pendaftaran->username);
+		      	if($pengguna){
+		      		$data_pengguna = array(
+		      			'id'       => $pengguna->id,
+		      			'fakultas' => $fakultas_baru,
+		      			'prodi'    => $prodi_baru
+		      		);
+		      		$this->admin_model->edit_pengguna_verifikasi($data_pengguna);
+		      	}
+		      	$this->session->set_flashdata('success', 'Pilihan program studi berhasil diubah. Kuota perubahan pilihan sudah habis.');
+		      }else{
+		      $this->session->set_flashdata('success', 'Data telah diedit');
+		      }
+		      redirect(base_url('admin/home/form_lanjutan'),'refresh');
+		    }
 	    }
-    }
 
     public function isi_form(){
 
@@ -4181,11 +4271,11 @@ class Home extends CI_CONTROLLER
         $this->load->view('admin/verifikasi/export', $data, FALSE);
     }
 
-    public function export_pendaftaran_excel($status = 'registrasi'){
-        $allowed = array('registrasi', 'terverifikasi', 'diterima', 'registrasi_ulang');
-        if (!in_array($status, $allowed)) {
-            show_404();
-        }
+	    public function export_pendaftaran_excel($status = 'registrasi'){
+	        $allowed = array('registrasi', 'terverifikasi', 'diterima', 'registrasi_ulang');
+	        if (!in_array($status, $allowed)) {
+	            show_404();
+	        }
 
         $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
         $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
@@ -4193,10 +4283,16 @@ class Home extends CI_CONTROLLER
             'registrasi' => 'Registrasi',
             'terverifikasi' => 'Terverifikasi',
             'diterima' => 'Diterima',
-            'registrasi_ulang' => 'Registrasi Ulang'
-        );
+	            'registrasi_ulang' => 'Registrasi Ulang'
+	        );
 
-        $excel_pmb = $this->admin_model->export_pendaftaran_status($id_thn_akademik, $status);
+	        $filters = array(
+	            'gelombang' => $this->input->get('gelombang') !== NULL ? $this->input->get('gelombang') : $this->input->post('gelombang'),
+	            'prodi' => $this->input->get('prodi') !== NULL ? $this->input->get('prodi') : $this->input->post('prodi'),
+	            'registrasi_ulang' => $this->input->get('registrasi_ulang') !== NULL ? $this->input->get('registrasi_ulang') : $this->input->post('registrasi_ulang')
+	        );
+
+	        $excel_pmb = $this->admin_model->export_pendaftaran_status($id_thn_akademik, $status, $filters);
 
         $this->load->library('excel');
         $excel = new PHPExcel();

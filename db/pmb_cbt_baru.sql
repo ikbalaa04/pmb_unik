@@ -945,6 +945,7 @@ CREATE TABLE `pendaftaran` (
   `jenjang` varchar(10) NOT NULL,
   `jurusan_pilihan` varchar(20) NOT NULL,
   `jurusan_pilihan2` char(11) NOT NULL,
+  `kuota_ubah_prodi` tinyint(1) NOT NULL DEFAULT 0,
   `email` char(100) NOT NULL,
   `password` char(20) NOT NULL,
   `nama_lengkap` char(120) NOT NULL,

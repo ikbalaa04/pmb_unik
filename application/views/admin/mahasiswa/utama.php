@@ -99,6 +99,15 @@ if ($detail->fix == 1) {
 <div class="col-md-1"></div>
 <div class="col-md-9">
 
+<?php
+$boleh_ubah_prodi = isset($sisa_ubah_prodi) && $sisa_ubah_prodi > 0;
+$atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
+?>
+
+<div class="alert alert-info">
+    Kuota perubahan fakultas/program studi: <b><?php echo $boleh_ubah_prodi ? '1 kali tersedia' : 'sudah habis' ?></b>.
+    Perubahan pilihan pertama, pilihan kedua, atau hanya pilihan kedua tetap dihitung sebagai 1 kali perubahan.
+</div>
 
 <div class="form-group">
     <label class="col-md-3 control-label">Username</label>
@@ -109,9 +118,21 @@ if ($detail->fix == 1) {
 
 
 <div class="form-group">
+    <label class="col-md-3 control-label">Fakultas Pilihan 1</label>
+    <div class="col-md-9">
+        <select <?php echo $atribut_ubah_prodi ?> name="fakultas" id="fakultas" class="form-control">
+            <option value="">-Pilih-</option>
+            <?php foreach($fakultas_aktif as $list_fakultas) {?>
+            <option value="<?php echo $list_fakultas->id?>" <?php if($detail->fakultas == $list_fakultas->id){echo "selected";} ?>><?php echo $list_fakultas->nama_fakultas?></option>
+            <?php } ?>
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
 	<label class="col-md-3 control-label">Gelombang Pilihan 1</label>
 	<div class="col-md-9">
-		<select disabled="" name="gelombang" class="form-control">
+		<select <?php echo $atribut_ubah_prodi ?> name="gelombang" id="gelombang" class="form-control">
 	        <option selected disabled>-Pilih-</option>
 	            <?php foreach($pilih_gelombang as $pilih_gelombang) {?>
 	        	<option value="<?php echo $pilih_gelombang->id?>" <?php if($detail->gelombang ==$pilih_gelombang->id){echo "selected";} ?>><?php echo $pilih_gelombang->nama_fakultas ?> - <?php echo $pilih_gelombang->nama?></option>
@@ -124,7 +145,7 @@ if ($detail->fix == 1) {
 <div class="form-group">
 	<label class="col-md-3 control-label">Pilihan 1</label>
 	<div class="col-md-9">
-	<select name="jurusan_pilihan" disabled="" class="form-control">
+	<select <?php echo $atribut_ubah_prodi ?> name="jurusan_pilihan" id="prodi" class="form-control">
         <option value="">-Pilih-</option>
             <?php foreach($prodi as $prodi) {?>
         	<option value="<?php echo $prodi->kode?>" <?php if($detail->jurusan_pilihan == $prodi->kode){echo "selected";}elseif($this->input->post('jurusan_pilihan')==$prodi->kode){echo "selected";} ?>><?php echo $prodi->jenjang?> <?php echo $prodi->nama?></option>
@@ -134,9 +155,21 @@ if ($detail->fix == 1) {
 </div>
 
 <div class="form-group">
+    <label class="col-md-3 control-label">Fakultas Pilihan 2</label>
+    <div class="col-md-9">
+        <select <?php echo $atribut_ubah_prodi ?> name="fakultas2" id="fakultas2" class="form-control">
+            <option value="">-Pilih-</option>
+            <?php foreach($fakultas_aktif as $list_fakultas2) {?>
+            <option value="<?php echo $list_fakultas2->id?>" <?php if($fakultas2 == $list_fakultas2->id){echo "selected";} ?>><?php echo $list_fakultas2->nama_fakultas?></option>
+            <?php } ?>
+        </select>
+    </div>
+</div>
+
+<div class="form-group">
     <label class="col-md-3 control-label">Gelombang Pilihan 2</label>
     <div class="col-md-9">
-        <select disabled="" class="form-control">
+        <select <?php echo $atribut_ubah_prodi ?> name="gelombang_2" id="gelombang_2" class="form-control">
             <option selected disabled>-Pilih-</option>
                 <?php foreach($pilih_gelombang_2 as $pilih_gelombang_2) {?>
                 <option value="<?php echo $pilih_gelombang_2->id?>" <?php if($detail->gelombang_2 ==$pilih_gelombang_2->id){echo "selected";} ?>><?php echo $pilih_gelombang_2->nama_fakultas ?> - <?php echo $pilih_gelombang_2->nama?></option>
@@ -148,7 +181,7 @@ if ($detail->fix == 1) {
 <div class="form-group">
 	<label class="col-md-3 control-label">Pilihan 2</label>
 	<div class="col-md-9">
-	<select name="jurusan_pilihan2" disabled="" class="form-control">
+	<select <?php echo $atribut_ubah_prodi ?> name="jurusan_pilihan2" id="prodi2" class="form-control">
         <option value="">-Pilih-</option>
             <?php   
             foreach($prodi1 as $prodi1) {?>
@@ -193,7 +226,7 @@ if ($detail->fix == 1) {
 <div class="form-group">
     <label class="col-md-3 control-label">Sumber Referensi</label>
     <div class="col-md-9">
-        <select disabled="" name="fakultas" class="form-control">
+        <select disabled="" name="sumber_display" class="form-control">
         <option selected disabled>-Pilih-</option>
             <?php foreach($sumber as $list_sumber) {?>
             <option value="<?php echo $list_sumber->nama?>" <?php if($detail->sumber == $list_sumber->nama){echo "selected";} ?>><?php echo $list_sumber->nama ?></option>

@@ -1,4 +1,18 @@
 <?php
+$export_filter = array();
+$filter_gelombang = $this->input->post('gelombang');
+$filter_prodi = $this->input->post('prodi');
+if ($filter_gelombang !== NULL && $filter_gelombang !== '') {
+    $export_filter['gelombang'] = $filter_gelombang;
+}
+if ($filter_prodi !== NULL && $filter_prodi !== '') {
+    $export_filter['prodi'] = $filter_prodi;
+}
+$export_url = base_url('admin/home/export_pendaftaran_excel/terverifikasi');
+if (!empty($export_filter)) {
+    $export_url .= '?' . http_build_query($export_filter);
+}
+
 if($this->session->flashdata('warning')){
     echo $this->session->flashdata('warning');
 }
@@ -61,7 +75,7 @@ if($this->session->flashdata('success')){
     <div class="col-lg-6" style="padding-top: 25px">
         <input form="accept-filter-form" style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
         <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/accept')?>" >Tanpa Filter</a>
-        <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/export_pendaftaran_excel/terverifikasi')?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
+        <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo $export_url ?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
         <form style="display: inline-block" method="post" action="<?php echo base_url('admin/home/generate_semua_nomor_ujian')?>" onsubmit="return confirm('Generate nomor ujian untuk semua peserta terverifikasi yang belum memiliki nomor ujian?')">
             <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Generate Semua No Ujian" class="btn btn-warning btn-md">
         </form>
