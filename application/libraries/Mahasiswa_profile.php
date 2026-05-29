@@ -80,9 +80,13 @@ class Mahasiswa_profile
 		return 'admin/home/form_lanjutan';
 	}
 
-	public function apply_validation_rules($form_validation, $group, $mahasiswa)
+	public function apply_validation_rules($form_validation, $group, $mahasiswa, $step = NULL)
 	{
 		foreach ($this->fields($group, $mahasiswa) as $field) {
+			if ($step !== NULL && (!isset($field['step']) || $field['step'] !== $step)) {
+				continue;
+			}
+
 			$name = isset($field['rule_name']) ? $field['rule_name'] : $field['name'];
 			$rules = isset($field['rules']) ? $field['rules'] : 'required';
 			$rules = preg_replace('/(^|\|)required(\||$)/', '$1callback_required_value$2', $rules);

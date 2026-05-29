@@ -22,7 +22,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
 <section class="content">
 <div class="row">
-<?php echo form_open(base_url('admin/home/form_lanjutan'),'class="form-horizontal form-lanjutan-wizard" novalidate="novalidate" data-initial-step="'.($this->input->post('submit') ? 'ortu' : 'diri').'"'); ?>
+<?php echo form_open(base_url('admin/home/form_lanjutan'),'class="form-horizontal form-lanjutan-wizard" novalidate="novalidate" data-initial-step="'.($this->input->get('step') == 'ortu' || $this->input->post('submit') ? 'ortu' : 'diri').'"'); ?>
 
  <div class="col-md-12">
       <div class="nav-tabs-custom">
@@ -90,9 +90,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">NPSN</label>
 				<div class="col-md-9">
 					<?php if($detail->npsn!=''){?>
-					<input type="number" name="npsn" required="" class="form-control"  value="<?php echo $detail->npsn ?>">
+					<input type="number" name="npsn" class="form-control"  value="<?php echo $detail->npsn ?>">
 					<?php }else{?>
-					<input type="number" name="npsn" required=""  class="form-control"  value="<?php echo $this->input->post('npsn') ?>">
+					<input type="number" name="npsn" class="form-control"  value="<?php echo $this->input->post('npsn') ?>">
 					<?php }?>
 					
 				</div>
@@ -854,7 +854,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 		<div class="col-md-12" style="text-align: right;">
 			<a href="<?php echo base_url('admin/home/form_utama') ?>" class="btn btn-default btn-back-utama"><i class="fa fa-arrow-left"></i> Kembali ke Data Utama</a>
 			<button class="btn btn-default btn-prev-step" type="button" style="display:none"><i class="fa fa-arrow-left"></i> Kembali ke Data Diri</button>
-			<button class="btn btn-primary btn-next-step" type="button"><i class="fa fa-arrow-right"></i> Lanjutkan ke Data Orang Tua / Wali</button>
+			<button class="btn btn-primary btn-next-step" type="button"><i class="fa fa-arrow-right"></i> Simpan Data Diri & Lanjutkan</button>
 			<button class="btn btn-success btn-submit-step" name="submit" type="submit" style="display:none"><i class="fa fa-save"></i> Simpan Data</button>
 			<button class="btn btn-danger" name="reset" type="reset"><i class="fa fa-times"></i> Reset</button>
 			

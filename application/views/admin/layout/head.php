@@ -356,8 +356,9 @@ function showUser(str) {
     });
 
     $(document).on('submit', '.form-horizontal', function(e){
-      var validateAll = $(this).hasClass('form-lanjutan-wizard');
-      if (!validateRequired(this, !validateAll)) {
+      var mode = $(this).data('submit-mode');
+      var validateVisibleOnly = mode === 'data-diri' || !$(this).hasClass('form-lanjutan-wizard');
+      if (!validateRequired(this, validateVisibleOnly)) {
         e.preventDefault();
       }
     });
@@ -365,7 +366,10 @@ function showUser(str) {
     $(document).on('click', '.btn-next-step', function(){
       var form = $(this).closest('form');
       if (validateRequired(form, true)) {
-        showFormStep('ortu');
+        form.data('submit-mode', 'data-diri');
+        form.find('input[name="simpan_data_diri"]').remove();
+        form.append('<input type="hidden" name="simpan_data_diri" value="1">');
+        form.trigger('submit');
       }
     });
 
