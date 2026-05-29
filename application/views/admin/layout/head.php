@@ -111,6 +111,29 @@ function showUser(str) {
     .example-modal .modal {
       background: transparent !important;
     }
+
+    .required-star {
+      color: #dd4b39;
+      font-weight: bold;
+      margin-left: 3px;
+    }
+
+    .required-note {
+      color: #777;
+      margin: 8px 0 16px;
+    }
+
+    .form-group.has-required-error .form-control {
+      border-color: #dd4b39;
+      box-shadow: none;
+    }
+
+    .required-error-message {
+      color: #dd4b39;
+      display: block;
+      font-size: 12px;
+      margin-top: 5px;
+    }
   </style>
 
   <style type="text/css">
@@ -152,6 +175,67 @@ function showUser(str) {
 }
 }
   </style>
+
+  <script>
+  $(function(){
+    $('.form-horizontal').each(function(){
+      $(this).find(':input[required]').each(function(){
+        var group = $(this).closest('.form-group');
+        var label = group.find('label.control-label').first();
+        if (label.length && label.find('.required-star').length === 0) {
+          label.append('<span class="required-star">*</span>');
+        }
+      });
+    });
+
+    function fieldLabel(field) {
+      var label = $(field).closest('.form-group').find('label.control-label').first().clone();
+      label.find('.required-star').remove();
+      return $.trim(label.text()) || 'Field ini';
+    }
+
+    function showRequiredError(field) {
+      var group = $(field).closest('.form-group');
+      group.addClass('has-required-error');
+      group.find('.required-error-message').remove();
+      $(field).after('<span class="required-error-message">'+fieldLabel(field)+' harus diisi.</span>');
+    }
+
+    function clearRequiredError(field) {
+      var group = $(field).closest('.form-group');
+      group.removeClass('has-required-error');
+      group.find('.required-error-message').remove();
+    }
+
+    $(document).on('invalid', ':input[required]', function(e){
+      e.preventDefault();
+      showRequiredError(this);
+    });
+
+    $(document).on('input change', ':input[required]', function(){
+      if (this.value) {
+        clearRequiredError(this);
+      }
+    });
+
+    $(document).on('submit', '.form-horizontal', function(e){
+      var firstError = null;
+      $(this).find(':input[required]').each(function(){
+        if (!this.value) {
+          showRequiredError(this);
+          if (firstError === null) {
+            firstError = this;
+          }
+        }
+      });
+
+      if (firstError !== null) {
+        e.preventDefault();
+        firstError.focus();
+      }
+    });
+  });
+  </script>
   
 </head>
 <body class="hold-transition skin-green sidebar-mini" >

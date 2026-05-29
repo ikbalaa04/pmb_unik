@@ -11,6 +11,7 @@ class Simple_login
 	{
 		$this->CI =& get_instance();
 		$this->CI->load->model('admin_model');
+		$this->CI->load->library('mahasiswa_profile');
 	}
 
 	public function login($username,$password){
@@ -51,6 +52,14 @@ class Simple_login
 				redirect(base_url('admin/home/kalkulasi_pendaftar'),'refresh');
 					
 			}else if( $this->CI->session->userdata('id_level') == "3"){
+				$detail_pendaftaran = $this->CI->admin_model->detail_pendaftaran_mahasiswa();
+				if($detail_pendaftaran && !$this->CI->mahasiswa_profile->is_complete($detail_pendaftaran)){
+					$this->CI->session->set_flashdata(
+						'warning',
+						'Silakan lengkapi data berikut terlebih dahulu: '.implode(', ', $this->CI->mahasiswa_profile->missing_labels($detail_pendaftaran)).'.'
+					);
+					redirect(base_url($this->CI->mahasiswa_profile->completion_target($detail_pendaftaran)),'refresh');
+				}
 				redirect(base_url('admin/home/form_utama'),'refresh');
 			}}else{
 				redirect(base_url('login'),'refresh');

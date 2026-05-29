@@ -18,6 +18,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
 ?>
 
+<?php $this->load->view('admin/mahasiswa/required_alert'); ?>
 
 <section class="content">
 <div class="row">
@@ -342,6 +343,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
 			<div class="col-md-5"></div>
 			<div class="col-md-6"><H3><b>Form Biodata</b></H3></div>
+			<div class="col-md-12"><p class="required-note">Field dengan tanda <span class="required-star">*</span> wajib diisi.</p></div>
 			<div class="col-md-12"><br></div>
 			<div class="col-md-1"></div>
 			<div class="col-md-8">
@@ -354,7 +356,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->nik==''){?>
 					<input type="number" required="" name="nik" class="form-control" value="<?php echo set_value('nik') ?>" >
 					<?php }else{?>
-					<input type="number" name="nik" class="form-control"  value="<?php echo $detail->nik ?>">
+						<input type="number" required="" name="nik" class="form-control"  value="<?php echo $detail->nik ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -363,9 +365,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Nama Lengkap</label>
 				<div class="col-md-9">
 					<?php if($detail->nama_lengkap==''){?>
-					<input type="text" name="nama_lengkap" class="form-control" value="<?php echo set_value('nama_lengkap') ?>" >
-					<?php }else{?>
-					<input type="text" name="nama_lengkap" class="form-control"  value="<?php echo $detail->nama_lengkap ?>">
+						<input type="text" name="nama_lengkap" required="" class="form-control" value="<?php echo set_value('nama_lengkap') ?>" >
+						<?php }else{?>
+						<input type="text" name="nama_lengkap" required="" class="form-control"  value="<?php echo $detail->nama_lengkap ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -398,7 +400,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->email==''){?>
 					<input type="email" name="email" class="form-control" required="" value="<?php echo set_value('email') ?>" >
 					<?php }else{?>
-					<input type="email" name="email" class="form-control"  value="<?php echo $detail->email ?>">
+						<input type="email" name="email" required="" class="form-control"  value="<?php echo $detail->email ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -448,7 +450,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Kewarganegaraan</label>
 				<div class="col-md-9">
-					<select name="kewarganegaraan" class="form-control">
+						<select name="kewarganegaraan" class="form-control" required="">
 						<option value="">-Pilih-</option>
 						<option value="WNA" <?php if($detail->kewarganegaraan == 'WNA'){echo "selected";}elseif($this->input->post('kewarganegaraan')=='WNA'){echo "selected";} ?>>WNA</option>
 						<option value="WNI" <?php if($detail->kewarganegaraan == 'WNI'){echo "selected";}elseif($this->input->post('kewarganegaraan')=='WNI'){echo "selected";} ?>>WNI</option>
@@ -475,7 +477,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->alamat==''){?>
 					<textarea name="alamat" required="" class="form-control" ><?php echo set_value('alamat') ?></textarea>
 					<?php }else{?>
-					<textarea name="alamat" class="form-control" ><?php echo $detail->alamat?></textarea>
+						<textarea name="alamat" required="" class="form-control" ><?php echo $detail->alamat?></textarea>
 					<?php } ?>
 				</div>
 			</div>
@@ -486,7 +488,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->kecamatan==''){?>
 					<input type="text" name="kecamatan" required="" class="form-control" value="<?php echo set_value('kecamatan') ?>" >
 					<?php }else{?>
-					<input type="text" name="kecamatan" class="form-control"  value="<?php echo $detail->kecamatan ?>">
+						<input type="text" name="kecamatan" required="" class="form-control"  value="<?php echo $detail->kecamatan ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -497,7 +499,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->kota==''){?>
 					<input type="text" name="kota" required="" class="form-control" value="<?php echo set_value('kota') ?>" >
 					<?php }else{?>
-					<input type="text" name="kota" class="form-control"  value="<?php echo $detail->kota ?>">
+						<input type="text" name="kota" required="" class="form-control"  value="<?php echo $detail->kota ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -508,7 +510,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->prov==''){?>
 					<input type="text" name="prov" required="" class="form-control" value="<?php echo set_value('prov') ?>" >
 					<?php }else{?>
-					<input type="text" name="prov" class="form-control"  value="<?php echo $detail->prov ?>">
+						<input type="text" name="prov" required="" class="form-control"  value="<?php echo $detail->prov ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -519,7 +521,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<?php if($detail->hp==''){?>
 					<input type="number" name="hp" required="" class="form-control" value="<?php echo set_value('hp') ?>" >
 					<?php }else{?>
-					<input type="number" name="hp" class="form-control"  value="<?php echo $detail->hp ?>">
+						<input type="number" name="hp" required="" class="form-control"  value="<?php echo $detail->hp ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -532,19 +534,27 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="col-md-12"><center><h2><b>Data Orang Tua</b></h2></center></div>
 			<div class="col-md-12"><hr></div>
 			<div class="col-md-6">
-			<div class="form-group">
-				<label class="col-md-3 control-label">Nama Ayah</label>
-				<div class="col-md-9">
-					<?php $ortu_nama = explode(",", $detail->ortu_nama ); ?>
-					<input type="text" name="ortu_nama[0]" class="form-control" value="<?php echo $ortu_nama[0] ?>" required="">
+				<div class="form-group">
+					<label class="col-md-3 control-label">Nama Ayah</label>
+					<div class="col-md-9">
+						<?php $ortu_nama = explode(",", $detail->ortu_nama ); ?>
+						<input type="text" name="ortu_nama[0]" class="form-control" value="<?php echo $ortu_nama[0] ?>" required="">
+					</div>
 				</div>
-			</div>
+
+				<div class="form-group">
+					<label class="col-md-3 control-label">NIK Ayah</label>
+					<div class="col-md-9">
+						<?php $ortu_nik = explode(",", isset($detail->ortu_nik) ? $detail->ortu_nik : ',,'); ?>
+						<input type="text" inputmode="numeric" pattern="[0-9]{16}" name="ortu_nik[0]" class="form-control" value="<?php echo isset($ortu_nik[0]) ? $ortu_nik[0] : '' ?>" required="" minlength="16" maxlength="16">
+					</div>
+				</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Ayah</label>
 				<div class="col-md-9">
 					<?php $ortu_tempat_lahir = explode("|", $detail->ortu_tempat_lahir ); ?>
-					<input type="text" name="ortu_tempat_lahir[0]" class="form-control" value="<?php echo $ortu_tempat_lahir[0] ?>" required="">
+					<input type="text" name="ortu_tempat_lahir[0]" class="form-control" value="<?php echo $ortu_tempat_lahir[0] ?>">
 				</div>
 			</div>
 
@@ -552,7 +562,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Tanggal Ayah</label>
 				<div class="col-md-9">
 					<?php $ortu_tgl_lahir = explode("|", $detail->ortu_tgl_lahir ); ?>
-					<input type="text" id="tanggal" name="ortu_tgl_lahir[0]" class="form-control" value="<?php echo $ortu_tgl_lahir[0] ?>" required="">
+					<input type="text" id="tanggal" name="ortu_tgl_lahir[0]" class="form-control" value="<?php echo $ortu_tgl_lahir[0] ?>">
 				</div>
 			</div>
 
@@ -560,7 +570,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Agama Ayah</label>
 				<div class="col-md-9">
 					<?php $agama_ortu = explode(",", $detail->ortu_agama); ?>
-					<select name="ortu_agama[0]" class="form-control" required="">
+						<select name="ortu_agama[0]" class="form-control">
 						<option value="-">-Pilih-</option>
 						<option value="Islam" <?php if($agama_ortu[0]=="Islam"){echo "selected";} ?>>Islam</option>
 						<option value="Hindu" <?php if($agama_ortu[0]=="Hindu"){echo "selected";} ?>>Hindu</option>
@@ -576,7 +586,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Pendidikan Terakhir Ayah</label>
 				<div class="col-md-9">
 					<?php $pendidikan_ortu = explode(",", $detail->ortu_pendidikan); ?>
-					<select name="ortu_pendidikan[0]" class="form-control" required="">
+						<select name="ortu_pendidikan[0]" class="form-control">
 						<option value="-">-Pilih-</option>
 						<option value="S3" <?php if($pendidikan_ortu[0] == "S3"){echo "selected";} ?>>S-3</option>
 						<option value="S2" <?php if($pendidikan_ortu[0] == "S2"){echo "selected";} ?>>S-2</option>
@@ -599,7 +609,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">No. HP Ayah</label>
 				<div class="col-md-9">
 					<?php $hp_ortu = explode(",", $detail->ortu_hp); ?>
-					<input type="number" name="ortu_hp[0]" class="form-control" value="<?php echo $hp_ortu[0] ?>" required="">
+						<input type="number" name="ortu_hp[0]" class="form-control" value="<?php echo $hp_ortu[0] ?>">
 				</div>
 			</div>
 
@@ -607,7 +617,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Pekerjaan Ayah</label>
 				<div class="col-md-9">
 					<?php $pekerjaan_ortu = explode(",", $detail->ortu_pekerjaan); ?>
-					<input type="text" name="ortu_pekerjaan[0]" class="form-control" value="<?php echo $pekerjaan_ortu[0]  ?>" required="">
+						<input type="text" name="ortu_pekerjaan[0]" class="form-control" value="<?php echo $pekerjaan_ortu[0]  ?>">
 				</div>
 			</div>
 
@@ -615,7 +625,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Penghasilan Ayah</label>
 				<div class="col-md-9">
 				<?php $penghasilan = explode(",", $detail->ortu_penghasilan ); ?>
-				<select name="ortu_penghasilan[0]" class="form-control" required="">
+					<select name="ortu_penghasilan[0]" class="form-control">
 			        <option value="-">-Pilih-</option>
 			            <?php foreach($list_penghasilan as $list_penghasilan) {?>
 			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan[0] == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
@@ -628,38 +638,46 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Alamat Orang Tua</label>
 				<?php $ortu_alamat = explode("|", $detail->ortu_alamat ); ?>
 				<div class="col-md-9">
-					<textarea class="form-control" name="ortu_alamat[0]" required=""><?php echo $ortu_alamat[0]?></textarea>
+						<textarea class="form-control" name="ortu_alamat[0]"><?php echo $ortu_alamat[0]?></textarea>
 				</div>
 			</div>
 
 			</div>
 
 			<div class="col-md-6">
-			<div class="form-group">
-				<label class="col-md-3 control-label">Nama Ibu</label>
-				<div class="col-md-9">
-					<input type="text" name="ortu_nama[1]" class="form-control" value="<?php echo $ortu_nama[1] ?>" required="">
+				<div class="form-group">
+					<label class="col-md-3 control-label">Nama Ibu</label>
+					<div class="col-md-9">
+						<input type="text" name="ortu_nama[1]" class="form-control" value="<?php echo $ortu_nama[1] ?>" required="">
+					</div>
 				</div>
-			</div>
+
+				<div class="form-group">
+					<label class="col-md-3 control-label">NIK Ibu</label>
+					<div class="col-md-9">
+						<input type="text" inputmode="numeric" pattern="[0-9]{16}" name="ortu_nik[1]" class="form-control" value="<?php echo isset($ortu_nik[1]) ? $ortu_nik[1] : '' ?>" required="" minlength="16" maxlength="16">
+						<input type="hidden" name="ortu_nik[2]" value="<?php echo isset($ortu_nik[2]) ? $ortu_nik[2] : '' ?>">
+					</div>
+				</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Ibu</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_tempat_lahir[1]" class="form-control" value="<?php echo $ortu_tempat_lahir[1] ?>" required="">
+						<input type="text" name="ortu_tempat_lahir[1]" class="form-control" value="<?php echo $ortu_tempat_lahir[1] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tanggal Lahir Ibu</label>
 				<div class="col-md-9">
-					<input type="text" id="tanggal2"  name="ortu_tgl_lahir[1]" class="form-control" value="<?php echo $ortu_tgl_lahir[1] ?>" required="">
+						<input type="text" id="tanggal2"  name="ortu_tgl_lahir[1]" class="form-control" value="<?php echo $ortu_tgl_lahir[1] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Agama Ibu</label>
 				<div class="col-md-9">
-					<select name="ortu_agama[1]" class="form-control" required="">
+						<select name="ortu_agama[1]" class="form-control">
 						<option value="-">-Pilih-</option>
 						<option value="Islam" <?php if($agama_ortu[1]=="Islam"){echo "selected";} ?>>Islam</option>
 						<option value="Hindu" <?php if($agama_ortu[1]=="Hindu"){echo "selected";} ?>>Hindu</option>
@@ -674,7 +692,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pendidikan Terakhir Ibu</label>
 				<div class="col-md-9">
-					<select name="ortu_pendidikan[1]" class="form-control" required="">
+						<select name="ortu_pendidikan[1]" class="form-control">
 						<option value="-">-Pilih-</option>
 						<option value="S3" <?php if($pendidikan_ortu[1] == "S3"){echo "selected";} ?>>S-3</option>
 						<option value="S2" <?php if($pendidikan_ortu[1] == "S2"){echo "selected";} ?>>S-2</option>
@@ -696,21 +714,21 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">No. HP Ibu</label>
 				<div class="col-md-9">
-					<input type="number" name="ortu_hp[1]" class="form-control" value="<?php echo $hp_ortu[1] ?>" required="">
+						<input type="number" name="ortu_hp[1]" class="form-control" value="<?php echo $hp_ortu[1] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Ibu</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_pekerjaan[1]" class="form-control" value="<?php echo $pekerjaan_ortu[1]  ?>" required="">
+						<input type="text" name="ortu_pekerjaan[1]" class="form-control" value="<?php echo $pekerjaan_ortu[1]  ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Penghasilan Ibu</label>
 				<div class="col-md-9">
-				<select name="ortu_penghasilan[1]" class="form-control" required="">
+				<select name="ortu_penghasilan[1]" class="form-control">
 			        <option value="-">-Pilih-</option>
 			            <?php foreach($list_penghasilan1 as $list_penghasilan) {?>
 			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan[1] == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
@@ -727,28 +745,28 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Nama Wali</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_nama[2]" class="form-control" value="<?php echo $ortu_nama[2] ?>" required="">
+					<input type="text" name="ortu_nama[2]" class="form-control" value="<?php echo $ortu_nama[2] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Wali</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_tempat_lahir[2]" class="form-control" value="<?php echo $ortu_tempat_lahir[2] ?>" required="">
+					<input type="text" name="ortu_tempat_lahir[2]" class="form-control" value="<?php echo $ortu_tempat_lahir[2] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tanggal Lahir Wali</label>
 				<div class="col-md-9">
-					<input type="text" id="tanggal3" name="ortu_tgl_lahir[2]" class="form-control" value="<?php echo $ortu_tgl_lahir[2] ?>" required="">
+					<input type="text" id="tanggal3" name="ortu_tgl_lahir[2]" class="form-control" value="<?php echo $ortu_tgl_lahir[2] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Agama Wali</label>
 				<div class="col-md-9">
-					<select name="ortu_agama[2]" class="form-control" required="">
+						<select name="ortu_agama[2]" class="form-control">
 						<option value="-">-Pilih-</option>
 						<option value="Islam" <?php if($agama_ortu[2]=="Islam"){echo "selected";} ?>>Islam</option>
 						<option value="Hindu" <?php if($agama_ortu[2]=="Hindu"){echo "selected";} ?>>Hindu</option>
@@ -763,7 +781,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pendidikan Terakhir Wali</label>
 				<div class="col-md-9">
-					<select name="ortu_pendidikan[2]" class="form-control" required="">
+						<select name="ortu_pendidikan[2]" class="form-control">
 						<option value="-">-Pilih-</option>
 						<option value="S3" <?php if($pendidikan_ortu[2] == "S3"){echo "selected";} ?>>S-3</option>
 						<option value="S2" <?php if($pendidikan_ortu[2] == "S2"){echo "selected";} ?>>S-2</option>
@@ -785,21 +803,21 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">No. HP Wali</label>
 				<div class="col-md-9">
-					<input type="number" name="ortu_hp[2]" class="form-control" value="<?php echo $hp_ortu[2] ?>" required="">
+					<input type="number" name="ortu_hp[2]" class="form-control" value="<?php echo $hp_ortu[2] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Wali</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_pekerjaan[2]" class="form-control" value="<?php echo $pekerjaan_ortu[2]  ?>" required="">
+					<input type="text" name="ortu_pekerjaan[2]" class="form-control" value="<?php echo $pekerjaan_ortu[2]  ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Penghasilan Wali</label>
 				<div class="col-md-9">
-				<select name="ortu_penghasilan[2]" class="form-control" required="">
+				<select name="ortu_penghasilan[2]" class="form-control">
 			        <option value="-">-Pilih-</option>
 			            <?php foreach($list_penghasilan2 as $list_penghasilan) {?>
 			        	<option value="<?php echo $list_penghasilan->nama?>" <?php if($penghasilan[2] == $list_penghasilan->nama){echo "selected";} ?>><?php echo $list_penghasilan->nama?></option>
@@ -811,7 +829,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Alamat Wali</label>
 				<div class="col-md-9">
-					<textarea class="form-control" name="ortu_alamat[1]" required=""><?php echo $ortu_alamat[1]?></textarea>
+					<textarea class="form-control" name="ortu_alamat[1]"><?php echo $ortu_alamat[1]?></textarea>
 				</div>
 			</div>
 
@@ -843,6 +861,3 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 <?php echo form_close(); ?>
 </div>
 </section>
-
-
-

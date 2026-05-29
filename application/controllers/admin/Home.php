@@ -7,11 +7,37 @@ class Home extends CI_CONTROLLER
     parent::__construct();
     $this->load->model('admin_model');
     $this->load->model('usm_model');
+    $this->load->library('mahasiswa_profile');
     if ($this->input->post('hp') !== NULL) {
         $_POST['hp'] = $this->admin_model->normalize_nomor_wa($this->input->post('hp'));
     }
 	//proteksi halaman
     $this->simple_login->cek_login();
+    $this->cek_kelengkapan_profil_mahasiswa();
+    }
+
+    private function cek_kelengkapan_profil_mahasiswa()
+    {
+        if ($this->session->userdata('id_level') != '3') {
+            return;
+        }
+
+        $detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();
+        if (!$detail_pendaftaran || $this->mahasiswa_profile->is_complete($detail_pendaftaran)) {
+            return;
+        }
+
+        $method = $this->router->fetch_method();
+        $allowed = array('form_utama', 'form_lanjutan', 'isi_form');
+        if (in_array($method, $allowed)) {
+            return;
+        }
+
+        $this->session->set_flashdata(
+            'warning',
+            'Silakan lengkapi data berikut terlebih dahulu: '.implode(', ', $this->mahasiswa_profile->missing_labels($detail_pendaftaran)).'.'
+        );
+        redirect(base_url($this->mahasiswa_profile->completion_target($detail_pendaftaran)), 'refresh');
     }
 
     //Menu Dasbor
@@ -2696,12 +2722,17 @@ class Home extends CI_CONTROLLER
 
 	    $valid->set_rules('program','Jalur pendaftaran','required',
 	                  array( 'required' => '%s harus diisi'));
+        if (!$this->mahasiswa_profile->form_complete('utama', $detail_pendaftaran)) {
+            $this->mahasiswa_profile->apply_validation_rules($valid, 'utama', $detail_pendaftaran);
+        }
 
 	    if($valid->run()===FALSE){
 	      //end validasi
 
 	    $data = array( 'title'            => 'Halaman Form Utama',          
                        'detail'     	  => $detail_pendaftaran,
+                       'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
+                       'wajib_utama_belum_lengkap' => !$this->mahasiswa_profile->form_complete('utama', $detail_pendaftaran),
                        'list_jenis'		  => $list_jenis,
 	                       'prodi'		      => $prodi,
 	                       'prodi1'		      => $prodi1,
@@ -2733,7 +2764,9 @@ class Home extends CI_CONTROLLER
 		      	$prodi_2_baru != $detail_pendaftaran->jurusan_pilihan2
 		      );
 
-		      if($prodi_diubah && $sisa_ubah_prodi <= 0){
+              $wajib_utama_belum_lengkap = !$this->mahasiswa_profile->form_complete('utama', $detail_pendaftaran);
+
+		      if($prodi_diubah && $sisa_ubah_prodi <= 0 && !$wajib_utama_belum_lengkap){
 		        $this->session->set_flashdata('warning', 'Kuota perubahan pilihan program studi sudah habis. Mahasiswa hanya bisa mengubah pilihan 1 kali.');
 		        redirect(base_url('admin/home/form_utama'),'refresh');
 		      }
@@ -2794,7 +2827,9 @@ class Home extends CI_CONTROLLER
 		      	$data['jurusan_pilihan'] = $prodi_baru;
 		      	$data['jurusan_pilihan2'] = $prodi_2_baru;
 		      	$data['jenjang'] = $detail_prodi_baru->jenjang;
-		      	$data['kuota_ubah_prodi'] = $kuota_ubah_prodi + 1;
+                if (!$wajib_utama_belum_lengkap) {
+		      	    $data['kuota_ubah_prodi'] = $kuota_ubah_prodi + 1;
+                }
 		      }
 
 		      $this->admin_model->edit_pendaftaran($data);
@@ -2843,21 +2878,7 @@ class Home extends CI_CONTROLLER
         //validasi input
 	    $valid = $this->form_validation;
 
-	    $valid->set_rules('nama_lengkap','Nama Lengkap','required',
-	                  array( 'required' => '%s harus diisi'));
-
-
-	    if($detail_pendaftaran->jenis!='PD') { 
-	    $valid->set_rules('tahun_lulus','Tahun','required|min_length[4]|max_length[4]',
-					array('required'   => '%s lulus harus diisi',
-						  'min_length' => '%s minimal 4 digit',
-						  'max_length' => '%s maksimal 4 digit'));
-		}
-
-		$valid->set_rules('nik','NIK','required|min_length[16]|max_length[16]',
-					array('required'   => '%s harus diisi',
-						  'min_length' => '%s minimal 16 digit',
-						  'max_length' => '%s maksimal 16 digit'));
+        $this->mahasiswa_profile->apply_validation_rules($valid, 'lanjutan', $detail_pendaftaran);
 
 
 	    if($valid->run()===FALSE){
@@ -2865,6 +2886,7 @@ class Home extends CI_CONTROLLER
 
 	    $data = array( 'title'            => 'Halaman Form Lanjutan',          
                        'detail'     	  => $detail_pendaftaran,
+                       'required_missing_labels' => $this->mahasiswa_profile->missing_labels($detail_pendaftaran),
                        'list_penghasilan' => $list_penghasilan,
                        'list_penghasilan1'=> $list_penghasilan1,
                        'list_penghasilan2'=> $list_penghasilan2,
@@ -2875,9 +2897,10 @@ class Home extends CI_CONTROLLER
 
 	      $ortu_nama 		= implode(",", $this->input->post('ortu_nama'));
 	      $ortu_tempat_lahir 		= implode("|", $this->input->post('ortu_tempat_lahir'));
-	      $ortu_tgl_lahir 		= implode("|", $this->input->post('ortu_tgl_lahir'));
-	      $ortu_agama 		= implode(",", $this->input->post('ortu_agama'));
-	      $ortu_pendidikan 	= implode(",", $this->input->post('ortu_pendidikan'));
+		      $ortu_tgl_lahir 		= implode("|", $this->input->post('ortu_tgl_lahir'));
+		      $ortu_agama 		= implode(",", $this->input->post('ortu_agama'));
+		      $ortu_nik 		= implode(",", $this->input->post('ortu_nik'));
+		      $ortu_pendidikan 	= implode(",", $this->input->post('ortu_pendidikan'));
 	      $ortu_hp 			= implode(",", $this->input->post('ortu_hp'));
 	      $ortu_pekerjaan   = implode(",", $this->input->post('ortu_pekerjaan'));
 	      $ortu_penghasilan = implode(",", $this->input->post('ortu_penghasilan'));
@@ -2899,8 +2922,9 @@ class Home extends CI_CONTROLLER
 	                        'ortu_nama'   		=> $ortu_nama,
 	        				'ortu_tempat_lahir' => $ortu_tempat_lahir,
 	        				'ortu_tgl_lahir'   	=> $ortu_tgl_lahir,
-	                        'ortu_agama' 		=> $ortu_agama,
-	                        'ortu_pendidikan'	=> $ortu_pendidikan,
+		                        'ortu_agama' 		=> $ortu_agama,
+		                        'ortu_nik' 		=> $ortu_nik,
+		                        'ortu_pendidikan'	=> $ortu_pendidikan,
 	                        'ortu_hp'			=> $ortu_hp,
 	        				'ortu_pekerjaan'	=> $ortu_pekerjaan,
 	                        'ortu_penghasilan'  => $ortu_penghasilan,

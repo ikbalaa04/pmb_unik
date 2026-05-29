@@ -212,7 +212,10 @@
         
         <?php }elseif($this->session->userdata('id_level')=="3") { ?>
 
-          <?php $detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();?>
+          <?php
+          $detail_pendaftaran = $this->admin_model->detail_pendaftaran_mahasiswa();
+          $profil_wajib_lengkap = $detail_pendaftaran ? $this->mahasiswa_profile->is_complete($detail_pendaftaran) : TRUE;
+          ?>
 
            <li class="treeview">
           <a href="#">
@@ -229,6 +232,10 @@
             <?php } ?>
           </ul>
         </li>
+
+          <?php if(!$profil_wajib_lengkap) { ?>
+          <li class="header">LENGKAPI DATA WAJIB UNTUK MEMBUKA MENU LAIN</li>
+          <?php }else{ ?>
 
           <?php if($detail_pendaftaran->bayar !='0'){ ?>
 
@@ -277,6 +284,8 @@
           <li><a href="<?php echo base_url('admin/home/kontak')?>"><i class="fa fa-phone text-aqua"></i><span>Kontak Admin</span></a></li>
 
           <li><a href="<?php echo base_url('admin/home/ganti_password')?>"><i class="fa fa-key text-aqua"></i> <span>Ganti Password</span></a></li>
+
+          <?php } ?>
                   
          <?php } ?>
       

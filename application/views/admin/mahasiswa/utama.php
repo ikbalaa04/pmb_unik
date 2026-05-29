@@ -18,6 +18,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
 ?>
 
+<?php $this->load->view('admin/mahasiswa/required_alert'); ?>
 
 <div class="row">
 <?php echo form_open_multipart(base_url('admin/home/form_utama/'),'class="form-horizontal"'); ?>
@@ -95,12 +96,13 @@ if ($detail->fix == 1) {
 
 
 <div class="col-md-12"><center><h2><b>Profil Utama</b></h2></center></div>
+<div class="col-md-12"><p class="required-note">Field dengan tanda <span class="required-star">*</span> wajib diisi.</p></div>
 <div class="col-md-12"><hr></div>
 <div class="col-md-1"></div>
 <div class="col-md-9">
 
 <?php
-$boleh_ubah_prodi = isset($sisa_ubah_prodi) && $sisa_ubah_prodi > 0;
+$boleh_ubah_prodi = (isset($sisa_ubah_prodi) && $sisa_ubah_prodi > 0) || !empty($wajib_utama_belum_lengkap);
 $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
 ?>
 

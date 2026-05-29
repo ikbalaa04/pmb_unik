@@ -29,11 +29,40 @@
       img{
         padding-bottom: 8px;
       }
-      b{
-        font-size: 25px;
-      }
+	      b{
+	        font-size: 25px;
+	      }
+	      .form-table{
+	        width: 900px;
+	        border-collapse: collapse;
+	      }
+	      .section-title td{
+	        font-size: 18px;
+	        font-weight: bold;
+	        padding-top: 10px;
+	        padding-bottom: 5px;
+	      }
+	      .field-label{
+	        width: 145px;
+	        vertical-align: top;
+	        padding: 2px 4px;
+	      }
+	      .field-separator{
+	        width: 10px;
+	        vertical-align: top;
+	        padding: 2px 2px;
+	      }
+	      .field-value{
+	        width: 290px;
+	        vertical-align: top;
+	        padding: 2px 8px 2px 2px;
+	      }
+	      .field-value-full{
+	        vertical-align: top;
+	        padding: 2px 8px 2px 2px;
+	      }
 
-  </style>
+	  </style>
 </head>
 </heead>
 <BODY onLoad="javascript: window.print()">
@@ -49,8 +78,8 @@ $print = $_REQUEST['print']; include "$print";
 
 <center>
 <div class="box">
-   <table>
-      <thead>
+	    <table class="form-table">
+	      <thead>
         <tr>
           <th width="110"><img style="padding-top: 10px; margin-right: 10px" src="<?php echo base_url('assets/upload/logo/thumbs/'.$detail_institusi->logo)?>" class="img img-responsive img-thumbnail" width="125"></th>
           <th colspan="2" align="left"><b style="font-size: 25px"><?php echo strtoupper($detail_institusi->nama)?></b><br>
@@ -61,10 +90,10 @@ $print = $_REQUEST['print']; include "$print";
       </thead>
     </table>
 
-    <table>
+    <table class="form-table">
       <thead>
 
-         <tr><th width="900" colspan="4" style="font-size: 18px;"><center>FORMULIR ISIAN DATA CALON MAHASISWA <br> Tahun Akademik <?php echo $gelombang->angkatan?><br><br></center></th>
+         <tr><th width="900" colspan="6" style="font-size: 18px;"><center>FORMULIR ISIAN DATA CALON MAHASISWA <br> Tahun Akademik <?php echo $gelombang->angkatan?><br><br></center></th>
         </tr>
 
       </thead>
@@ -77,314 +106,111 @@ $print = $_REQUEST['print']; include "$print";
             $pilihan2  = $this->admin_model->pilihan2($kode2);
             ?>
 
-      <tr>
-        <td colspan="4" style="font-size: 18px;"><strong>I. DATA PRIBADI</strong></td>
-      </tr> 
+	      <?php
+	        $jk = '-';
+	        if($detail_pendaftaran->jk == 'L'){
+	          $jk = 'Laki-laki';
+	        }elseif($detail_pendaftaran->jk == 'P'){
+	          $jk = 'Perempuan';
+	        }
 
-      <tr>
-        <td></td>
-        <td width="150" style="text-align: top-left">Nama Lengkap </td>
-        <td width="10">:</td>
-        <td><?php echo $detail_pendaftaran->nama_lengkap?></td>
-      </tr> 
+	        $jenis_pendaftaran = '-';
+	        if($detail_pendaftaran->jenis == 'MB') {
+	          $jenis_pendaftaran = 'Mahasiswa Baru';
+	        }elseif($detail_pendaftaran->jenis == 'PD') {
+	          $jenis_pendaftaran = 'Mahasiswa Pindahan';
+	        }
 
-      <tr>
-        <td></td>
-        <td>TTL </td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->tempat_lahir?>, <?php echo date('d-m-Y',strtotime($detail_pendaftaran->tanggal_lahir))?></td>
-      </tr> 
+	        $asal_sekolah = $detail_pendaftaran->sekolah_nama == '' ? $detail_pendaftaran->kampus_asal : $detail_pendaftaran->sekolah_nama;
+	        $jurusan_sekolah = $detail_pendaftaran->jenjang == 'Profesi' ? $detail_pendaftaran->kampus_asal : $detail_pendaftaran->sekolah_jurusan;
+	        $tanggal_lahir = '-';
+	        if ($detail_pendaftaran->tanggal_lahir != '' && $detail_pendaftaran->tanggal_lahir != '0000-00-00') {
+	          $tanggal_lahir = date('d-m-Y',strtotime($detail_pendaftaran->tanggal_lahir));
+	        }
+	        $ttl = trim($detail_pendaftaran->tempat_lahir) == '' && $tanggal_lahir == '-' ? '-' : trim($detail_pendaftaran->tempat_lahir).', '.$tanggal_lahir;
+	        $pilihan_1 = $detail_pendaftaran->jurusan_pilihan == '0' || !$pilihan1 ? '-' : $pilihan1->jenjang.' '.$pilihan1->nama;
+	        $pilihan_2 = $detail_pendaftaran->jurusan_pilihan2 == '0' || !$pilihan2 ? '-' : $pilihan2->jenjang.' '.$pilihan2->nama;
+	        $gelombang_id = $detail_pendaftaran->gelombang;
+	        $detail_gelombang = $this->admin_model->popup_gelombang($gelombang_id);
+	        $nama_gelombang = $detail_gelombang ? $detail_gelombang->nama : '-';
+	        $jalur = $detail_pendaftaran->program == '' ? '-' : $kartu_program->nama;
 
-      <tr>
-        <td></td>
-        <td>Agama </td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->agama?></td>
-      </tr> 
+	        $nama_ortu = explode(",", $detail_pendaftaran->ortu_nama);
+	        $pekerjaan_ortu = explode(",", $detail_pendaftaran->ortu_pekerjaan);
+	        $penghasilan = explode(",", $detail_pendaftaran->ortu_penghasilan);
+	        $hp_ortu = explode(",", $detail_pendaftaran->ortu_hp);
+	        $ortu_alamat = explode("|", $detail_pendaftaran->ortu_alamat);
 
-       <tr>
-        <td></td>
-        <td>Email </td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->email?></td>
-      </tr> 
+	        $val = function($value) {
+	          return trim($value) == '' ? '-' : $value;
+	        };
+	        $arr = function($array, $index) use ($val) {
+	          return isset($array[$index]) ? $val($array[$index]) : '-';
+	        };
+	        $section = function($title) {
+	          echo '<tr class="section-title"><td colspan="6">'.$title.'</td></tr>';
+	        };
+	        $grid = function($rows) {
+	          foreach ($rows as $row) {
+	            echo '<tr>';
+	            echo '<td class="field-label">'.$row[0][0].'</td><td class="field-separator">:</td><td class="field-value">'.$row[0][1].'</td>';
+	            if (isset($row[1])) {
+	              echo '<td class="field-label">'.$row[1][0].'</td><td class="field-separator">:</td><td class="field-value">'.$row[1][1].'</td>';
+	            } else {
+	              echo '<td class="field-label"></td><td class="field-separator"></td><td class="field-value"></td>';
+	            }
+	            echo '</tr>';
+	          }
+	        };
+	      ?>
 
-       <tr>
-        <td></td>
-        <td>No. Telp </td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->hp?></td>
-      </tr> 
+	      <?php $section('I. DATA PRIBADI'); ?>
+	      <?php $grid(array(
+	        array(array('Nama Lengkap', $val($detail_pendaftaran->nama_lengkap)), array('TTL', $val($ttl))),
+	        array(array('Agama', $val($detail_pendaftaran->agama)), array('Jenis Kelamin', $jk)),
+	        array(array('Email', $val($detail_pendaftaran->email)), array('No. Telp', $val($detail_pendaftaran->hp))),
+	        array(array('Alamat', $val($detail_pendaftaran->alamat)))
+	      )); ?>
 
-      <tr>
-        <td></td>
-        <td>Jenis Kelamin </td>
-        <td>:</td>
-        <td><?php if($detail_pendaftaran->jk == 'L'){ ?>
-          Laki-laki
-        <?php }elseif($detail_pendaftaran->jk == 'P'){ ?>
-          Perempuan
-        <?php }else{ ?>
-          -
-        <?php } ?>
-        </td>
-      </tr>
+	      <?php $section('II. DATA SEKOLAH'); ?>
+	      <?php if($detail_pendaftaran->jenis == 'MB') { ?>
+	        <?php
+	          $sekolah_rows = array(
+	            array(array('NISN', $val($detail_pendaftaran->nisn)), array('Asal Sekolah', $val($asal_sekolah))),
+	            array(array('Jurusan', $val($jurusan_sekolah)), array('Tahun Lulus', $val($detail_pendaftaran->tahun_lulus)))
+	          );
+	          if($detail_pendaftaran->jenjang == 'Profesi') {
+	            $sekolah_rows[] = array(array('IPK', $val($detail_pendaftaran->ipk)));
+	          }
+	          $grid($sekolah_rows);
+	        ?>
+	      <?php }elseif($detail_pendaftaran->jenis == 'PD') { ?>
+	        <?php $grid(array(
+	          array(array('Asal Kampus', $val($detail_pendaftaran->pindahan_namapt)), array('Asal Fakultas', $val($detail_pendaftaran->pindahan_fakultas))),
+	          array(array('Asal Program Studi', $val($detail_pendaftaran->pindahan_prodi)), array('NIM', $val($detail_pendaftaran->pindahan_nim)))
+	        )); ?>
+	      <?php } ?>
 
-      <tr>
-        <td></td>
-        <td>Alamat</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->alamat?></td>
-      </tr>
+	      <?php $section('III. DATA ORANG TUA / WALI'); ?>
+	      <?php $grid(array(
+	        array(array('Nama Ayah', $arr($nama_ortu, 0)), array('Nama Ibu', $arr($nama_ortu, 1))),
+	        array(array('Pekerjaan Ayah', $arr($pekerjaan_ortu, 0)), array('Pekerjaan Ibu', $arr($pekerjaan_ortu, 1))),
+	        array(array('Penghasilan Ayah', $arr($penghasilan, 0)), array('Penghasilan Ibu', $arr($penghasilan, 1))),
+	        array(array('No. Telp Ayah', $arr($hp_ortu, 0)), array('No. Telp Ibu', $arr($hp_ortu, 1))),
+	        array(array('Alamat Orang Tua', $arr($ortu_alamat, 0))),
+	        array(array('Nama Wali', $arr($nama_ortu, 2)), array('Pekerjaan Wali', $arr($pekerjaan_ortu, 2))),
+	        array(array('Penghasilan Wali', $arr($penghasilan, 2)), array('No. Telp Wali', $arr($hp_ortu, 2))),
+	        array(array('Alamat Wali', $arr($ortu_alamat, 1)))
+	      )); ?>
 
-      <tr>
-        <td colspan="4" style="font-size: 18px;"><strong>II. DATA SEKOLAH</strong></td>
-      </tr> 
+	      <tr><td colspan="6"><br><br><br><br><br><br></td></tr>
 
-      <?php if($detail_pendaftaran->jenis == 'MB') { ?>
-      <tr>
-        <td></td>
-        <td>NISN</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->nisn?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Asal Sekolah</td>
-        <td>:</td>
-        <?php if($detail_pendaftaran->sekolah_nama == '') { ?>
-        <td><?php echo $detail_pendaftaran->kampus_asal ?></td>
-        <?php }else{ ?>
-        <td><?php echo $detail_pendaftaran->sekolah_nama?></td>
-        <?php } ?>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Jurusan</td>
-        <td>:</td>
-        <?php if($detail_pendaftaran->jenjang == 'Profesi') { ?>
-        <td><?php echo $detail_pendaftaran->kampus_asal ?></td>
-        <?php }else{ ?>
-        <td><?php echo $detail_pendaftaran->sekolah_jurusan; ?></td>
-        <?php } ?>
-      </tr>
-
-      <?php if($detail_pendaftaran->jenjang == 'Profesi') { ?>
-      <tr>
-        <td></td>
-        <td>IPK</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->ipk ?></td>
-      </tr>
-      <?php } ?>
-
-      <tr>
-        <td></td>
-        <td>Tahun Lulus</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->tahun_lulus; ?></td>
-      </tr>
-
-      <?php }elseif($detail_pendaftaran->jenis == 'PD') { ?>
-
-      <tr>
-        <td></td>
-        <td>Asal Kampus</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->pindahan_namapt ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Asal Faultas</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->pindahan_fakultas ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Asal Program Studi</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->pindahan_prodi ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>NIM</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->pindahan_nim ?></td>
-      </tr>
-
-      <?php } ?>
-
-
-      <tr>
-        <td colspan="4" style="font-size: 18px;"><strong>III. DATA ORANG TUA / WALI</strong></td>
-      </tr> 
-
-       <?php $nama_ortu = explode(",", $detail_pendaftaran->ortu_nama ); ?>
-       <?php $pendidikan_ortu = explode(",", $detail_pendaftaran->ortu_pendidikan); ?>
-       <?php $pekerjaan_ortu = explode(",", $detail_pendaftaran->ortu_pekerjaan); ?>
-       <?php $penghasilan = explode(",", $detail_pendaftaran->ortu_penghasilan ); ?>
-       <?php $hp_ortu = explode(",", $detail_pendaftaran->ortu_hp); ?>
-       <?php $ortu_alamat = explode("|", $detail_pendaftaran->ortu_alamat ); ?>
-
-       <tr>
-        <td></td>
-        <td>Nama Ayah</td>
-        <td>:</td>
-        <td><?php echo $nama_ortu[0] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Pekerjaan Ayah</td>
-        <td>:</td>
-        <td><?php echo $pekerjaan_ortu[0] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Penghasilan Ayah</td>
-        <td>:</td>
-        <td><?php echo $penghasilan[0] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>No. Telp Ayah</td>
-        <td>:</td>
-        <td><?php echo $hp_ortu[0] ?></td>
-      </tr>
-
-
-      <tr>
-        <td></td>
-        <td>Nama Ibu</td>
-        <td>:</td>
-        <td><?php echo $nama_ortu[1] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Pekerjaan Ibu</td>
-        <td>:</td>
-        <td><?php echo $pekerjaan_ortu[1] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Penghasilan Ibu</td>
-        <td>:</td>
-        <td><?php echo $penghasilan[1] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>No. Telp Ibu</td>
-        <td>:</td>
-        <td><?php echo $hp_ortu[1] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Alamat Orang Tua</td>
-        <td>:</td>
-        <td><?php echo $ortu_alamat[0]?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Nama Wali</td>
-        <td>:</td>
-        <td><?php echo $nama_ortu[2] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Pekerjaan Wali</td>
-        <td>:</td>
-        <td><?php echo $pekerjaan_ortu[2] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Penghasilan Wali</td>
-        <td>:</td>
-        <td><?php echo $penghasilan[2] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>No. Telp Wali</td>
-        <td>:</td>
-        <td><?php echo $hp_ortu[2] ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Alamat Wali</td>
-        <td>:</td>
-        <td><?php echo $ortu_alamat[1]?></td>
-      </tr>
-
-      <tr><td colspan="4"><br><br><br><br><br><br><br><br><br><br><br></td></tr>
-
-      <tr>
-        <td colspan="4" style="font-size: 18px;"><strong>IV. DATA UTAMA CALON MAHASISWA</td>
-      </tr> 
-
-      <tr>
-        <td></td>
-        <td>Nomor Ujian</td>
-        <td>:</td>
-        <td><?php echo $detail_pendaftaran->noujian?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Gelombang</td>
-        <td>:</td>
-        <?php $gelombang = $detail_pendaftaran->gelombang?>
-        <?php $detail_gelombang     = $this->admin_model->popup_gelombang($gelombang)?>
-        <td><?php echo $detail_gelombang->nama ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Jenis Pendaftaran</td>
-        <td>:</td>
-        <?php if($detail_pendaftaran->jenis == 'MB') { ?>
-        <td>Mahasiswa Baru</td>
-        <?php }elseif($detail_pendaftaran->jenis == 'PD') { ?>
-        <td>Mahasiswa Pindahan</td>
-        <?php } ?>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Jalur Pendaftaran</td>
-        <td>:</td>
-        <td><?php if($detail_pendaftaran->program ==''){echo "-";}else{ echo $kartu_program->nama; } ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Pilihan 1</td>
-        <td>:</td>
-        <td><?php if($detail_pendaftaran->jurusan_pilihan =='0'){echo "-";}else{ ?>
-          <?php echo $pilihan1->jenjang;?> <?php echo $pilihan1->nama; } ?></td>
-      </tr>
-
-      <tr>
-        <td></td>
-        <td>Pilihan 2</td>
-        <td>:</td>
-        <td><?php if($detail_pendaftaran->jurusan_pilihan2 =='0'){echo "-";}else{ ?>
-          <?php echo $pilihan2->jenjang;?> <?php echo $pilihan2->nama; } ?></td>
-      </tr>
+	      <?php $section('IV. DATA UTAMA CALON MAHASISWA'); ?>
+	      <?php $grid(array(
+	        array(array('Nomor Ujian', $val($detail_pendaftaran->noujian)), array('Gelombang', $val($nama_gelombang))),
+	        array(array('Jenis Pendaftaran', $jenis_pendaftaran), array('Jalur Pendaftaran', $val($jalur))),
+	        array(array('Pilihan 1', $val($pilihan_1)), array('Pilihan 2', $val($pilihan_2)))
+	      )); ?>
 
       </tbody>
     </table>
@@ -473,9 +299,3 @@ $print = $_REQUEST['print']; include "$print";
     </table>
   </div>
 </center>
-
-    
-
-
-    
- 

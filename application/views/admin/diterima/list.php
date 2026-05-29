@@ -20,17 +20,18 @@ if (!empty($export_filter)) {
         <div class="col-lg-4">
             <?php $list_prodi_aktif = $this->admin_model->list_prodi_aktif();?>
             <label>Program Studi</label><br>
-            <select required="" name="prodi" class="form-control">
+            <select name="prodi" class="form-control">
             <option value="">-Pilih Prodi-</option>
             <?php foreach($list_prodi_aktif as $list_prodi_aktif) {?>
-            <option value="<?php echo $list_prodi_aktif->kode ?>" <?php if($this->input->post('prodi')==$list_prodi_aktif->kode){echo "selected";} ?>><?php echo $list_prodi_aktif->singkatan ?> - <?php echo $list_prodi_aktif->jenjang ?> <?php echo $list_prodi_aktif->nama ?> </option>
+            <?php $value_prodi = $list_prodi_aktif->jenjang.'|'.$list_prodi_aktif->kode; ?>
+            <option value="<?php echo $value_prodi ?>" <?php if($filter_prodi==$value_prodi || $filter_prodi==$list_prodi_aktif->kode){echo "selected";} ?>><?php echo $list_prodi_aktif->singkatan ?> - <?php echo $list_prodi_aktif->jenjang ?> <?php echo $list_prodi_aktif->nama ?> </option>
                 <?php } ?>
             </select>
         </div>
 
         <div class="col-lg-3">
             <label>Gelombang</label><br>
-            <select required="" class="form-control" name="gelombang">
+            <select class="form-control" name="gelombang">
                 <option value="">-Pilih Gelombang-</option>
                 <?php foreach($pilih_gelombang as $pilih_gelombang) { ?>
                 <option value="<?php echo $pilih_gelombang->id ?>" <?php if($this->input->post('gelombang')==$pilih_gelombang->id){echo "selected";} ?>><?php echo $pilih_gelombang->singkatan ?> - <?php echo $pilih_gelombang->nama ?> - <?php echo $pilih_gelombang->tahun ?></option>
@@ -43,17 +44,18 @@ if (!empty($export_filter)) {
         <div class="col-lg-4">
             <?php $list_prodi_aktif = $this->admin_model->fakultas_prodi();?>
             <label>Program Studi</label><br>
-            <select required="" name="prodi" class="form-control">
+            <select name="prodi" class="form-control">
             <option value="">-Pilih Prodi-</option>
             <?php foreach($list_prodi_aktif as $list_prodi_aktif) {?>
-            <option value="<?php echo $list_prodi_aktif->kode ?>" <?php if($this->input->post('prodi')==$list_prodi_aktif->kode){echo "selected";} ?>><?php echo $list_prodi_aktif->singkatan ?> - <?php echo $list_prodi_aktif->jenjang ?> <?php echo $list_prodi_aktif->nama ?> </option>
+            <?php $value_prodi = $list_prodi_aktif->jenjang.'|'.$list_prodi_aktif->kode; ?>
+            <option value="<?php echo $value_prodi ?>" <?php if($filter_prodi==$value_prodi || $filter_prodi==$list_prodi_aktif->kode){echo "selected";} ?>><?php echo $list_prodi_aktif->singkatan ?> - <?php echo $list_prodi_aktif->jenjang ?> <?php echo $list_prodi_aktif->nama ?> </option>
                 <?php } ?>
             </select>
         </div>
 
         <div class="col-lg-3">
             <label>Gelombang</label><br>
-            <select required="" class="form-control" name="gelombang">
+            <select class="form-control" name="gelombang">
                 <option value="">-Pilih Gelombang-</option>
                 <?php foreach($pilih_gelombang as $pilih_gelombang) { ?>
                 <option value="<?php echo $pilih_gelombang->id ?>" <?php if($this->input->post('gelombang')==$pilih_gelombang->id){echo "selected";} ?>><?php echo $pilih_gelombang->nama ?> - <?php echo $pilih_gelombang->tahun ?></option>

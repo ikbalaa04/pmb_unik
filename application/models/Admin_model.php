@@ -1619,6 +1619,7 @@ class Admin_model extends CI_Model {
 
 			$gelombang = $this->input->post('gelombang');
 			$prodi = $this->input->post('prodi');
+			$prodi_filter = $this->parse_prodi_filter($prodi);
 					
 			$this->db->select('pendaftaran.*, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG');
 			$this->db->from('pendaftaran');
@@ -1829,9 +1830,10 @@ class Admin_model extends CI_Model {
 		return $query->result();
     }
 
-	    public function export_pendaftaran_status($id_thn_akademik, $status, $filters = array())
-		{
-			$this->db->select('pendaftaran.*, prodi.nama as nama_prodi, prodi.jenjang as jenjang_prodi, prodi2.nama as nama_prodi2, prodi2.jenjang as jenjang_prodi2, program.nama as nama_program, fakultas.singkatan, fakultas.nama_fakultas, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
+		    public function export_pendaftaran_status($id_thn_akademik, $status, $filters = array())
+			{
+				$prodi_filter = isset($filters['prodi']) ? $this->parse_prodi_filter($filters['prodi']) : array('jenjang' => '', 'kode' => '');
+				$this->db->select('pendaftaran.*, prodi.nama as nama_prodi, prodi.jenjang as jenjang_prodi, prodi2.nama as nama_prodi2, prodi2.jenjang as jenjang_prodi2, program.nama as nama_program, fakultas.singkatan, fakultas.nama_fakultas, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 			$this->db->from('pendaftaran');
 			$this->db->where('pendaftaran.tahun_akademik', $id_thn_akademik);
 
@@ -1860,24 +1862,36 @@ class Admin_model extends CI_Model {
 			if (isset($filters['gelombang']) && $filters['gelombang'] !== '') {
 				$this->db->where('pendaftaran.gelombang', $filters['gelombang']);
 			}
-			if (isset($filters['prodi']) && $filters['prodi'] !== '') {
-				$this->db->where('pendaftaran.jurusan_pilihan', $filters['prodi']);
-			}
+				if ($prodi_filter['kode'] !== '') {
+					$this->db->where('pendaftaran.jurusan_pilihan', $prodi_filter['kode']);
+					if ($prodi_filter['jenjang'] !== '') {
+						$this->db->where('pendaftaran.jenjang', $prodi_filter['jenjang']);
+					}
+				}
 			if ($status == 'registrasi_ulang' && isset($filters['registrasi_ulang']) && $filters['registrasi_ulang'] !== '') {
 				$this->db->where('pendaftaran.registrasi_ulang', $filters['registrasi_ulang']);
 			}
 
-			$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan', 'left');
+				$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan AND prodi.jenjang = pendaftaran.jenjang', 'left');
 			$this->db->join('prodi prodi2', 'prodi2.kode = pendaftaran.jurusan_pilihan2', 'left');
 		$this->db->join('program', 'program.id = pendaftaran.program', 'left');
 		$this->db->join('fakultas', 'fakultas.id = pendaftaran.fakultas', 'left');
 		$this->db->join('gelombang', 'gelombang.id = pendaftaran.gelombang', 'left');
 		$this->db->order_by('pendaftaran.tanggal_update', 'desc');
-		$query = $this->db->get();
-		return $query->result();
-    }
+			$query = $this->db->get();
+			return $query->result();
+	    }
 
-    public function export_siakad_mahasiswa_lulus($id_thn_akademik = 'all', $prodi = 'all')
+			private function parse_prodi_filter($prodi)
+			{
+				$result = array('jenjang' => '', 'kode' => $prodi);
+				if (strpos($prodi, '|') !== FALSE) {
+					list($result['jenjang'], $result['kode']) = explode('|', $prodi, 2);
+				}
+				return $result;
+			}
+
+	    public function export_siakad_mahasiswa_lulus($id_thn_akademik = 'all', $prodi = 'all')
 	{
 		$prodi_kode = $prodi;
 		$prodi_jenjang = '';
@@ -1992,15 +2006,22 @@ class Admin_model extends CI_Model {
 				
 		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.registrasi_ulang, pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.ipk, pendaftaran.fix, pendaftaran.nim, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
-		$this->db->where(array('tahun_akademik'								=> $id_thn_akademik,
-							   'pendaftaran.gelombang' 						=> $gelombang,
-							   'pendaftaran.jurusan_pilihan'				=> $prodi,
-							   'bayar' 										=> '1',
-							   // 'pendaftaran.tahun'			=> $tahun,
-							   'approve' 									=> '1',
-							   'fix'										=> '1',
-							   'non_fix'									=> '0'));
-		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan','left');
+			$this->db->where(array('tahun_akademik'								=> $id_thn_akademik,
+								   'bayar' 										=> '1',
+								   // 'pendaftaran.tahun'			=> $tahun,
+								   'approve' 									=> '1',
+								   'fix'										=> '1',
+								   'non_fix'									=> '0'));
+			if ($gelombang != '') {
+				$this->db->where('pendaftaran.gelombang', $gelombang);
+			}
+			if ($prodi_filter['kode'] != '') {
+				$this->db->where('pendaftaran.jurusan_pilihan', $prodi_filter['kode']);
+				if ($prodi_filter['jenjang'] != '') {
+					$this->db->where('pendaftaran.jenjang', $prodi_filter['jenjang']);
+				}
+			}
+			$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan AND prodi.jenjang = pendaftaran.jenjang','left');
 		$this->db->join('program', 'program.id = pendaftaran.program','left');
 		$this->db->join('fakultas', 'fakultas.id = pendaftaran.fakultas','left');
 		$this->db->join('gelombang', 'gelombang.id  = pendaftaran.gelombang','left');

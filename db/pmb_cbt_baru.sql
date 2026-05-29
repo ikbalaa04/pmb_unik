@@ -961,6 +961,7 @@ CREATE TABLE `pendaftaran` (
   `alamat` text NOT NULL,
   `hp` char(50) NOT NULL,
   `ortu_nama` char(100) NOT NULL DEFAULT '-,-,-',
+  `ortu_nik` char(60) NOT NULL DEFAULT '-,-,-',
   `ortu_tempat_lahir` char(50) NOT NULL DEFAULT '-|-|-',
   `ortu_tgl_lahir` char(50) NOT NULL DEFAULT '-|-|-',
   `ortu_agama` char(50) NOT NULL DEFAULT '-,-,-',
