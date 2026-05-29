@@ -119,7 +119,14 @@ if (!empty($chart_referensi_pendaftar_tahunan)) {
             );
         }
 
-        $chart_referensi_data_by_year[$year_id]['labels'][] = $row->sumber_referensi;
+        $label_referensi = $row->sumber_referensi;
+        if ($label_referensi == 'Sosial Media') {
+            $label_referensi = 'Sosmed';
+        } elseif (strpos($label_referensi, 'Staf / Karyawan') !== FALSE) {
+            $label_referensi = 'Staff';
+        }
+
+        $chart_referensi_data_by_year[$year_id]['labels'][] = $label_referensi;
         $chart_referensi_data_by_year[$year_id]['data'][] = (int) $row->jumlah_pendaftar;
     }
 }
