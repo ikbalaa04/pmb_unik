@@ -70,6 +70,47 @@ class Home extends CI_CONTROLLER
         return $value !== '' && $value !== '-' && $value !== '0';
     }
 
+    private function is_empty_form_value($value)
+    {
+        $value = trim((string) $value);
+        return $value === '' || $value === '-' || $value === '0';
+    }
+
+    private function post_or_existing($name, $existing, $capital_each_word = FALSE)
+    {
+        $value = $this->input->post($name);
+        if ($this->is_empty_form_value($value)) {
+            return $existing;
+        }
+
+        return $capital_each_word ? $this->capital_each_word($value) : $value;
+    }
+
+    private function post_array_or_existing($name, $existing, $separator, $capital_each_word = FALSE)
+    {
+        $posted = $this->input->post($name);
+        $existing_parts = explode($separator, (string) $existing);
+
+        if (!is_array($posted)) {
+            return $existing;
+        }
+
+        $result = array();
+        $length = max(count($posted), count($existing_parts));
+        for ($index = 0; $index < $length; $index++) {
+            $value = isset($posted[$index]) ? $posted[$index] : '';
+            if ($this->is_empty_form_value($value)) {
+                $value = isset($existing_parts[$index]) ? $existing_parts[$index] : '';
+            } elseif ($capital_each_word) {
+                $value = $this->capital_each_word($value);
+            }
+
+            $result[] = $value;
+        }
+
+        return implode($separator, $result);
+    }
+
     //Menu Dasbor
     public function dasbor(){
         $detail_pendaftaran 		= $this->admin_model->detail_pendaftaran_mahasiswa();
@@ -2925,30 +2966,30 @@ class Home extends CI_CONTROLLER
 	    }else{
 	      $i=$this->input;
 
-	      $ortu_nama 		= implode(",", $this->capital_each_word_array($this->input->post('ortu_nama')));
-	      $ortu_tempat_lahir 		= implode("|", $this->capital_each_word_array($this->input->post('ortu_tempat_lahir')));
-		      $ortu_tgl_lahir 		= implode("|", $this->input->post('ortu_tgl_lahir'));
-		      $ortu_agama 		= implode(",", $this->input->post('ortu_agama'));
-		      $ortu_nik 		= implode(",", $this->input->post('ortu_nik'));
-		      $ortu_pendidikan 	= implode(",", $this->input->post('ortu_pendidikan'));
-	      $ortu_hp 			= implode(",", $this->input->post('ortu_hp'));
-	      $ortu_pekerjaan   = implode(",", $this->capital_each_word_array($this->input->post('ortu_pekerjaan')));
-	      $ortu_penghasilan = implode(",", $this->input->post('ortu_penghasilan'));
-	      $ortu_alamat = implode("|", $this->input->post('ortu_alamat'));
+	      $ortu_nama = $this->post_array_or_existing('ortu_nama', $detail_pendaftaran->ortu_nama, ',', TRUE);
+	      $ortu_tempat_lahir = $this->post_array_or_existing('ortu_tempat_lahir', $detail_pendaftaran->ortu_tempat_lahir, '|', TRUE);
+	      $ortu_tgl_lahir = $this->post_array_or_existing('ortu_tgl_lahir', $detail_pendaftaran->ortu_tgl_lahir, '|');
+	      $ortu_agama = $this->post_array_or_existing('ortu_agama', $detail_pendaftaran->ortu_agama, ',');
+	      $ortu_nik = $this->post_array_or_existing('ortu_nik', isset($detail_pendaftaran->ortu_nik) ? $detail_pendaftaran->ortu_nik : ',,', ',');
+	      $ortu_pendidikan = $this->post_array_or_existing('ortu_pendidikan', $detail_pendaftaran->ortu_pendidikan, ',');
+	      $ortu_hp = $this->post_array_or_existing('ortu_hp', $detail_pendaftaran->ortu_hp, ',');
+	      $ortu_pekerjaan = $this->post_array_or_existing('ortu_pekerjaan', $detail_pendaftaran->ortu_pekerjaan, ',', TRUE);
+	      $ortu_penghasilan = $this->post_array_or_existing('ortu_penghasilan', $detail_pendaftaran->ortu_penghasilan, ',');
+	      $ortu_alamat = $this->post_array_or_existing('ortu_alamat', $detail_pendaftaran->ortu_alamat, '|');
 
 	      $data = array(    'id'                => $detail_pendaftaran->id,
-	      					'nisn'				=> $i->post('nisn'),
-	      					'ipk'				=> $i->post('ipk'),
-	      					'email'				=> $i->post('email'),
-	                        'nama_lengkap'      => $this->capital_each_word($i->post('nama_lengkap')),
-	                        'tempat_lahir'      => $this->capital_each_word($i->post('tempat_lahir')),
-	        				'tanggal_lahir'     => $i->post('tanggal_lahir'),
-	                        'jk'     			=> $i->post('jk'),
-	                        'agama'     		=> $i->post('agama'),
-	                        'kewarganegaraan'	=> $i->post('kewarganegaraan'),
-	        				'status_sipil'      => $i->post('status_sipil'),
-	                        'alamat'      		=> $i->post('alamat'),
-	                        'hp'      			=> $i->post('hp'),
+	      					'nisn'				=> $this->post_or_existing('nisn', $detail_pendaftaran->nisn),
+	      					'ipk'				=> $this->post_or_existing('ipk', $detail_pendaftaran->ipk),
+	      					'email'				=> $this->post_or_existing('email', $detail_pendaftaran->email),
+	                        'nama_lengkap'      => $this->post_or_existing('nama_lengkap', $detail_pendaftaran->nama_lengkap, TRUE),
+	                        'tempat_lahir'      => $this->post_or_existing('tempat_lahir', $detail_pendaftaran->tempat_lahir, TRUE),
+	        				'tanggal_lahir'     => $this->post_or_existing('tanggal_lahir', $detail_pendaftaran->tanggal_lahir),
+	                        'jk'     			=> $this->post_or_existing('jk', $detail_pendaftaran->jk),
+	                        'agama'     		=> $this->post_or_existing('agama', $detail_pendaftaran->agama),
+	                        'kewarganegaraan'	=> $this->post_or_existing('kewarganegaraan', $detail_pendaftaran->kewarganegaraan),
+	        				'status_sipil'      => $this->post_or_existing('status_sipil', $detail_pendaftaran->status_sipil),
+	                        'alamat'      		=> $this->post_or_existing('alamat', $detail_pendaftaran->alamat),
+	                        'hp'      			=> $this->post_or_existing('hp', $detail_pendaftaran->hp),
 	                        'ortu_nama'   		=> $ortu_nama,
 	        				'ortu_tempat_lahir' => $ortu_tempat_lahir,
 	        				'ortu_tgl_lahir'   	=> $ortu_tgl_lahir,
@@ -2959,24 +3000,23 @@ class Home extends CI_CONTROLLER
 	        				'ortu_pekerjaan'	=> $ortu_pekerjaan,
 	                        'ortu_penghasilan'  => $ortu_penghasilan,
 	                        'ortu_alamat'      	=> $ortu_alamat,
-	                        'sekolah_nama'      => $i->post('sekolah_nama'),
-	                        'sekolah_jurusan'   => $i->post('sekolah_jurusan'),
-	                        'sekolah_nama_jurusan'=> $i->post('sekolah_nama_jurusan'),
-	                        'tahun_lulus'		=> $i->post('tahun_lulus')	,
-	        				'no_ijazah'      	=> $i->post('no_ijazah'),
-	                        'nilai_ijazah'      => $i->post('nilai_ijazah'),
-	        				'pindahan_namapt'   => $this->capital_each_word($i->post('pindahan_namapt')),
-	                        'pindahan_fakultas' => $this->capital_each_word($i->post('pindahan_fakultas')),
-	                        'pindahan_prodi'	=> $this->capital_each_word($i->post('pindahan_prodi')),
-	                        'pindahan_nim'		=> $i->post('pindahan_nim')	,
-	        				'pindahan_jumlahsks'=> $i->post('pindahan_jumlahsks'),
-	                        'nilai_ijazah'      => $i->post('nilai_ijazah'),
-	                        'nik'				=> $i->post('nik'),
-	                        'kecamatan'=> $this->capital_each_word($i->post('kecamatan')),
-	                        'kota'      => $this->capital_each_word($i->post('kota')),
-	                        'prov'				=> $this->capital_each_word($i->post('prov')),
-	                        'npsn'      => $i->post('npsn'),
-	                        'baju'				=> $i->post('baju')
+	                        'sekolah_nama'      => $this->post_or_existing('sekolah_nama', $detail_pendaftaran->sekolah_nama),
+	                        'sekolah_jurusan'   => $this->post_or_existing('sekolah_jurusan', $detail_pendaftaran->sekolah_jurusan),
+	                        'sekolah_nama_jurusan'=> $this->post_or_existing('sekolah_nama_jurusan', $detail_pendaftaran->sekolah_nama_jurusan),
+	                        'tahun_lulus'		=> $this->post_or_existing('tahun_lulus', $detail_pendaftaran->tahun_lulus),
+	        				'no_ijazah'      	=> $this->post_or_existing('no_ijazah', $detail_pendaftaran->no_ijazah),
+	                        'nilai_ijazah'      => $this->post_or_existing('nilai_ijazah', $detail_pendaftaran->nilai_ijazah),
+	        				'pindahan_namapt'   => $this->post_or_existing('pindahan_namapt', $detail_pendaftaran->pindahan_namapt, TRUE),
+	                        'pindahan_fakultas' => $this->post_or_existing('pindahan_fakultas', $detail_pendaftaran->pindahan_fakultas, TRUE),
+	                        'pindahan_prodi'	=> $this->post_or_existing('pindahan_prodi', $detail_pendaftaran->pindahan_prodi, TRUE),
+	                        'pindahan_nim'		=> $this->post_or_existing('pindahan_nim', $detail_pendaftaran->pindahan_nim),
+	        				'pindahan_jumlahsks'=> $this->post_or_existing('pindahan_jumlahsks', $detail_pendaftaran->pindahan_jumlahsks),
+	                        'nik'				=> $this->post_or_existing('nik', $detail_pendaftaran->nik),
+	                        'kecamatan'=> $this->post_or_existing('kecamatan', $detail_pendaftaran->kecamatan, TRUE),
+	                        'kota'      => $this->post_or_existing('kota', $detail_pendaftaran->kota, TRUE),
+	                        'prov'				=> $this->post_or_existing('prov', $detail_pendaftaran->prov, TRUE),
+	                        'npsn'      => $this->post_or_existing('npsn', $detail_pendaftaran->npsn),
+	                        'baju'				=> $this->post_or_existing('baju', $detail_pendaftaran->baju)
 	      );
 	      $this->admin_model->edit_pendaftaran($data);
 

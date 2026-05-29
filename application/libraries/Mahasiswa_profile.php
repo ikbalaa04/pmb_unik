@@ -110,6 +110,17 @@ class Mahasiswa_profile
 			return $jenis !== 'PD';
 		}
 
+		$jenjang = isset($mahasiswa->jenjang) ? $mahasiswa->jenjang : '';
+		$is_pasca = in_array($jenjang, array('S2', 'S3', 'Profesi'));
+
+		if ($field['condition'] === 'mb_non_pasca') {
+			return $jenis === 'MB' && !$is_pasca;
+		}
+
+		if ($field['condition'] === 'mb_pasca') {
+			return $jenis === 'MB' && $is_pasca;
+		}
+
 		return TRUE;
 	}
 

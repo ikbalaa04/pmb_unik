@@ -351,6 +351,10 @@ function showUser(str) {
       this.value = capitalEachWord(this.value);
     });
 
+    $('.title-case-input').each(function(){
+      this.value = capitalEachWord(this.value);
+    });
+
     $(document).on('submit', '.form-horizontal', function(e){
       var validateAll = $(this).hasClass('form-lanjutan-wizard');
       if (!validateRequired(this, !validateAll)) {
