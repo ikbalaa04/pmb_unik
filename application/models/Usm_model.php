@@ -142,10 +142,10 @@ class Usm_model extends CI_Model {
 						  gelombang.nama as G,
 						  gelombang.fakultas,
 						  gelombang.tahun,
-						  fakultas.singkatan,
-						  fakultas.nama_fakultas,
-						  gedung.nama as GD,
-						  jenisusm.nama as J, prodi.jenjang, prodi.nama as nama_prodi, program.nama as nama_program');
+							  fakultas.singkatan,
+							  fakultas.nama_fakultas,
+							  gedung.nama as GD,
+							  jenisusm.nama as J, prodi.jenjang as jenjang_prodi, prodi.nama as nama_prodi, program.nama as nama_program');
 		$this->db->from('jadwalusm');
 		$this->db->join('gelombang','gelombang.id=jadwalusm.gelombang','left');
 		$this->db->join('fakultas','fakultas.id=gelombang.fakultas','left');

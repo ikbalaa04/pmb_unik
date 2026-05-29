@@ -16,9 +16,20 @@ echo form_open(base_url('admin/usm/edit_jadwal_usm/'.$detail_jadwal_usm->id),'cl
             <option value="<?php echo $list_program_aktif->id ?>" <?php if($detail_jadwal_usm->program== $list_program_aktif->id ){echo "selected";}?>><?php echo $list_program_aktif->nama ?></option>
           <?php } ?>
         </select>
-  </div>
-  </div>
+	  </div>
+	  </div>
 
+	<div class="form-group">
+	  <label class="col-md-2 control-label">Jenjang</label>
+	  <div class="col-md-5">
+	          <select class="form-control" name="jenjang" required="">
+	          <option value="">-Pilih-</option>
+	          <?php foreach($jenjang as $list_jenjang){ ?>
+	            <option value="<?php echo $list_jenjang->nama ?>" <?php if(isset($detail_jadwal_usm->jenjang) && $detail_jadwal_usm->jenjang== $list_jenjang->nama ){echo "selected";}?>><?php echo $list_jenjang->nama ?></option>
+	          <?php } ?>
+	        </select>
+	  </div>
+	  </div>
 
 <div class="form-group">
 <label class="col-md-2 control-label">Tempat</label>

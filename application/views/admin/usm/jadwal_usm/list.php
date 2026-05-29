@@ -12,9 +12,10 @@
     <thead>
         <tr>
             <th><input type="checkbox" id="check-all"></th>
-            <th>No</th>
-            <th>Program</th>
-            <th>Jenis Ujian</th>
+	            <th>No</th>
+	            <th>Program</th>
+	            <th>Jenjang</th>
+	            <th>Jenis Ujian</th>
             <th>Tanggal Ujian</th>
             <th>Tempat</th>
             <th>Aksi</th>
@@ -25,8 +26,9 @@
         <tr> 
             <td><input type="checkbox" class="check-item" name="id[]" value="<?php echo $jadwal_usm->id ?>" /></td>
             <td width="20"><?php echo $i ?></td>
-             <td><?php echo $jadwal_usm->nama_program ?></td>
-            <td><?php echo $jadwal_usm->J ?></td>
+	             <td><?php echo $jadwal_usm->nama_program ?></td>
+	             <td><?php echo $jadwal_usm->jenjang != '' ? $jadwal_usm->jenjang : 'Semua Jenjang' ?></td>
+	            <td><?php echo $jadwal_usm->J ?></td>
             <td> <?php $tanggal = date('D',strtotime($jadwal_usm->tgl_ujian));
                 $hariList = array('Sun' => 'Minggu',
                                   'Mon' => 'Senin',

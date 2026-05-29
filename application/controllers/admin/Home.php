@@ -2175,10 +2175,12 @@ class Home extends CI_CONTROLLER
     public function cetak_kartu_admin($id){
 
       $detail_pendaftaran 			= $this->admin_model->detail_pendaftaran($id);
-      $gelombang 					= $detail_pendaftaran->gelombang;
-      $prodi 					= $detail_pendaftaran->jurusan_pilihan;
-      $program 					= $detail_pendaftaran->program;
-      $jadwal_usm                 	= $this->admin_model->jadwal_usm_admin($program);
+	      $gelombang 					= $detail_pendaftaran->gelombang;
+	      $prodi 					= $detail_pendaftaran->jurusan_pilihan;
+	      $program 					= $detail_pendaftaran->program;
+	      $detail_prodi 				= $this->admin_model->detail_prodi_kode($prodi);
+	      $jenjang_jadwal 				= !empty($detail_prodi->jenjang) ? $detail_prodi->jenjang : $detail_pendaftaran->jenjang;
+	      $jadwal_usm                 	= $this->admin_model->jadwal_usm_admin($program, $jenjang_jadwal);
       $detail_institusi             = $this->admin_model->detail_institusi();
       $fakultas 					= $detail_pendaftaran->fakultas;
       $detail_fakultas				= $this->admin_model->kartu_fakultas($fakultas);
@@ -3356,9 +3358,12 @@ class Home extends CI_CONTROLLER
 
 	public function cetak_kartu_ujian(){
 
-      $detail_pendaftaran 			= $this->admin_model->detail_pendaftaran_mahasiswa();
-      $program 						= $detail_pendaftaran->program;
-      $jadwal_usm                 	= $this->admin_model->jadwal_usm_admin($program);
+	      $detail_pendaftaran 			= $this->admin_model->detail_pendaftaran_mahasiswa();
+	      $program 						= $detail_pendaftaran->program;
+	      $prodi 						= $detail_pendaftaran->jurusan_pilihan;
+	      $detail_prodi 				= $this->admin_model->detail_prodi_kode($prodi);
+	      $jenjang_jadwal 				= !empty($detail_prodi->jenjang) ? $detail_prodi->jenjang : $detail_pendaftaran->jenjang;
+	      $jadwal_usm                 	= $this->admin_model->jadwal_usm_admin($program, $jenjang_jadwal);
       $detail_institusi             = $this->admin_model->detail_institusi();
       $fakultas 					= $detail_pendaftaran->fakultas;
       $detail_fakultas				= $this->admin_model->kartu_fakultas($fakultas);
@@ -3850,10 +3855,12 @@ class Home extends CI_CONTROLLER
 	public function jadwal_usm(){
 
       $detail_pendaftaran 			= $this->admin_model->detail_pendaftaran_mahasiswa();
-      $gelombang 					= $detail_pendaftaran->gelombang;
-      $prodi 					= $detail_pendaftaran->jurusan_pilihan;
-      $program 					= $detail_pendaftaran->program;
-      $jadwal_usm                 	= $this->admin_model->jadwal_usm_admin($program);
+	      $gelombang 					= $detail_pendaftaran->gelombang;
+	      $prodi 					= $detail_pendaftaran->jurusan_pilihan;
+	      $program 					= $detail_pendaftaran->program;
+	      $detail_prodi 				= $this->admin_model->detail_prodi_kode($prodi);
+	      $jenjang_jadwal 				= !empty($detail_prodi->jenjang) ? $detail_prodi->jenjang : $detail_pendaftaran->jenjang;
+	      $jadwal_usm                 	= $this->admin_model->jadwal_usm_admin($program, $jenjang_jadwal);
         
 
         $data = array( 'title'          	=> 'Halaman Jadwal Tes',
@@ -4659,14 +4666,16 @@ class Home extends CI_CONTROLLER
     $detail_pendaftaran 	= $this->admin_model->detail_pendaftaran($id);
     $gelombang 				= $detail_pendaftaran->gelombang;
     $id 					= $detail_pendaftaran->gelombang;
-    $prodi 					= $detail_pendaftaran->jurusan_pilihan;
-    $id_gelombang 			= $this->admin_model->detail_gelombang($id);
-    $jadwal_usm             = $this->admin_model->jadwal_usm_admin($gelombang,$prodi);
+	    $prodi 					= $detail_pendaftaran->jurusan_pilihan;
+	    $id_gelombang 			= $this->admin_model->detail_gelombang($id);
+	    $program 				= $detail_pendaftaran->program;
+	    $detail_prodi 			= $this->admin_model->detail_prodi_kode($prodi);
+	    $jenjang_jadwal 		= !empty($detail_prodi->jenjang) ? $detail_prodi->jenjang : $detail_pendaftaran->jenjang;
+	    $jadwal_usm             = $this->admin_model->jadwal_usm_admin($program, $jenjang_jadwal);
     $detail_institusi       = $this->admin_model->detail_institusi();
     $fakultas 				= $detail_pendaftaran->fakultas;
     $detail_fakultas		= $this->admin_model->kartu_fakultas($fakultas);
-    $program 				= $detail_pendaftaran->program;
-    $kartu_program			= $this->admin_model->kartu_program($program);
+	    $kartu_program			= $this->admin_model->kartu_program($program);
       
 
         $data = array('title'                     => 'Cetak Formulir',

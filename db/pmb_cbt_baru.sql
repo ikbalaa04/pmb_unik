@@ -657,6 +657,7 @@ CREATE TABLE `jadwalusm` (
   `id` int(11) NOT NULL,
   `gelombang` int(11) DEFAULT NULL,
   `prodi` int(11) DEFAULT NULL,
+  `jenjang` varchar(20) DEFAULT NULL,
   `ruang` int(11) DEFAULT NULL,
   `jenis_ujin` char(11) DEFAULT NULL,
   `tgl_ujian` date DEFAULT NULL,
@@ -670,11 +671,11 @@ CREATE TABLE `jadwalusm` (
 -- Dumping data for table `jadwalusm`
 --
 
-INSERT INTO `jadwalusm` (`id`, `gelombang`, `prodi`, `ruang`, `jenis_ujin`, `tgl_ujian`, `jam_mulai`, `jam_selesai`, `created_at`, `program`) VALUES
-(1, NULL, NULL, 2, '8', '2023-03-04', '09:00:00', 'Selesai', '2023-02-01 14:28:53', 23),
-(2, NULL, NULL, 1, '7', '2023-02-04', '11:00:00', 'Selesai', '2023-02-01 14:29:34', 23),
-(3, NULL, NULL, 1, '7', '2023-03-04', '11:00:00', 'Selesai', '2023-02-01 14:29:53', 19),
-(4, NULL, NULL, 1, '7', '2023-03-04', '11:00:00', 'Selesai', '2023-02-01 14:30:20', 22);
+INSERT INTO `jadwalusm` (`id`, `gelombang`, `prodi`, `jenjang`, `ruang`, `jenis_ujin`, `tgl_ujian`, `jam_mulai`, `jam_selesai`, `created_at`, `program`) VALUES
+(1, NULL, NULL, NULL, 2, '8', '2023-03-04', '09:00:00', 'Selesai', '2023-02-01 14:28:53', 23),
+(2, NULL, NULL, NULL, 1, '7', '2023-02-04', '11:00:00', 'Selesai', '2023-02-01 14:29:34', 23),
+(3, NULL, NULL, NULL, 1, '7', '2023-03-04', '11:00:00', 'Selesai', '2023-02-01 14:29:53', 19),
+(4, NULL, NULL, NULL, 1, '7', '2023-03-04', '11:00:00', 'Selesai', '2023-02-01 14:30:20', 22);
 
 -- --------------------------------------------------------
 

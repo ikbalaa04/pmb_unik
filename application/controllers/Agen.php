@@ -1970,14 +1970,16 @@ class Agen extends CI_Controller
     public function cetak_kartu($id)
   {
     $this->simple_login_agen->cek_login();
-    $detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-    $gelombang          = $detail_pendaftaran->gelombang;
-    $jadwal_usm         = $this->admin_model->jadwal_usm_admin($gelombang);
-    $detail_institusi   = $this->admin_model->detail_institusi();
-    $fakultas           = $detail_pendaftaran->fakultas;
-    $detail_fakultas    = $this->admin_model->kartu_fakultas($fakultas);
-    $program            = $detail_pendaftaran->program;
-    $kartu_program      = $this->admin_model->kartu_program($program);
+	    $detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
+	    $program            = $detail_pendaftaran->program;
+	    $prodi              = $detail_pendaftaran->jurusan_pilihan;
+	    $detail_prodi       = $this->admin_model->detail_prodi_kode($prodi);
+	    $jenjang_jadwal     = !empty($detail_prodi->jenjang) ? $detail_prodi->jenjang : $detail_pendaftaran->jenjang;
+	    $jadwal_usm         = $this->admin_model->jadwal_usm_admin($program, $jenjang_jadwal);
+	    $detail_institusi   = $this->admin_model->detail_institusi();
+	    $fakultas           = $detail_pendaftaran->fakultas;
+	    $detail_fakultas    = $this->admin_model->kartu_fakultas($fakultas);
+	    $kartu_program      = $this->admin_model->kartu_program($program);
 
 
     $data = array('title'            => 'Halaman Cetak Kartu',

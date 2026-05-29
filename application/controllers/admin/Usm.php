@@ -276,8 +276,9 @@ class Usm extends CI_CONTROLLER
       $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
       $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
 
-      $gedung       = $this->usm_model->gedung();
-      $jenis       = $this->usm_model->jenis_usm();
+	      $gedung       = $this->usm_model->gedung();
+	      $jenis       = $this->usm_model->jenis_usm();
+	      $jenjang     = $this->admin_model->list_jenjang_aktif();
 
       if ($this->session->userdata('id_level')=='1') {
           $gelombang   = $this->admin_model->pilih_gelombang($id_thn_akademik);
@@ -286,26 +287,30 @@ class Usm extends CI_CONTROLLER
           $gelombang   = $this->admin_model->pilih_gelombang_fakultas($id_thn_akademik);
       }
 
-      $valid = $this->form_validation;
+	      $valid = $this->form_validation;
 
-       $valid->set_rules( 'program','Program','required',
-                    array( 'required' => '%s harus dipilih'));
+	       $valid->set_rules( 'program','Program','required',
+	                    array( 'required' => '%s harus dipilih'));
+	       $valid->set_rules( 'jenjang','Jenjang','required',
+	                    array( 'required' => '%s harus dipilih'));
 
       if($valid->run()===FALSE){
       //end validasi
-       $data = array('title'      		=> 'Halaman Tambah Jadwal USM',
-      			       	 'gelombang'     	=> $gelombang,
-      			       	 'gedung'     		=> $gedung,
-      			       	 'jenis'     		  => $jenis,
-                     'isi'         		=> 'admin/usm/jadwal_usm/tambah');
+	       $data = array('title'      	=> 'Halaman Tambah Jadwal USM',
+	                     'gelombang'  	=> $gelombang,
+	                     'gedung'     	=> $gedung,
+	                     'jenis'      	=> $jenis,
+	                     'jenjang'    	=> $jenjang,
+	                     'isi'        	=> 'admin/usm/jadwal_usm/tambah');
         $this->load->view('admin/layout/wrapper', $data, FALSE);
       
       }else{
 
         $i=$this->input;
-        $data = array(  'gelombang'             => $i->post('gelombang'),
-                        'prodi'                 => $i->post('prodi'),
-                        'ruang'              		=> $i->post('gedung'),
+	        $data = array(  'gelombang'             => $i->post('gelombang'),
+	                        'prodi'                 => $i->post('prodi'),
+	                        'jenjang'               => $i->post('jenjang'),
+	                        'ruang'              		=> $i->post('gedung'),
         				        'jenis_ujin'            => $i->post('jenis_ujin'),
         				        'tgl_ujian'             => $i->post('tgl_ujian'),
                         'jam_mulai'             => $i->post('jam_mulai'),
@@ -331,31 +336,36 @@ class Usm extends CI_CONTROLLER
           $gelombang   = $this->admin_model->pilih_gelombang_fakultas($id_thn_akademik);
       }
 
-    $gedung     = $this->usm_model->gedung();
-    $jenis     = $this->usm_model->jenis_usm();
+	    $gedung     = $this->usm_model->gedung();
+	    $jenis     = $this->usm_model->jenis_usm();
+	    $jenjang   = $this->admin_model->list_jenjang_aktif();
 
     //validasi input
     $valid = $this->form_validation;
 
-    $valid->set_rules( 'program','Program','required',
-                    array( 'required' => '%s harus dipilih'));
+	    $valid->set_rules( 'program','Program','required',
+	                    array( 'required' => '%s harus dipilih'));
+	    $valid->set_rules( 'jenjang','Jenjang','required',
+	                    array( 'required' => '%s harus dipilih'));
 
     if($valid->run()===FALSE){
       //end validasi
 
-    $data = array(  'title'               => 'Halaman Edit Jadwal USM',
-                    'detail_jadwal_usm'   => $detail_jadwal_usm, 
-                    'gelombang'     		  => $gelombang,
-			       	      'gedung'     			    => $gedung,
-			       	      'jenis'     			    => $jenis,
-                    'isi'                 => 'admin/usm/jadwal_usm/edit');
+	    $data = array(  'title'               => 'Halaman Edit Jadwal USM',
+	                    'detail_jadwal_usm'   => $detail_jadwal_usm,
+	                    'gelombang'           => $gelombang,
+	                    'gedung'              => $gedung,
+	                    'jenis'               => $jenis,
+	                    'jenjang'             => $jenjang,
+	                    'isi'                 => 'admin/usm/jadwal_usm/edit');
     $this->load->view('admin/layout/wrapper', $data, FALSE);
     }else{
       $i=$this->input;
-      $data = array(    'id'                		=> $id,
-                        'gelombang'             => $i->post('gelombang'),
-                        'prodi'                 => $i->post('prodi'),
-                        'ruang'              		=> $i->post('gedung'),
+	      $data = array(    'id'                		=> $id,
+	                        'gelombang'             => $i->post('gelombang'),
+	                        'prodi'                 => $i->post('prodi'),
+	                        'jenjang'               => $i->post('jenjang'),
+	                        'ruang'              		=> $i->post('gedung'),
                 				'jenis_ujin'            => $i->post('jenis_ujin'),
                 				'tgl_ujian'             => $i->post('tgl_ujian'),
                         'jam_mulai'             => $i->post('jam_mulai'),

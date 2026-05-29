@@ -1430,9 +1430,9 @@ class Admin_model extends CI_Model {
 		return $query->result();
     }
 
-    public function jadwal_usm_admin($program)
+	    public function jadwal_usm_admin($program, $jenjang = NULL)
 
-	{
+		{
 
 		$i=$this->input;
 
@@ -1440,9 +1440,16 @@ class Admin_model extends CI_Model {
 						  gelombang.nama as G,
 						  gedung.nama as GD,
 						  jenisusm.nama as J');
-		$this->db->from('jadwalusm');
-		$this->db->where(array('jadwalusm.program' 						=> $program));
-		$this->db->join('gelombang','gelombang.id=jadwalusm.gelombang','left');
+			$this->db->from('jadwalusm');
+			$this->db->where(array('jadwalusm.program' 						=> $program));
+			if ($jenjang !== NULL && $jenjang !== '') {
+				$this->db->group_start();
+				$this->db->where('jadwalusm.jenjang', $jenjang);
+				$this->db->or_where('jadwalusm.jenjang', '');
+				$this->db->or_where('jadwalusm.jenjang IS NULL', NULL, FALSE);
+				$this->db->group_end();
+			}
+			$this->db->join('gelombang','gelombang.id=jadwalusm.gelombang','left');
 		$this->db->join('gedung','gedung.id=jadwalusm.ruang','left');
 		$this->db->join('jenisusm','jenisusm.id=jadwalusm.jenis_ujin','left');
 		$this->db->order_by('jadwalusm.tgl_ujian','asc');
