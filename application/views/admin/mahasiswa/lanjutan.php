@@ -27,8 +27,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
  <div class="col-md-12">
       <div class="nav-tabs-custom">
         <ul class="form-step-indicator">
-          <li class="active" data-step="diri">1. Data Diri</li>
-          <li data-step="ortu">2. Data Orang Tua / Wali</li>
+          <li data-step="utama">1. Data Utama</li>
+          <li class="active" data-step="diri">2. Data Diri</li>
+          <li data-step="ortu">3. Orang Tua / Wali</li>
         </ul>
         <div class="tab-content">
           <div class="active tab-pane" id="activity">
@@ -54,9 +55,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Jurusan</label>
 				<div class="col-md-9">
 					<?php if($detail->sekolah_nama!=''){?>
-					<input style="text-transform: capitalize;" required=""  type="text" name="sekolah_jurusan" class="form-control" value="<?php echo $detail->sekolah_jurusan ?>">
+					<input required=""  type="text" name="sekolah_jurusan" class="form-control" value="<?php echo $detail->sekolah_jurusan ?>">
 					<?php }else{?>
-					<input style="text-transform: capitalize;" type="text" name="sekolah_jurusan" required="" class="form-control"  value="<?php echo $this->input->post('sekolah_jurusan') ?>">
+					<input type="text" name="sekolah_jurusan" required="" class="form-control"  value="<?php echo $this->input->post('sekolah_jurusan') ?>">
 					<?php }?>
 				</div>
 			</div>
@@ -112,9 +113,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Jurusan</label>
 				<div class="col-md-9">
 					<?php if($detail->sekolah_jurusan!=''){?>
-					<input style="text-transform: capitalize;" required=""  type="text" name="sekolah_jurusan" class="form-control" value="<?php echo $detail->sekolah_jurusan ?>">
+					<input required=""  type="text" name="sekolah_jurusan" class="form-control" value="<?php echo $detail->sekolah_jurusan ?>">
 					<?php }else{?>
-					<input style="text-transform: capitalize;" type="text" name="sekolah_jurusan" required="" class="form-control"  value="<?php echo $this->input->post('sekolah_jurusan') ?>">
+					<input type="text" name="sekolah_jurusan" required="" class="form-control"  value="<?php echo $this->input->post('sekolah_jurusan') ?>">
 					<?php }?>
 				</div>
 			</div>
@@ -177,9 +178,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Kampus</label>
 				<div class="col-md-9">
 					<?php if($detail->pindahan_namapt!=''){?>
-					<input type="text" name="pindahan_namapt" required=""  class="form-control"  value="<?php echo $detail->pindahan_namapt ?>">
+					<input type="text" name="pindahan_namapt" required=""  class="form-control title-case-input"  value="<?php echo $detail->pindahan_namapt ?>">
 					<?php }else{?>
-					<input type="text" name="pindahan_namapt" required="" class="form-control"  value="<?php echo $this->input->post('pindahan_namapt') ?>">
+					<input type="text" name="pindahan_namapt" required="" class="form-control title-case-input"  value="<?php echo $this->input->post('pindahan_namapt') ?>">
 					<?php }?>
 					
 				</div>
@@ -189,9 +190,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Fakultas <small>(Jika tidak ada isi dengan '-')</small></label>
 				<div class="col-md-9">
 					<?php if($detail->pindahan_fakultas!=''){?>
-					<input type="text" name="pindahan_fakultas" class="form-control"  value="<?php echo $detail->pindahan_fakultas ?>">
+					<input type="text" name="pindahan_fakultas" class="form-control title-case-input"  value="<?php echo $detail->pindahan_fakultas ?>">
 					<?php }else{?>
-					<input type="text" name="pindahan_fakultas" class="form-control"  value="<?php echo $this->input->post('pindahan_fakultas') ?>">
+					<input type="text" name="pindahan_fakultas" class="form-control title-case-input"  value="<?php echo $this->input->post('pindahan_fakultas') ?>">
 					<?php }?>
 					
 				</div>
@@ -202,9 +203,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Program Studi</label>
 				<div class="col-md-9">
 					<?php if($detail->pindahan_prodi!=''){?>
-					<input type="text" name="pindahan_prodi" required=""  class="form-control"  value="<?php echo $detail->pindahan_prodi ?>">
+					<input type="text" name="pindahan_prodi" required=""  class="form-control title-case-input"  value="<?php echo $detail->pindahan_prodi ?>">
 					<?php }else{?>
-					<input type="text" name="pindahan_prodi" required="" class="form-control"  value="<?php echo $this->input->post('pindahan_prodi') ?>">
+					<input type="text" name="pindahan_prodi" required="" class="form-control title-case-input"  value="<?php echo $this->input->post('pindahan_prodi') ?>">
 					<?php }?>
 					
 				</div>
@@ -255,9 +256,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Kampus</label>
 				<div class="col-md-9">
 					<?php if($detail->pindahan_namapt!=''){?>
-					<input type="text" name="pindahan_namapt" required=""  class="form-control"  value="<?php echo $detail->pindahan_namapt ?>">
+					<input type="text" name="pindahan_namapt" required=""  class="form-control title-case-input"  value="<?php echo $detail->pindahan_namapt ?>">
 					<?php }else{?>
-					<input type="text" name="pindahan_namapt" required="" class="form-control"  value="<?php echo $this->input->post('pindahan_namapt') ?>">
+					<input type="text" name="pindahan_namapt" required="" class="form-control title-case-input"  value="<?php echo $this->input->post('pindahan_namapt') ?>">
 					<?php }?>
 					
 				</div>
@@ -267,9 +268,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Fakultas <small>(Jika tidak ada isi dengan '-')</small></label>
 				<div class="col-md-9">
 					<?php if($detail->pindahan_fakultas!=''){?>
-					<input type="text" name="pindahan_fakultas" class="form-control"  value="<?php echo $detail->pindahan_fakultas ?>">
+					<input type="text" name="pindahan_fakultas" class="form-control title-case-input"  value="<?php echo $detail->pindahan_fakultas ?>">
 					<?php }else{?>
-					<input type="text" name="pindahan_fakultas" class="form-control"  value="<?php echo $this->input->post('pindahan_fakultas') ?>">
+					<input type="text" name="pindahan_fakultas" class="form-control title-case-input"  value="<?php echo $this->input->post('pindahan_fakultas') ?>">
 					<?php }?>
 					
 				</div>
@@ -280,9 +281,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Asal Program Studi</label>
 				<div class="col-md-9">
 					<?php if($detail->pindahan_prodi!=''){?>
-					<input type="text" name="pindahan_prodi" required=""  class="form-control"  value="<?php echo $detail->pindahan_prodi ?>">
+					<input type="text" name="pindahan_prodi" required=""  class="form-control title-case-input"  value="<?php echo $detail->pindahan_prodi ?>">
 					<?php }else{?>
-					<input type="text" name="pindahan_prodi" required="" class="form-control"  value="<?php echo $this->input->post('pindahan_prodi') ?>">
+					<input type="text" name="pindahan_prodi" required="" class="form-control title-case-input"  value="<?php echo $this->input->post('pindahan_prodi') ?>">
 					<?php }?>
 					
 				</div>
@@ -365,9 +366,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Nama Lengkap</label>
 				<div class="col-md-9">
 					<?php if($detail->nama_lengkap==''){?>
-						<input type="text" name="nama_lengkap" required="" class="form-control" value="<?php echo set_value('nama_lengkap') ?>" >
+						<input type="text" name="nama_lengkap" required="" class="form-control title-case-input" value="<?php echo set_value('nama_lengkap') ?>" >
 						<?php }else{?>
-						<input type="text" name="nama_lengkap" required="" class="form-control"  value="<?php echo $detail->nama_lengkap ?>">
+						<input type="text" name="nama_lengkap" required="" class="form-control title-case-input"  value="<?php echo $detail->nama_lengkap ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -376,9 +377,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Tempat Lahir</label>
 				<div class="col-md-9">
 					<?php if($detail->tempat_lahir==''){?>
-					<input type="text" name="tempat_lahir" required="" class="form-control" value="<?php echo set_value('tempat_lahir') ?>" >
+					<input type="text" name="tempat_lahir" required="" class="form-control title-case-input" value="<?php echo set_value('tempat_lahir') ?>" >
 					<?php }else{?>
-					<input type="text" name="tempat_lahir" required=""  class="form-control"  value="<?php echo $detail->tempat_lahir ?>">
+					<input type="text" name="tempat_lahir" required=""  class="form-control title-case-input"  value="<?php echo $detail->tempat_lahir ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -486,9 +487,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Kecamatan</label>
 				<div class="col-md-9">
 					<?php if($detail->kecamatan==''){?>
-					<input type="text" name="kecamatan" required="" class="form-control" value="<?php echo set_value('kecamatan') ?>" >
+					<input type="text" name="kecamatan" required="" class="form-control title-case-input" value="<?php echo set_value('kecamatan') ?>" >
 					<?php }else{?>
-						<input type="text" name="kecamatan" required="" class="form-control"  value="<?php echo $detail->kecamatan ?>">
+						<input type="text" name="kecamatan" required="" class="form-control title-case-input"  value="<?php echo $detail->kecamatan ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -497,9 +498,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Kabupaten/Kota</label>
 				<div class="col-md-9">
 					<?php if($detail->kota==''){?>
-					<input type="text" name="kota" required="" class="form-control" value="<?php echo set_value('kota') ?>" >
+					<input type="text" name="kota" required="" class="form-control title-case-input" value="<?php echo set_value('kota') ?>" >
 					<?php }else{?>
-						<input type="text" name="kota" required="" class="form-control"  value="<?php echo $detail->kota ?>">
+						<input type="text" name="kota" required="" class="form-control title-case-input"  value="<?php echo $detail->kota ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -508,9 +509,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Provinsi</label>
 				<div class="col-md-9">
 					<?php if($detail->prov==''){?>
-					<input type="text" name="prov" required="" class="form-control" value="<?php echo set_value('prov') ?>" >
+					<input type="text" name="prov" required="" class="form-control title-case-input" value="<?php echo set_value('prov') ?>" >
 					<?php }else{?>
-						<input type="text" name="prov" required="" class="form-control"  value="<?php echo $detail->prov ?>">
+						<input type="text" name="prov" required="" class="form-control title-case-input"  value="<?php echo $detail->prov ?>">
 					<?php } ?>
 				</div>
 			</div>
@@ -538,7 +539,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 					<label class="col-md-3 control-label">Nama Ayah</label>
 					<div class="col-md-9">
 						<?php $ortu_nama = explode(",", $detail->ortu_nama ); ?>
-						<input type="text" name="ortu_nama[0]" class="form-control" value="<?php echo $ortu_nama[0] ?>" required="">
+						<input type="text" name="ortu_nama[0]" class="form-control title-case-input" value="<?php echo $ortu_nama[0] ?>" required="">
 					</div>
 				</div>
 
@@ -554,7 +555,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Tempat Lahir Ayah</label>
 				<div class="col-md-9">
 					<?php $ortu_tempat_lahir = explode("|", $detail->ortu_tempat_lahir ); ?>
-					<input type="text" name="ortu_tempat_lahir[0]" class="form-control" value="<?php echo $ortu_tempat_lahir[0] ?>">
+					<input type="text" name="ortu_tempat_lahir[0]" class="form-control title-case-input" value="<?php echo $ortu_tempat_lahir[0] ?>">
 				</div>
 			</div>
 
@@ -617,7 +618,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<label class="col-md-3 control-label">Pekerjaan Ayah</label>
 				<div class="col-md-9">
 					<?php $pekerjaan_ortu = explode(",", $detail->ortu_pekerjaan); ?>
-						<input type="text" name="ortu_pekerjaan[0]" class="form-control" value="<?php echo $pekerjaan_ortu[0]  ?>">
+						<input type="text" name="ortu_pekerjaan[0]" class="form-control title-case-input" value="<?php echo $pekerjaan_ortu[0]  ?>">
 				</div>
 			</div>
 
@@ -648,7 +649,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 				<div class="form-group">
 					<label class="col-md-3 control-label">Nama Ibu</label>
 					<div class="col-md-9">
-						<input type="text" name="ortu_nama[1]" class="form-control" value="<?php echo $ortu_nama[1] ?>" required="">
+						<input type="text" name="ortu_nama[1]" class="form-control title-case-input" value="<?php echo $ortu_nama[1] ?>" required="">
 					</div>
 				</div>
 
@@ -663,7 +664,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Ibu</label>
 				<div class="col-md-9">
-						<input type="text" name="ortu_tempat_lahir[1]" class="form-control" value="<?php echo $ortu_tempat_lahir[1] ?>">
+						<input type="text" name="ortu_tempat_lahir[1]" class="form-control title-case-input" value="<?php echo $ortu_tempat_lahir[1] ?>">
 				</div>
 			</div>
 
@@ -721,7 +722,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Ibu</label>
 				<div class="col-md-9">
-						<input type="text" name="ortu_pekerjaan[1]" class="form-control" value="<?php echo $pekerjaan_ortu[1]  ?>">
+						<input type="text" name="ortu_pekerjaan[1]" class="form-control title-case-input" value="<?php echo $pekerjaan_ortu[1]  ?>">
 				</div>
 			</div>
 
@@ -745,14 +746,14 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Nama Wali</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_nama[2]" class="form-control" value="<?php echo $ortu_nama[2] ?>">
+					<input type="text" name="ortu_nama[2]" class="form-control title-case-input" value="<?php echo $ortu_nama[2] ?>">
 				</div>
 			</div>
 
 			<div class="form-group">
 				<label class="col-md-3 control-label">Tempat Lahir Wali</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_tempat_lahir[2]" class="form-control" value="<?php echo $ortu_tempat_lahir[2] ?>">
+					<input type="text" name="ortu_tempat_lahir[2]" class="form-control title-case-input" value="<?php echo $ortu_tempat_lahir[2] ?>">
 				</div>
 			</div>
 
@@ -810,7 +811,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 			<div class="form-group">
 				<label class="col-md-3 control-label">Pekerjaan Wali</label>
 				<div class="col-md-9">
-					<input type="text" name="ortu_pekerjaan[2]" class="form-control" value="<?php echo $pekerjaan_ortu[2]  ?>">
+					<input type="text" name="ortu_pekerjaan[2]" class="form-control title-case-input" value="<?php echo $pekerjaan_ortu[2]  ?>">
 				</div>
 			</div>
 
@@ -851,6 +852,7 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 	<div class="col-md-12"><hr>
 	<div class="form-group">
 		<div class="col-md-12" style="text-align: right;">
+			<a href="<?php echo base_url('admin/home/form_utama') ?>" class="btn btn-default btn-back-utama"><i class="fa fa-arrow-left"></i> Kembali ke Data Utama</a>
 			<button class="btn btn-default btn-prev-step" type="button" style="display:none"><i class="fa fa-arrow-left"></i> Kembali ke Data Diri</button>
 			<button class="btn btn-primary btn-next-step" type="button"><i class="fa fa-arrow-right"></i> Lanjutkan ke Data Orang Tua / Wali</button>
 			<button class="btn btn-success btn-submit-step" name="submit" type="submit" style="display:none"><i class="fa fa-save"></i> Simpan Data</button>

@@ -40,6 +40,30 @@ class Home extends CI_CONTROLLER
         redirect(base_url($this->mahasiswa_profile->completion_target($detail_pendaftaran)), 'refresh');
     }
 
+    private function capital_each_word($value)
+    {
+        $value = trim((string) $value);
+        if ($value === '') {
+            return $value;
+        }
+
+        if (function_exists('mb_convert_case')) {
+            return mb_convert_case(mb_strtolower($value, 'UTF-8'), MB_CASE_TITLE, 'UTF-8');
+        }
+
+        return ucwords(strtolower($value));
+    }
+
+    private function capital_each_word_array($values)
+    {
+        $result = array();
+        foreach ((array) $values as $value) {
+            $result[] = $this->capital_each_word($value);
+        }
+
+        return $result;
+    }
+
     //Menu Dasbor
     public function dasbor(){
         $detail_pendaftaran 		= $this->admin_model->detail_pendaftaran_mahasiswa();
@@ -2895,14 +2919,14 @@ class Home extends CI_CONTROLLER
 	    }else{
 	      $i=$this->input;
 
-	      $ortu_nama 		= implode(",", $this->input->post('ortu_nama'));
-	      $ortu_tempat_lahir 		= implode("|", $this->input->post('ortu_tempat_lahir'));
+	      $ortu_nama 		= implode(",", $this->capital_each_word_array($this->input->post('ortu_nama')));
+	      $ortu_tempat_lahir 		= implode("|", $this->capital_each_word_array($this->input->post('ortu_tempat_lahir')));
 		      $ortu_tgl_lahir 		= implode("|", $this->input->post('ortu_tgl_lahir'));
 		      $ortu_agama 		= implode(",", $this->input->post('ortu_agama'));
 		      $ortu_nik 		= implode(",", $this->input->post('ortu_nik'));
 		      $ortu_pendidikan 	= implode(",", $this->input->post('ortu_pendidikan'));
 	      $ortu_hp 			= implode(",", $this->input->post('ortu_hp'));
-	      $ortu_pekerjaan   = implode(",", $this->input->post('ortu_pekerjaan'));
+	      $ortu_pekerjaan   = implode(",", $this->capital_each_word_array($this->input->post('ortu_pekerjaan')));
 	      $ortu_penghasilan = implode(",", $this->input->post('ortu_penghasilan'));
 	      $ortu_alamat = implode("|", $this->input->post('ortu_alamat'));
 
@@ -2910,8 +2934,8 @@ class Home extends CI_CONTROLLER
 	      					'nisn'				=> $i->post('nisn'),
 	      					'ipk'				=> $i->post('ipk'),
 	      					'email'				=> $i->post('email'),
-	                        'nama_lengkap'      => $i->post('nama_lengkap'),
-	                        'tempat_lahir'      => $i->post('tempat_lahir'),
+	                        'nama_lengkap'      => $this->capital_each_word($i->post('nama_lengkap')),
+	                        'tempat_lahir'      => $this->capital_each_word($i->post('tempat_lahir')),
 	        				'tanggal_lahir'     => $i->post('tanggal_lahir'),
 	                        'jk'     			=> $i->post('jk'),
 	                        'agama'     		=> $i->post('agama'),
@@ -2935,23 +2959,23 @@ class Home extends CI_CONTROLLER
 	                        'tahun_lulus'		=> $i->post('tahun_lulus')	,
 	        				'no_ijazah'      	=> $i->post('no_ijazah'),
 	                        'nilai_ijazah'      => $i->post('nilai_ijazah'),
-	        				'pindahan_namapt'   => $i->post('pindahan_namapt'),
-	                        'pindahan_fakultas' => $i->post('pindahan_fakultas'),
-	                        'pindahan_prodi'	=> $i->post('pindahan_prodi'),
+	        				'pindahan_namapt'   => $this->capital_each_word($i->post('pindahan_namapt')),
+	                        'pindahan_fakultas' => $this->capital_each_word($i->post('pindahan_fakultas')),
+	                        'pindahan_prodi'	=> $this->capital_each_word($i->post('pindahan_prodi')),
 	                        'pindahan_nim'		=> $i->post('pindahan_nim')	,
 	        				'pindahan_jumlahsks'=> $i->post('pindahan_jumlahsks'),
 	                        'nilai_ijazah'      => $i->post('nilai_ijazah'),
 	                        'nik'				=> $i->post('nik'),
-	                        'kecamatan'=> $i->post('kecamatan'),
-	                        'kota'      => $i->post('kota'),
-	                        'prov'				=> $i->post('prov'),
+	                        'kecamatan'=> $this->capital_each_word($i->post('kecamatan')),
+	                        'kota'      => $this->capital_each_word($i->post('kota')),
+	                        'prov'				=> $this->capital_each_word($i->post('prov')),
 	                        'npsn'      => $i->post('npsn'),
 	                        'baju'				=> $i->post('baju')
 	      );
 	      $this->admin_model->edit_pendaftaran($data);
 
 	      $data_username = array(   'id'                => $pengguna->id,
-			                        'nama'      		=> $i->post('nama_lengkap'),
+			                        'nama'      		=> $this->capital_each_word($i->post('nama_lengkap')),
 			                        'email'  			=> $i->post('email'),
 			                        'hp'  				=> $i->post('hp')
 	      );

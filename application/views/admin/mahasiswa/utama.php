@@ -23,6 +23,14 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 <div class="row">
 <?php echo form_open_multipart(base_url('admin/home/form_utama/'),'class="form-horizontal" novalidate="novalidate"'); ?>
 
+<div class="col-md-12">
+    <ul class="form-step-indicator">
+        <li class="active">1. Data Utama</li>
+        <li>2. Data Diri</li>
+        <li>3. Orang Tua / Wali</li>
+    </ul>
+</div>
+
 <?php 
 $program = $detail->program;
 $detail_program  = $this->admin_model->kartu_program($program);  
@@ -95,7 +103,7 @@ if ($detail->fix == 1) {
 ?>
 
 
-<div class="col-md-12"><center><h2><b>Profil Utama</b></h2></center></div>
+<div class="col-md-12"><center><h2><b>Data Utama</b></h2></center></div>
 <div class="col-md-12"><p class="required-note">Field dengan tanda <span class="required-star">*</span> wajib diisi.</p></div>
 <div class="col-md-12"><hr></div>
 <div class="col-md-1"></div>
@@ -269,7 +277,7 @@ $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
 <div class="col-md-12"><hr>
 <div class="form-group">
 	<div class="col-md-11" style="text-align: right;">
-		<button class="btn btn-primary" name="submit" type="submit"><i class="fa fa-forward"></i> Selanjutnya</button>
+		<button class="btn btn-primary" name="submit" type="submit"><i class="fa fa-forward"></i> Lanjutkan ke Data Diri</button>
 		<button class="btn btn-danger" name="reset" type="reset"><i class="fa fa-times"></i> Reset</button>
 		
 	</div>

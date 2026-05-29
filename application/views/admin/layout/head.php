@@ -254,6 +254,12 @@ function showUser(str) {
       group.find('.required-error-message').remove();
     }
 
+    function capitalEachWord(value) {
+      return $.trim(value).toLowerCase().replace(/\b([a-z\u00c0-\u024f])/g, function(match){
+        return match.toUpperCase();
+      });
+    }
+
     function validateVisibleRequired(form) {
       var firstError = null;
       $(form).find(':input[required]:visible').each(function(){
@@ -283,14 +289,14 @@ function showUser(str) {
         $('#activity').removeClass('active');
         $('#settings').addClass('active');
         $('.form-step-indicator li').removeClass('active').filter('[data-step="ortu"]').addClass('active');
-        $('.btn-next-step').hide();
+        $('.btn-next-step, .btn-back-utama').hide();
         $('.btn-prev-step, .btn-submit-step').show();
       } else {
         $('#settings').removeClass('active');
         $('#activity').addClass('active');
         $('.form-step-indicator li').removeClass('active').filter('[data-step="diri"]').addClass('active');
         $('.btn-prev-step, .btn-submit-step').hide();
-        $('.btn-next-step').show();
+        $('.btn-next-step, .btn-back-utama').show();
       }
 
       $('html, body').animate({scrollTop: $('.form-lanjutan-wizard').offset().top - 80}, 200);
@@ -305,6 +311,10 @@ function showUser(str) {
       if (this.value) {
         clearRequiredError(this);
       }
+    });
+
+    $(document).on('blur', '.title-case-input', function(){
+      this.value = capitalEachWord(this.value);
     });
 
     $(document).on('submit', '.form-horizontal', function(e){

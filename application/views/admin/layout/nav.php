@@ -217,21 +217,11 @@
           $profil_wajib_lengkap = $detail_pendaftaran ? $this->mahasiswa_profile->is_complete($detail_pendaftaran) : TRUE;
           ?>
 
-           <li class="treeview">
-          <a href="#">
-            <i class="fa fa-users text-aqua"></i>
-            <span>Data Calon Mahasiswa</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
-            <li><a href="<?php echo base_url('admin/home/form_utama')?>"><i class="fa fa-get-pocket"></i> Form Utama</a></li>
-            <?php if($detail_pendaftaran->valid_lanjutan =='1'){?>
-            <li><a href="<?php echo base_url('admin/home/form_lanjutan')?>"><i class="fa fa-get-pocket"></i> Form Lanjutan </a></li>
-            <?php } ?>
-          </ul>
-        </li>
+          <li>
+            <a href="<?php echo base_url('admin/home/form_utama')?>">
+              <i class="fa fa-list-alt text-aqua"></i> <span>Formulir</span>
+            </a>
+          </li>
 
           <?php if(!$profil_wajib_lengkap) { ?>
           <li class="header">LENGKAPI DATA WAJIB UNTUK MEMBUKA MENU LAIN</li>
