@@ -529,6 +529,9 @@ class Home extends CI_CONTROLLER
 	      if ($this->db->field_exists('wa_group', 'konfigurasi')) {
 	        $data['wa_group'] = $i->post('wa_group');
 	      }
+	      if ($this->db->field_exists('wa_group_s2', 'konfigurasi')) {
+	        $data['wa_group_s2'] = $i->post('wa_group_s2');
+	      }
 	      if ($this->db->field_exists('wa_group_kelulusan', 'konfigurasi')) {
 	        $data['wa_group_kelulusan'] = $i->post('wa_group_kelulusan');
 	      }

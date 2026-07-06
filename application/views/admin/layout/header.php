@@ -1,7 +1,8 @@
 <header class="main-header">
     <?php
       $konfigurasi_header = $this->admin_model->detail_institusi();
-      $link_wa_group = isset($konfigurasi_header->wa_group) ? trim($konfigurasi_header->wa_group) : '';
+      $link_wa_group_s1 = isset($konfigurasi_header->wa_group) ? trim($konfigurasi_header->wa_group) : '';
+      $link_wa_group_s2 = isset($konfigurasi_header->wa_group_s2) ? trim($konfigurasi_header->wa_group_s2) : '';
     ?>
     <!-- Logo -->
     <?php if($this->session->userdata('id_level') == '3') { ?>
@@ -30,9 +31,14 @@
 
             <div class="navbar-custom-menu">
               <ul class="nav navbar-nav">
-                <?php if($link_wa_group != '') { ?>
+                <?php if($link_wa_group_s1 != '') { ?>
                 <li class="dropdown user user-menu">
-                     <a href="<?php echo $link_wa_group; ?>" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Gabung WA Group</a>
+                     <a href="<?php echo $link_wa_group_s1; ?>" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Group WA S1</a>
+                  </li>
+                <?php } ?>
+                <?php if($link_wa_group_s2 != '') { ?>
+                <li class="dropdown user user-menu">
+                     <a href="<?php echo $link_wa_group_s2; ?>" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Group WA S2</a>
                   </li>
                 <?php } ?>
                  <li class="dropdown user user-menu">

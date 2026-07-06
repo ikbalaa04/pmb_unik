@@ -5,6 +5,8 @@ $logo_image = base_url('assets/logounik.png');
 $news_items = isset($informasi) ? $informasi : array();
 $gallery_items = isset($galeri) ? $galeri : array();
 $statistik_items = isset($statistik_pendaftar) ? $statistik_pendaftar : array();
+$default_news_image = file_exists(FCPATH.'assets/upload/berita/default.png') ? base_url('assets/upload/berita/default.png') : base_url('assets/bg.jpg');
+$program_count = is_array($list_prodi) ? count($list_prodi) : 0;
 $total_pendaftar = 0;
 if (!empty($statistik_items)) {
   foreach ($statistik_items as $statistik) {
@@ -36,7 +38,7 @@ if ($total_pendaftar == 0 && !empty($pendaftar_tes)) {
   }
 
   #header .logo img {
-    max-height: 56px;
+    max-height: 48px;
     width: auto;
   }
 
@@ -276,14 +278,36 @@ if ($total_pendaftar == 0 && !empty($pendaftar_tes)) {
     background: #173b2a;
   }
 
+  .pmh-main-info .row {
+    align-items: stretch !important;
+  }
+
   .pmh-main-info .pmh-section-title h2,
   .pmh-main-info .pmh-section-title p {
     color: #fff;
   }
 
   .pmh-info-copy {
-    color: rgba(255, 255, 255, 0.86);
+    max-width: 760px;
+    padding: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.055);
     line-height: 1.8;
+  }
+
+  .pmh-info-copy,
+  .pmh-info-copy * {
+    text-align: left !important;
+  }
+
+  .pmh-info-copy p {
+    margin-bottom: 12px;
+  }
+
+  .pmh-info-copy br {
+    content: "";
   }
 
   .pmh-info-copy p:last-child {
@@ -292,24 +316,29 @@ if ($total_pendaftar == 0 && !empty($pendaftar_tes)) {
 
   .pmh-program-strip {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: 14px;
+    height: 100%;
   }
 
   .pmh-strip-item {
-    padding: 18px;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+    align-items: center;
+    min-height: 94px;
+    padding: 20px;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.09);
   }
 
   .pmh-strip-item i {
     color: #f4c542;
-    font-size: 26px;
+    font-size: 28px;
   }
 
   .pmh-strip-item strong {
     display: block;
-    margin-top: 10px;
     color: #fff;
   }
 
@@ -536,7 +565,7 @@ if ($total_pendaftar == 0 && !empty($pendaftar_tes)) {
         <div class="pmh-quick-grid">
           <div class="pmh-quick-item">
             <span>Program Studi</span>
-            <strong><?php echo is_array($list_prodi) ? count($list_prodi) : 0; ?>+</strong>
+            <strong><?php echo $program_count; ?>+</strong>
           </div>
           <div class="pmh-quick-item">
             <span>Pendaftar</span>
@@ -630,7 +659,7 @@ if ($total_pendaftar == 0 && !empty($pendaftar_tes)) {
           <?php foreach ($news_items as $item) { ?>
             <article class="pmh-news-card">
               <?php if($item->foto == '') { ?>
-                <img src="<?php echo base_url('assets/upload/berita/default.png'); ?>" alt="<?php echo $item->judul; ?>">
+                <img src="<?php echo $default_news_image; ?>" alt="<?php echo $item->judul; ?>">
               <?php }else{ ?>
                 <img src="<?php echo base_url('assets/upload/berita/thumbs/'.$item->foto); ?>" alt="<?php echo $item->judul; ?>">
               <?php } ?>
