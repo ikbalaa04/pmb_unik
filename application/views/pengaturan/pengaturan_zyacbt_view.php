@@ -25,7 +25,7 @@
                         <div class="form-group">
 							<label class="col-sm-4 control-label">Nama</label>
                             <div class="col-sm-8">
-								<input type="text" class="form-control input-sm" id="-nama" name="-nama" >
+								<input type="text" class="form-control input-sm" id="zyacbt-nama" name="zyacbt-nama" >
                                 <p class="help-block">
 									Nama Pelaksana .<br />
                                     Digunakan sebagai identitas pelaksanaan Tes.
@@ -35,7 +35,7 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">Keterangan</label>
                             <div class="col-sm-8">
-								<input type="text" class="form-control input-sm" id="-keterangan" name="-keterangan" >
+								<input type="text" class="form-control input-sm" id="zyacbt-keterangan" name="zyacbt-keterangan" >
                                 <p class="help-block">
 									Keterangan Pelaksana bisa diisi dengan Slogan ataupun Alamat dari Organisasi.
 								</p>
@@ -44,7 +44,7 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">Link Login Operator</label>
                             <div class="col-sm-8">
-								<select class="form-control input-sm" id="-link-login" name="-link-login">
+								<select class="form-control input-sm" id="zyacbt-link-login" name="zyacbt-link-login">
 									<option value="tidak">Tidak</option>
                                     <option value="ya">Ya</option>
 								</select>
@@ -56,7 +56,7 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">Lock Mobile Exam Browser</label>
                             <div class="col-sm-8">
-								<select class="form-control input-sm" id="-mobile-lock-xambro" name="-mobile-lock-xambro">
+								<select class="form-control input-sm" id="zyacbt-mobile-lock-xambro" name="zyacbt-mobile-lock-xambro">
 									<option value="tidak">Tidak</option>
                                     <option value="ya">Ya</option>
 								</select>
@@ -68,7 +68,7 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">Informasi ke Peserta Tes</label>
                             <div class="col-sm-8">
-								<input type="hidden" name="-informasi" id="-informasi" >
+								<input type="hidden" name="zyacbt-informasi" id="zyacbt-informasi" >
 								<textarea class="textarea" id="_informasi" name="_informasi" style="width: 100%; height: 150px; font-size: 13px; line-height: 25px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                                 <p class="help-block">
 									Informasi yang diberikan ke peserta tes di Dashboard Peserta Tes
@@ -90,16 +90,23 @@
 <script lang="javascript">
 	function load_data(){
         $("#modal-proses").modal('show');
-        $.getJSON('<?php echo site_url().'/'.$url; ?>/get_pengaturan_', function(data){
+        $.getJSON('<?php echo site_url().'/'.$url; ?>/get_pengaturan_zyacbt', function(data){
             if(data.data==1){
-                $('#-nama').val(data.cbt_nama);
-                $('#-keterangan').val(data.cbt_keterangan);
-                $('#-link-login').val(data.link_login_operator);
-				$('#-mobile-lock-xambro').val(data.mobile_lock_xambro);
-				$('#_informasi').val(data.cbt_informasi);
-				$('#-informasi').val('');
+                $('#zyacbt-nama').val(data.cbt_nama);
+                $('#zyacbt-keterangan').val(data.cbt_keterangan);
+                $('#zyacbt-link-login').val(data.link_login_operator);
+				$('#zyacbt-mobile-lock-xambro').val(data.mobile_lock_xambro);
+				if(CKEDITOR.instances._informasi){
+					CKEDITOR.instances._informasi.setData(data.cbt_informasi);
+				}else{
+					$('#_informasi').val(data.cbt_informasi);
+				}
+				$('#zyacbt-informasi').val(data.cbt_informasi);
             }
             $("#modal-proses").modal('hide');
+        }).fail(function(){
+            $("#modal-proses").modal('hide');
+            notify_error('Gagal mengambil data pengaturan');
         });
     }
 
@@ -109,14 +116,14 @@
 		load_data();
         $('#form-pengaturan').submit(function(){
             $("#modal-proses").modal('show');
-			$('#-informasi').val(CKEDITOR.instances._informasi.getData());
+			$('#zyacbt-informasi').val(CKEDITOR.instances._informasi.getData());
             $.ajax({
                     url:"<?php echo site_url().'/'.$url; ?>/simpan",
                     type:"POST",
                     data:$('#form-pengaturan').serialize(),
+					dataType:"json",
                     cache: false,
-                    success:function(respon){
-                        var obj = $.parseJSON(respon);
+                    success:function(obj){
                         if(obj.status==1){
                             $("#modal-proses").modal('hide');
                             notify_success(obj.pesan);
@@ -124,6 +131,10 @@
                             $("#modal-proses").modal('hide');
                             $('#form-pesan').html(pesan_err(obj.pesan));
                         }
+                    },
+                    error:function(){
+                        $("#modal-proses").modal('hide');
+                        notify_error('Gagal menyimpan pengaturan');
                     }
             });
             return false;
