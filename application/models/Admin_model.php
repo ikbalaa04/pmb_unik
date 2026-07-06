@@ -1194,20 +1194,23 @@ class Admin_model extends CI_Model {
 
 	// pendaftaran
 	public function edit_pendaftaran($data){
+      if(empty($data['id'])){
+        return FALSE;
+      }
+
       $old_username = NULL;
-      if(!empty($data['id'])){
-      	$this->db->select('username');
-      	$this->db->from('pendaftaran');
-      	$this->db->where('id', $data['id']);
-      	$pendaftaran_lama = $this->db->get()->row();
-      	if($pendaftaran_lama){
-      		$old_username = $pendaftaran_lama->username;
-      	}
+      $this->db->select('username');
+      $this->db->from('pendaftaran');
+      $this->db->where('id', $data['id']);
+      $pendaftaran_lama = $this->db->get()->row();
+      if($pendaftaran_lama){
+        $old_username = $pendaftaran_lama->username;
       }
 
       $this->db->where('id', $data['id']);
       $this->db->update('pendaftaran', $data);
       $this->sync_user_tes_by_pendaftaran_id($data['id'], $old_username);
+      return TRUE;
 	}
 
 	public function generate_nomor_ujian($fakultas)
