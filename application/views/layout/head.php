@@ -93,6 +93,13 @@
 
     #header {
       padding: 0;
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+      transition: background .2s ease, box-shadow .2s ease, backdrop-filter .2s ease;
+    }
+
+    #header.header-scrolled {
       background: rgba(255, 255, 255, 0.94);
       box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
       backdrop-filter: blur(14px);
@@ -118,6 +125,7 @@
       max-height: 48px;
       width: auto;
       object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.18));
     }
 
     #header .navbar ul {
@@ -128,10 +136,17 @@
     #header .navbar a,
     #header .navbar a:focus {
       padding: 12px 14px;
-      color: #2f3d37;
+      color: #173b2a;
       font-size: 14px;
       font-weight: 800;
       letter-spacing: 0;
+      text-shadow: 0 1px 8px rgba(255, 255, 255, 0.45);
+    }
+
+    #header.header-scrolled .navbar a,
+    #header.header-scrolled .navbar a:focus {
+      color: #2f3d37;
+      text-shadow: none;
     }
 
     #header .navbar .getstarted,
@@ -162,4 +177,3 @@
 </head>
 
 <body>
-

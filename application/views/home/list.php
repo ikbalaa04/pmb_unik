@@ -29,8 +29,13 @@ if ($total_pendaftar == 0 && !empty($pendaftar_tes)) {
   }
 
   #header {
-    background: rgba(255, 255, 255, 0.96);
-    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    background: transparent;
+    box-shadow: none;
+  }
+
+  #header.header-scrolled {
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
   }
 
   #header .header-container {
