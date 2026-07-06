@@ -127,10 +127,10 @@
         $.ajax({
             url:'<?php echo site_url().'/'.$url; ?>/get_tes_soal_by_tessoal/'+$('#tes-soal-id').val(),
             type:"POST",
+            dataType:"json",
             cache: false,
             timeout: 10000,
-            success:function(respon){
-                var data = $.parseJSON(respon);
+            success:function(data){
                 if(data.data==1){
                     // Mengubah nilai ragu-ragu di database
                     if($('#tes-soal-ragu').val()==0){
@@ -141,10 +141,10 @@
                     $.ajax({
                             url:'<?php echo site_url().'/'.$url; ?>/update_tes_soal_ragu/'+$('#tes-soal-id').val()+'/'+ragu,
                             type:"POST",
+                            dataType:"json",
                             cache: false,
                             timeout: 5000,
-                            success:function(respon){
-                                var data = $.parseJSON(respon);
+                            success:function(data){
                                 if(data.data==1){
                                     notify_success('Jawaban Ragu-ragu berhasil diubah');
                                 }
@@ -208,10 +208,10 @@
         $.ajax({
             url:'<?php echo site_url().'/'.$url; ?>/get_soal_by_tessoal/'+tessoal_id+'/'+$('#tes-user-id').val(),
             type:"POST",
+            dataType:"json",
             cache: false,
             timeout: 10000,
-            success:function(respon){
-                var data = $.parseJSON(respon);
+            success:function(data){
                 if(data.data==1){
                     $('#tes-soal-id').val(data.tes_soal_id);
                     $('#tes-soal-nomor').val(data.tes_soal_nomor);
@@ -369,10 +369,10 @@
                     url:"<?php echo site_url().'/'.$url; ?>/simpan_jawaban",
                     type:"POST",
                     data:$('#form-kerjakan').serialize(),
+                    dataType:"json",
                     cache: false,
                     timeout: 10000,
-                    success:function(respon){
-                        var obj = $.parseJSON(respon);
+                    success:function(obj){
                         if(obj.status==1){
                             $("#modal-proses").modal('hide');
                             notify_success(obj.pesan);
@@ -408,10 +408,10 @@
                     url:"<?php echo site_url().'/'.$url; ?>/hentikan_tes",
                     type:"POST",
                     data:$('#form-hentikan').serialize(),
+                    dataType:"json",
                     cache: false,
                     timeout: 10000,
-                    success:function(respon){
-                        var obj = $.parseJSON(respon);
+                    success:function(obj){
                         if(obj.status==1){
                             window.location.reload();
                         }else{

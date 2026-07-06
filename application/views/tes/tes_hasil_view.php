@@ -136,6 +136,8 @@
                     <button type="button" id="btn-edit-hentikan" class="btn btn-primary">Hentikan</button>
                     <button type="button" id="btn-edit-buka-tes" class="btn btn-primary">Buka Tes</button>
                     <button type="button" id="btn-edit-waktu" class="btn btn-primary">Tambah Waktu</button>
+                    <button type="button" id="btn-edit-luluskan" class="btn btn-success">Luluskan</button>
+                    <button type="button" id="btn-edit-tidak-lulus" class="btn btn-danger">Tidak Lulus</button>
                 </div>
 			</div>
         </div>
@@ -238,6 +240,20 @@
             $('#form-edit').submit();
         });
 
+        $('#btn-edit-luluskan').click(function(){
+            if(confirm('Luluskan peserta CBT yang dipilih dan ubah status PMB menjadi diterima?')){
+                $('#edit-pilihan').val('luluskan');
+                $('#form-edit').submit();
+            }
+        });
+
+        $('#btn-edit-tidak-lulus').click(function(){
+            if(confirm('Tandai peserta CBT yang dipilih sebagai tidak lulus?')){
+                $('#edit-pilihan').val('tidak_lulus');
+                $('#form-edit').submit();
+            }
+        });
+
         $('#btn-edit-pilih').click(function(event) {
             if($('#check').val()==0) {
                 $(':checkbox').each(function() {
@@ -258,9 +274,9 @@
                     url:"<?php echo site_url().'/'.$url; ?>/edit_tes",
                     type:"POST",
                     data:$('#form-edit').serialize(),
+                    dataType:"json",
                     cache: false,
-                    success:function(respon){
-                        var obj = $.parseJSON(respon);
+                    success:function(obj){
                         if(obj.status==1){
                             refresh_table();
                             $("#modal-proses").modal('hide');
@@ -270,6 +286,10 @@
                             $("#modal-proses").modal('hide');
                             notify_error(obj.pesan);
                         }
+                    },
+                    error:function(){
+                        $("#modal-proses").modal('hide');
+                        notify_error('Aksi gagal diproses, silahkan coba kembali');
                     }
             });
             return false;

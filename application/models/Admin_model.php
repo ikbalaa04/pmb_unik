@@ -1194,8 +1194,20 @@ class Admin_model extends CI_Model {
 
 	// pendaftaran
 	public function edit_pendaftaran($data){
+      $old_username = NULL;
+      if(!empty($data['id'])){
+      	$this->db->select('username');
+      	$this->db->from('pendaftaran');
+      	$this->db->where('id', $data['id']);
+      	$pendaftaran_lama = $this->db->get()->row();
+      	if($pendaftaran_lama){
+      		$old_username = $pendaftaran_lama->username;
+      	}
+      }
+
       $this->db->where('id', $data['id']);
       $this->db->update('pendaftaran', $data);
+      $this->sync_user_tes_by_pendaftaran_id($data['id'], $old_username);
 	}
 
 	public function generate_nomor_ujian($fakultas)
@@ -3319,12 +3331,106 @@ class Admin_model extends CI_Model {
 	}
 
 	public function tambah_user_tes($data_tes){
+		if(!empty($data_tes['user_name'])){
+			$existing = $this->detail_cbt_user($data_tes['user_name']);
+			if($existing){
+				$this->db->where('user_id', $existing->user_id);
+				$this->db->update('cbt_user', $data_tes);
+				return;
+			}
+		}
 		$this->db->insert('cbt_user',$data_tes);
 	}
 
 	public function edit_user_tes($data_user){
 		$this->db->where('user_name', $data_user['user_name']);
 		$this->db->update('cbt_user', $data_user); 
+	}
+
+	public function sync_user_tes_by_login($username, $password)
+	{
+		$this->db->select('id');
+		$this->db->from('pendaftaran');
+		$this->db->where(array(
+			'username' => $username,
+			'password' => $password,
+			'approve' => '1'
+		));
+		$this->db->order_by('id', 'desc');
+		$query = $this->db->get();
+		if($query->num_rows()==0){
+			return FALSE;
+		}
+
+		return $this->sync_user_tes_by_pendaftaran_id($query->row()->id, $username);
+	}
+
+	public function sync_user_tes_by_pendaftaran_id($id, $old_username = NULL)
+	{
+		if(empty($id)){
+			return FALSE;
+		}
+
+		$this->db->select('id, username, password, nama_lengkap, email, approve, tahun_akademik, gelombang');
+		$this->db->from('pendaftaran');
+		$this->db->where('id', $id);
+		$pendaftaran = $this->db->get()->row();
+		if(!$pendaftaran || (string) $pendaftaran->approve !== '1'){
+			return FALSE;
+		}
+
+		$grup_id = NULL;
+		if(!empty($pendaftaran->tahun_akademik)){
+			$detail_thn_akademik = $this->detail_thn_akademik($pendaftaran->tahun_akademik);
+			if($detail_thn_akademik){
+				$detail_grup_nama = $this->detail_grup_nama($detail_thn_akademik->nama_thn_akademik);
+				if($detail_grup_nama){
+					$grup_id = $detail_grup_nama->grup_id;
+				}
+			}
+		}
+
+		$gelombang = '';
+		if(!empty($pendaftaran->gelombang)){
+			$detail_gelombang = $this->detail_gelombang_id($pendaftaran->gelombang);
+			if($detail_gelombang){
+				$gelombang = $detail_gelombang->nama;
+			}
+		}
+
+		$user_tes = array(
+			'user_name' => $pendaftaran->username,
+			'user_password' => $pendaftaran->password,
+			'user_email' => $pendaftaran->email,
+			'user_firstname' => $pendaftaran->nama_lengkap,
+			'user_level' => '1',
+			'user_detail' => $gelombang
+		);
+
+		$existing = FALSE;
+		if(!empty($old_username)){
+			$existing = $this->detail_cbt_user($old_username);
+		}
+		if(!$existing && !empty($pendaftaran->username)){
+			$existing = $this->detail_cbt_user($pendaftaran->username);
+		}
+
+		if($existing){
+			if($grup_id !== NULL){
+				$user_tes['user_grup_id'] = $grup_id;
+			}
+			$this->db->where('user_id', $existing->user_id);
+			$this->db->update('cbt_user', $user_tes);
+			return TRUE;
+		}
+
+		if($grup_id === NULL){
+			return FALSE;
+		}
+
+		$user_tes['user_grup_id'] = $grup_id;
+		$this->db->insert('cbt_user', $user_tes);
+		return TRUE;
 	}
 
 	public function edit_konfirmasi($data2){

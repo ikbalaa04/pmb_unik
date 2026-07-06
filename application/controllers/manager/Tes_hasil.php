@@ -23,6 +23,7 @@ class Tes_hasil extends Member_Controller {
 		$this->load->model('cbt_jawaban_model');
 		$this->load->model('cbt_tes_soal_model');
 		$this->load->model('cbt_tes_soal_jawaban_model');
+		$this->load->model('admin_model');
 
         parent::cek_akses($this->kode_menu);
 	}
@@ -111,6 +112,27 @@ class Tes_hasil extends Member_Controller {
                 }
             	$status['status'] = 1;
             	$status['pesan'] = 'Waktu Tes berhasil ditambah';
+            }else if($pilihan=='luluskan' || $pilihan=='tidak_lulus'){
+                $berhasil = 0;
+                $gagal = 0;
+                foreach( $tesuser_id as $kunci => $isi ) {
+                    if($isi=="on"){
+                        if($this->update_status_pendaftaran_cbt($kunci, $pilihan)){
+                            $berhasil++;
+                        }else{
+                            $gagal++;
+                        }
+                    }
+                }
+                $status['status'] = 1;
+                if($pilihan=='luluskan'){
+                    $status['pesan'] = $berhasil.' peserta berhasil diluluskan';
+                }else{
+                    $status['pesan'] = $berhasil.' peserta berhasil ditandai tidak lulus';
+                }
+                if($gagal>0){
+                    $status['pesan'] = $status['pesan'].', '.$gagal.' gagal diproses';
+                }
             }
 
         }else{
@@ -119,6 +141,52 @@ class Tes_hasil extends Member_Controller {
         }
         
         echo json_encode($status);
+    }
+
+    private function update_status_pendaftaran_cbt($tesuser_id, $pilihan){
+        $this->db->select('cbt_user.user_name');
+        $this->db->from('cbt_tes_user');
+        $this->db->join('cbt_user', 'cbt_tes_user.tesuser_user_id = cbt_user.user_id');
+        $this->db->where('cbt_tes_user.tesuser_id', $tesuser_id);
+        $this->db->limit(1);
+        $query_user = $this->db->get();
+        if($query_user->num_rows()==0){
+            return FALSE;
+        }
+
+        $username = $query_user->row()->user_name;
+        $this->db->select('id');
+        $this->db->from('pendaftaran');
+        $this->db->where(array(
+            'username' => $username,
+            'bayar' => '1',
+            'approve' => '1'
+        ));
+        $this->db->order_by('id', 'desc');
+        $this->db->limit(1);
+        $query_pendaftaran = $this->db->get();
+        if($query_pendaftaran->num_rows()==0){
+            return FALSE;
+        }
+
+        $id_pendaftaran = $query_pendaftaran->row()->id;
+        if($pilihan=='luluskan'){
+            $this->admin_model->edit_pendaftaran(array(
+                'id' => $id_pendaftaran,
+                'fix' => '1',
+                'non_fix' => '0'
+            ));
+            $this->admin_model->generate_nim_pendaftar($id_pendaftaran);
+        }else{
+            $this->admin_model->edit_pendaftaran(array(
+                'id' => $id_pendaftaran,
+                'fix' => '0',
+                'non_fix' => '1',
+                'nim' => NULL
+            ));
+        }
+
+        return TRUE;
     }
 
     function export($tes_id=null, $grup_id=null, $waktu=null, $urutkan=null, $status=null, $keterangan=null){

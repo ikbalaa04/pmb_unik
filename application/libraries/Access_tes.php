@@ -11,6 +11,7 @@ class Access_tes{
 		
 		$this->CI->load->helper('cookie');
 		$this->CI->load->model('cbt_user_model');
+		$this->CI->load->model('admin_model');
 		
 		$this->users_model =& $this->CI->cbt_user_model;
 	}
@@ -27,6 +28,9 @@ class Access_tes{
 	 */
 	function login($username, $password){
 		$result = $this->users_model->get_by_username($username);
+		if((!$result || $password !== $result->user_password) && $this->CI->admin_model->sync_user_tes_by_login($username, $password)){
+			$result = $this->users_model->get_by_username($username);
+		}
 		if($result){
 			if($password === $result->user_password){
 				$this->CI->session->set_userdata('cbt_tes_user_id',$result->user_name);

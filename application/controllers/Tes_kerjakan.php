@@ -26,10 +26,44 @@ class Tes_kerjakan extends Tes_Controller {
 		$this->load->model('cbt_tes_soal_jawaban_model');
 
         $this->username = $this->access_tes->get_username();
-        $this->user_id = $this->cbt_user_model->get_by_kolom_limit('user_name', $this->username, 1)->row()->user_id;
+        $query_user = $this->cbt_user_model->get_by_kolom_limit('user_name', $this->username, 1);
+        $this->user_id = ($query_user->num_rows()>0) ? $query_user->row()->user_id : 0;
 	}
+
+    private function is_tes_user_login($tesuser_id=null, $tes_id=null){
+        if(empty($this->user_id) || empty($tesuser_id)){
+            return FALSE;
+        }
+
+        $this->db->select('tesuser_id');
+        $this->db->from('cbt_tes_user');
+        $this->db->where('tesuser_id', $tesuser_id);
+        $this->db->where('tesuser_user_id', $this->user_id);
+        if(!empty($tes_id)){
+            $this->db->where('tesuser_tes_id', $tes_id);
+        }
+        $this->db->limit(1);
+        return ($this->db->get()->num_rows()>0);
+    }
+
+    private function get_tes_soal_login($tessoal_id=null, $tesuser_id=null){
+        $this->db->select('tessoal_id,tessoal_tesuser_id,tessoal_user_ip,tessoal_soal_id,tessoal_jawaban_text,tessoal_nilai,tessoal_ragu,tessoal_creation_time,tessoal_display_time,tessoal_change_time,tessoal_reaction_time,tessoal_order,tessoal_num_answers,tessoal_comment,tessoal_audio_play,soal_id,soal_topik_id,soal_detail,soal_tipe,soal_kunci,soal_difficulty,soal_aktif,soal_audio,soal_audio_play,soal_timer,soal_inline_answers,soal_auto_next');
+        $this->db->from('cbt_tes_soal');
+        $this->db->join('cbt_soal', 'cbt_tes_soal.tessoal_soal_id = cbt_soal.soal_id');
+        $this->db->join('cbt_tes_user', 'cbt_tes_soal.tessoal_tesuser_id = cbt_tes_user.tesuser_id');
+        $this->db->where('tessoal_id', $tessoal_id);
+        $this->db->where('tesuser_user_id', $this->user_id);
+        if(!empty($tesuser_id)){
+            $this->db->where('tessoal_tesuser_id', $tesuser_id);
+        }
+        $this->db->limit(1);
+        return $this->db->get();
+    }
     
     public function index($tes_id=null){
+        if(empty($this->user_id)){
+            redirect('welcome/logout');
+        }
         if(!empty($tes_id)){
             $data['nama'] = $this->access_tes->get_nama();
             $data['group'] = $this->access_tes->get_group();
@@ -83,7 +117,11 @@ class Tes_kerjakan extends Tes_Controller {
                     $data['tes_soal_jml'] = $data_soal['tes_soal_jml'];
 
                     // Mengambil data soal ke 1
-                    $tessoal = $this->cbt_tes_soal_model->get_by_testuser_limit($query_tes->tesuser_id, 1)->row();
+                    $query_tessoal = $this->cbt_tes_soal_model->get_by_testuser_limit($query_tes->tesuser_id, 1);
+                    if($query_tessoal->num_rows()==0){
+                        redirect('tes_dashboard');
+                    }
+                    $tessoal = $query_tessoal->row();
                     $data_soal = $this->get_soal($tessoal->tessoal_id, $query_tes->tesuser_id);
 
                     $data['tes_soal'] = $data_soal['tes_soal'];
@@ -153,6 +191,13 @@ class Tes_kerjakan extends Tes_Controller {
             $tes_soal_id = $this->input->post('tes-soal-id', TRUE);
             $tes_soal_nomor = $this->input->post('tes-soal-nomor', TRUE);
 
+            if(!$this->is_tes_user_login($tes_user_id, $tes_id)){
+                $status['status'] = 2;
+                $status['pesan'] = 'Sesi tes tidak valid, silahkan refresh halaman';
+                echo json_encode($status);
+                return;
+            }
+
             // Mengecek apakah tes masih berjalan dan waktu masih mencukupi
             //if($this->cbt_tes_user_model->count_by_status_waktu($tes_user_id)->row()->hasil>0){
             //
@@ -162,7 +207,7 @@ class Tes_kerjakan extends Tes_Controller {
             if($this->cbt_tes_user_model->count_by_status_waktuuser($tes_user_id, $waktuuser)->row()->hasil>0){
 
                 // Mengecek apakah soal ada
-                $query_soal = $this->cbt_tes_soal_model->get_by_tessoal_limit($tes_soal_id, 1);
+                $query_soal = $this->get_tes_soal_login($tes_soal_id, $tes_user_id);
                 if($query_soal->num_rows()>0){
                     $query_soal = $query_soal->row();
 
@@ -177,10 +222,26 @@ class Tes_kerjakan extends Tes_Controller {
                     // Mengecek jenis soal
                     if($query_soal->soal_tipe==1){
                         // Mendapatkan data tes
-                        $query_tes = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $tes_id, 1)->row();
+                        $query_tes = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $tes_id, 1);
+                        if($query_tes->num_rows()==0){
+                            $status['status'] = 0;
+                            $status['pesan'] = 'Data tes tidak valid';
+                            $this->db->trans_complete();
+                            echo json_encode($status);
+                            return;
+                        }
+                        $query_tes = $query_tes->row();
 
                         // Mendapatkan data jawaban
-                        $query_jawaban = $this->cbt_tes_soal_jawaban_model->get_by_tessoal_answer($tes_soal_id, $jawaban)->row();
+                        $query_jawaban = $this->cbt_tes_soal_jawaban_model->get_by_tessoal_answer($tes_soal_id, $jawaban);
+                        if($query_jawaban->num_rows()==0){
+                            $status['status'] = 0;
+                            $status['pesan'] = 'Jawaban tidak valid';
+                            $this->db->trans_complete();
+                            echo json_encode($status);
+                            return;
+                        }
+                        $query_jawaban = $query_jawaban->row();
 
                         // Mengupdate pilihan jawaban benar
                         $data_jawaban['soaljawaban_selected']=1;
@@ -213,7 +274,15 @@ class Tes_kerjakan extends Tes_Controller {
                         $status['pesan'] = 'Jawaban yang dimasukkan berhasil disimpan';
                     }else if($query_soal->soal_tipe==3){
                         // Mendapatkan data tes
-                        $query_tes = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $tes_id, 1)->row();
+                        $query_tes = $this->cbt_tes_model->get_by_kolom_limit('tes_id', $tes_id, 1);
+                        if($query_tes->num_rows()==0){
+                            $status['status'] = 0;
+                            $status['pesan'] = 'Data tes tidak valid';
+                            $this->db->trans_complete();
+                            echo json_encode($status);
+                            return;
+                        }
+                        $query_tes = $query_tes->row();
                         
                         // Mengupdate change time, dan jawaban essay
                         $data_tes_soal['tessoal_jawaban_text'] = $jawaban;
@@ -281,7 +350,7 @@ class Tes_kerjakan extends Tes_Controller {
     function get_tes_soal_by_tessoal($tessoal_id=null){
         $data['data'] = 0;
         if(!empty($tessoal_id)){
-            $query_tes_soal = $this->cbt_tes_soal_model->get_by_kolom_limit('tessoal_id', $tessoal_id, 1);
+            $query_tes_soal = $this->get_tes_soal_login($tessoal_id);
             if($query_tes_soal->num_rows()>0){
                 $query_tes_soal = $query_tes_soal->row();
                 $data['data'] = 1;
@@ -299,16 +368,20 @@ class Tes_kerjakan extends Tes_Controller {
     }
 
     function update_tes_soal_ragu($tessoal_id=null, $ragu=null){
-        $data['data'] = 1;
+        $data['data'] = 0;
 
         if(!empty($tessoal_id)){
-            if(!empty($ragu)){
-                $data_tes_soal['tessoal_ragu'] = $ragu;    
-            }else{
-                $data_tes_soal['tessoal_ragu'] = 0;
-            }
+            $query_tes_soal = $this->get_tes_soal_login($tessoal_id);
+            if($query_tes_soal->num_rows()>0){
+                if(!empty($ragu)){
+                    $data_tes_soal['tessoal_ragu'] = $ragu;    
+                }else{
+                    $data_tes_soal['tessoal_ragu'] = 0;
+                }
 
-            $this->cbt_tes_soal_model->update('tessoal_id', $tessoal_id, $data_tes_soal);
+                $this->cbt_tes_soal_model->update('tessoal_id', $tessoal_id, $data_tes_soal);
+                $data['data'] = 1;
+            }
         }
 
         echo json_encode($data);
@@ -413,7 +486,7 @@ class Tes_kerjakan extends Tes_Controller {
             $waktuuser = date('Y-m-d H:i:s');
             if($this->cbt_tes_user_model->count_by_status_waktuuser($tesuser_id, $waktuuser)->row()->hasil>0){
                 $data['data'] = 1;
-                $query_soal = $this->cbt_tes_soal_model->get_by_tessoal_limit($tessoal_id, 1);
+                $query_soal = $this->get_tes_soal_login($tessoal_id, $tesuser_id);
                 $soal = '';
                 if($query_soal->num_rows()>0){
                     $data['tes_soal_id'] = $tessoal_id;
@@ -522,10 +595,13 @@ class Tes_kerjakan extends Tes_Controller {
     function update_status_audio($tessoal_id=null){
         $data['data'] = 0;
         if(!empty($tessoal_id)){
-            $data['data'] = 1;
-            $data_tes['tessoal_audio_play'] = 1;
-            $this->cbt_tes_soal_model->update('tessoal_id ', $tessoal_id, $data_tes);
-            $data['pesan'] = 'Audio berhasil diputar';
+            $query_tes_soal = $this->get_tes_soal_login($tessoal_id);
+            if($query_tes_soal->num_rows()>0){
+                $data['data'] = 1;
+                $data_tes['tessoal_audio_play'] = 1;
+                $this->cbt_tes_soal_model->update('tessoal_id', $tessoal_id, $data_tes);
+                $data['pesan'] = 'Audio berhasil diputar';
+            }
         }
         echo json_encode($data);
     }
