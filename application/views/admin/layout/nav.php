@@ -227,13 +227,13 @@
           <li class="header">LENGKAPI DATA WAJIB UNTUK MEMBUKA MENU LAIN</li>
           <?php }else{ ?>
 
-          <?php if($detail_pendaftaran->bayar !='0'){ ?>
-
           <?php $program = $detail_pendaftaran->program;
           $detail_program  = $this->admin_model->kartu_program($program);  ?>
           <?php if($detail_program->tipe_program =='Berbayar'){ ?>
           <li><a href="<?php echo base_url('admin/home/konfirmasi_bayar')?>"><i class="fa fa-money text-aqua"></i> <span>Registrasi Pendaftaran</span></a></li>  
           <?php } ?>
+
+          <?php if($detail_pendaftaran->bayar !='0'){ ?>
 
           <?php if($detail_pendaftaran->fix=='1' && $detail_pendaftaran->non_fix=='0'){ ?>
 

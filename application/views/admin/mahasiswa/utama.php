@@ -42,8 +42,12 @@ if ($detail->fix == 1) {
 	            <div class="alert alert-success alert-persistent" style="border:1px solid #00a65a;background:#eaf8f0;color:#256b3f;">
 	            <center>
 	                Selamat anda dinyatakan <b>LULUS</b> tes seleksi ujian saringan masuk,<br>
+	                <?php if($detail->bayar != '1' || $detail->approve != '1') { ?>
+	                silakan selesaikan dan tunggu verifikasi <b>Registrasi Pendaftaran</b> terlebih dahulu sebelum melakukan daftar ulang.<br>
+	                <?php }else{ ?>
 	                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
 	                dan lengkapi berkas persyaratan.<br>
+	                <?php } ?>
 	                <?php if($link_wa_group_kelulusan != '') { ?>
 	                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
 	                <b>

@@ -5800,6 +5800,11 @@ class Home extends CI_CONTROLLER
     public function registrasi_ulang_user(){
 
 		$detail 	= $this->admin_model->detail_pendaftaran_mahasiswa();
+		if(!$detail || $detail->bayar != '1' || $detail->approve != '1'){
+			$this->session->set_flashdata('warning', 'Silakan selesaikan dan tunggu verifikasi Registrasi Pendaftaran terlebih dahulu sebelum melakukan Registrasi Ulang.');
+			redirect(base_url('admin/home/konfirmasi_bayar'),'refresh');
+		}
+
 		$kode 		= $detail->jurusan_pilihan;
 		$prodi  = $this->admin_model->detail_prodi_kode($kode);
 		$valid = $this->form_validation;
