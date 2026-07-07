@@ -1,7 +1,6 @@
 <?php
 $detail_institusi = $this->admin_model->detail_institusi();
 $hero_image = base_url('assets/upload/bg/'.$detail_institusi->bg_beranda);
-$logo_image = base_url('assets/logounik.png');
 $news_items = isset($informasi) ? $informasi : array();
 $gallery_items = isset($galeri) ? $galeri : array();
 $statistik_items = isset($statistik_pendaftar) ? $statistik_pendaftar : array();

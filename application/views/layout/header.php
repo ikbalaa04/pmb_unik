@@ -1,5 +1,8 @@
  <!-- ======= Header ======= -->
-  <?php $detail_institusi  = $this->admin_model->detail_institusi();?>
+  <?php
+    $detail_institusi = $this->admin_model->detail_institusi();
+    $logo_public = !empty($detail_institusi->logo) ? base_url('assets/upload/logo/thumbs/'.$detail_institusi->logo) : base_url('assets/logounik.png');
+  ?>
   
   <header id="header" class="fixed-top d-flex align-items-center">
     <div class="container">
@@ -7,7 +10,7 @@
         <div class="logo">
           <!--<img class="text-light"><a href="<?php echo base_url() ?>"><span><?php echo $detail_institusi->judul ?></span></a></h1>-->
           <!-- Uncomment below if you prefer to use an image logo -->
-           <a href="<?php echo base_url() ?>"><img src="<?php echo base_url('assets/upload/logo/thumbs/'.$konfigurasi->logo)?>" alt="Logo" height="70px" ></a>
+           <a href="<?php echo base_url() ?>"><img src="<?php echo $logo_public; ?>" alt="Logo" height="70px" ></a>
         </div>
 
         <nav id="navbar" class="navbar">
