@@ -11,7 +11,7 @@
       $logo = base_url('assets/logounik.png');
     ?>
     <link href="<?php echo base_url('assets/upload/logo/thumbs/'.$detail_institusi->logo)?>" rel="icon">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:400,500,600,700,800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="<?php echo base_url()?>assets/login/css/style.css">
 
@@ -25,7 +25,7 @@
         margin: 0;
         color: #1f2933;
         background: #f6faf7;
-        font-family: "Poppins", Arial, sans-serif;
+        font-family: "Open Sans", Arial, sans-serif;
       }
 
       .login-page {
@@ -88,6 +88,7 @@
       .login-copy h1 {
         margin: 0;
         color: #fff;
+        font-family: "Raleway", sans-serif;
         font-size: 46px;
         line-height: 1.14;
         font-weight: 800;
@@ -139,6 +140,7 @@
       .login-panel h2 {
         margin: 0;
         color: #173b2a;
+        font-family: "Raleway", sans-serif;
         font-size: 30px;
         line-height: 1.25;
         font-weight: 800;
@@ -158,6 +160,7 @@
       .login-form label {
         margin-bottom: 8px;
         color: #344054;
+        font-family: "Poppins", sans-serif;
         font-size: 13px;
         font-weight: 800;
       }
@@ -187,6 +190,7 @@
         border-radius: 8px;
         color: #fff;
         background: #009f73;
+        font-family: "Poppins", sans-serif;
         font-weight: 800;
         box-shadow: 0 16px 36px rgba(0, 159, 115, 0.22);
       }
@@ -203,6 +207,7 @@
         margin-top: 22px;
         text-align: center;
         color: #667085;
+        font-family: "Open Sans", Arial, sans-serif;
         font-size: 14px;
       }
 
