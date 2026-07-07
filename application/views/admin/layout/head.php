@@ -260,7 +260,7 @@ function showUser(str) {
       }
 
       var value = $.trim($(field).val());
-      return value === '' || value === '-' || value === '0';
+      return value === '' || value === '-';
     }
 
     function showRequiredError(field) {
