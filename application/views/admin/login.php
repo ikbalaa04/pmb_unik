@@ -179,6 +179,38 @@
         box-shadow: 0 0 0 3px rgba(21, 148, 100, 0.12);
       }
 
+      .login-password-field {
+        position: relative;
+      }
+
+      .login-password-field .form-control {
+        padding-right: 48px;
+      }
+
+      .login-password-toggle {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 8px;
+        color: #667085;
+        background: transparent;
+        transform: translateY(-50%);
+        cursor: pointer;
+      }
+
+      .login-password-toggle:hover,
+      .login-password-toggle:focus {
+        color: #087f5f;
+        background: #eef6f2;
+        outline: none;
+      }
+
       .login-submit {
         display: inline-flex;
         align-items: center;
@@ -310,7 +342,12 @@
               </div>
               <div class="form-group mb-3">
                 <label for="password">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Masukan password" required>
+                <div class="login-password-field">
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Masukan password" required>
+                  <button type="button" class="login-password-toggle" id="toggle-password" aria-label="Lihat password">
+                    <i class="fa fa-eye"></i>
+                  </button>
+                </div>
               </div>
               <button type="submit" class="login-submit"><i class="fa fa-sign-in"></i> Login</button>
             </form>
@@ -329,5 +366,22 @@
     <script src="<?php echo base_url()?>assets/login/js/popper.js"></script>
     <script src="<?php echo base_url()?>assets/login/js/bootstrap.min.js"></script>
     <script src="<?php echo base_url()?>assets/login/js/main.js"></script>
+    <script>
+      (function() {
+        var password = document.getElementById('password');
+        var toggle = document.getElementById('toggle-password');
+
+        if (!password || !toggle) {
+          return;
+        }
+
+        toggle.addEventListener('click', function() {
+          var isHidden = password.getAttribute('type') === 'password';
+          password.setAttribute('type', isHidden ? 'text' : 'password');
+          toggle.setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Lihat password');
+          toggle.querySelector('i').className = isHidden ? 'fa fa-eye-slash' : 'fa fa-eye';
+        });
+      })();
+    </script>
   </body>
 </html>
