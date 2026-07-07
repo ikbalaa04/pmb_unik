@@ -7,7 +7,7 @@
         <div class="logo">
           <!--<img class="text-light"><a href="<?php echo base_url() ?>"><span><?php echo $detail_institusi->judul ?></span></a></h1>-->
           <!-- Uncomment below if you prefer to use an image logo -->
-           <a href="<?php echo base_url() ?>"><img src="<?php echo base_url('assets/logounik.png')?>" alt="Logo" height="70px" ></a>
+           <a href="<?php echo base_url() ?>"><img src="<?php echo base_url('assets/upload/logo/thumbs/'.$konfigurasi->logo)?>" alt="Logo" height="70px" ></a>
         </div>
 
         <nav id="navbar" class="navbar">
