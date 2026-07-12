@@ -4612,7 +4612,7 @@ class Home extends CI_CONTROLLER
         $sheet->setTitle(substr($labels[$status], 0, 31));
 
         $headers = array(
-            'No', 'Status Data', 'Tanggal Daftar', 'Tanggal Update', 'Username', 'No. Ujian', 'Sumber',
+            'No', 'Status Data', 'Tanggal Daftar', 'Tanggal Update', 'Username', 'NIM', 'No. Ujian', 'Sumber',
             'NIK', 'NISN', 'Nama Lengkap', 'Jenis', 'Program', 'Fakultas', 'Gelombang', 'Pilihan 1',
             'Pilihan 2', 'Email', 'No WA', 'Asal Sekolah', 'Jurusan Sekolah', 'Tahun Lulus',
             'Tempat Lahir', 'Tanggal Lahir', 'Jenis Kelamin', 'Agama', 'Alamat', 'Kecamatan',
@@ -4626,8 +4626,8 @@ class Home extends CI_CONTROLLER
             $sheet->getColumnDimensionByColumn($col)->setAutoSize(true);
         }
         $sheet->freezePane('A2');
-        $sheet->getStyle('A1:AP1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:AP1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB('D9D9D9');
+        $sheet->getStyle('A1:AQ1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:AQ1')->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB('D9D9D9');
 
         $row_number = 2;
         $no = 1;
@@ -4639,6 +4639,7 @@ class Home extends CI_CONTROLLER
                 $row->tanggal_daftar,
                 $row->tanggal_update,
                 $row->username,
+                $row->nim,
                 $row->noujian,
                 trim($row->sumber.' '.$row->keterangan_sumber),
                 $row->nik,

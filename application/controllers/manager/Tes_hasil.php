@@ -189,6 +189,32 @@ class Tes_hasil extends Member_Controller {
         return TRUE;
     }
 
+	private function get_program_studi_peserta($username, &$cache){
+		if(empty($username)){
+			return '';
+		}
+		if(isset($cache[$username])){
+			return $cache[$username];
+		}
+
+		$this->db->select('pendaftaran.jurusan_pilihan, prodi.nama AS nama_prodi');
+		$this->db->from('pendaftaran');
+		$this->db->join('prodi', 'prodi.kode = pendaftaran.jurusan_pilihan', 'left');
+		$this->db->where('pendaftaran.username', $username);
+		$this->db->order_by('pendaftaran.id', 'desc');
+		$this->db->limit(1);
+		$query = $this->db->get();
+
+		$program_studi = '';
+		if($query->num_rows()>0){
+			$row = $query->row();
+			$program_studi = !empty($row->nama_prodi) ? $row->nama_prodi : $row->jurusan_pilihan;
+		}
+
+		$cache[$username] = $program_studi;
+		return $program_studi;
+	}
+
     function export($tes_id=null, $grup_id=null, $waktu=null, $urutkan=null, $status=null, $keterangan=null){
         if(!empty($tes_id) AND !empty($grup_id) AND !empty($waktu) AND !empty($urutkan) AND !empty($status)){
             $this->load->library('excel');
@@ -206,18 +232,25 @@ class Tes_hasil extends Member_Controller {
             $inputFileName = './public/form/form-data-hasil-tes.xls';
             $excel = PHPExcel_IOFactory::load($inputFileName);
             $worksheet = $excel->getSheet(0);
+			$worksheet->setCellValueByColumnAndRow(6, 1, 'Program Studi');
+			$worksheet->setCellValueByColumnAndRow(7, 1, 'Nilai');
+			$worksheet->getColumnDimension('G')->setWidth(30);
+			$worksheet->getColumnDimension('H')->setWidth(12);
 
             if($query->num_rows()>0){
                 $query = $query->result();
+				$program_studi_cache = array();
                 $row = 2;
                 foreach ($query as $temp) {
+					$program_studi = $this->get_program_studi_peserta($temp->user_name, $program_studi_cache);
                     $worksheet->setCellValueByColumnAndRow(0, $row, ($row-1));
                     $worksheet->setCellValueByColumnAndRow(1, $row, $temp->tesuser_creation_time);
                     $worksheet->setCellValueByColumnAndRow(2, $row, $temp->tes_nama);
                     $worksheet->setCellValueByColumnAndRow(3, $row, $temp->user_name);
                     $worksheet->setCellValueByColumnAndRow(4, $row, stripslashes($temp->user_firstname));
                     $worksheet->setCellValueByColumnAndRow(5, $row, $temp->grup_nama);
-                    $worksheet->setCellValueByColumnAndRow(6, $row, $temp->nilai);
+                    $worksheet->setCellValueByColumnAndRow(6, $row, $program_studi);
+                    $worksheet->setCellValueByColumnAndRow(7, $row, $temp->nilai);
 
                     $row++;
                 }
