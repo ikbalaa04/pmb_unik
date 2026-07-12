@@ -48,14 +48,12 @@ if ($detail->fix == 1) {
 	                langkah berikutnya silakan melakukan daftar ulang pada menu <b>Registrasi Ulang</b> 
 	                dan lengkapi berkas persyaratan.<br>
 	                <?php } ?>
-	                <?php if($link_wa_group_kelulusan != '') { ?>
-	                Silakan masuk ke grup calon mahasiswa dengan link berikut: 
-	                <b>
-	                    <a style="color:#008d4c" href="<?php echo $link_wa_group_kelulusan; ?>" target="_blank">
-	                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
-	                    </a>
-	                </b>
-	                <?php } ?>
+                <?php if($link_wa_group_kelulusan != '') { ?>
+                Silakan masuk ke grup calon mahasiswa dengan link berikut:
+                    <a class="btn btn-xs" style="margin-left:4px;background:#fff;color:#1f5e38;border:1px solid #1f5e38;font-weight:700;" href="<?php echo $link_wa_group_kelulusan; ?>" target="_blank">
+                        <i class="fa fa-whatsapp" style="padding-right:4px"></i>Gabung Group
+                    </a>
+                <?php } ?>
 	            </center>
 	            </div>
 	        </div>

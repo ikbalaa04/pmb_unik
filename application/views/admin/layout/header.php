@@ -3,6 +3,11 @@
       $konfigurasi_header = $this->admin_model->detail_institusi();
       $link_wa_group_s1 = isset($konfigurasi_header->wa_group) ? trim($konfigurasi_header->wa_group) : '';
       $link_wa_group_s2 = isset($konfigurasi_header->wa_group_s2) ? trim($konfigurasi_header->wa_group_s2) : '';
+      $jenjang_mahasiswa = '';
+      if ($this->session->userdata('id_level') == '3') {
+        $detail_pendaftaran_header = $this->admin_model->detail_pendaftaran_mahasiswa();
+        $jenjang_mahasiswa = $detail_pendaftaran_header ? strtoupper(trim($detail_pendaftaran_header->jenjang)) : '';
+      }
     ?>
     <!-- Logo -->
     <?php if($this->session->userdata('id_level') == '3') { ?>
@@ -31,12 +36,12 @@
 
             <div class="navbar-custom-menu">
               <ul class="nav navbar-nav">
-                <?php if($link_wa_group_s1 != '') { ?>
+                <?php if($link_wa_group_s1 != '' && $jenjang_mahasiswa != 'S2') { ?>
                 <li class="dropdown user user-menu">
                      <a href="<?php echo $link_wa_group_s1; ?>" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Group WA S1</a>
                   </li>
                 <?php } ?>
-                <?php if($link_wa_group_s2 != '') { ?>
+                <?php if($link_wa_group_s2 != '' && $jenjang_mahasiswa != 'S1') { ?>
                 <li class="dropdown user user-menu">
                      <a href="<?php echo $link_wa_group_s2; ?>" target="_blank" class="btn btn-success btn-flat"><i class="fa fa-whatsapp"></i> Group WA S2</a>
                   </li>
