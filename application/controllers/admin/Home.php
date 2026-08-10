@@ -5627,7 +5627,15 @@ class Home extends CI_CONTROLLER
     public function kalkulasi_pendaftar(){
 
         $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
-    		$id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
+        $tahun_akademik_terpilih = $ambil_detail_thn_akademik;
+        $id_thn_akademik_filter = $this->input->get('tahun_akademik');
+        if ($id_thn_akademik_filter !== NULL && $id_thn_akademik_filter !== '') {
+            $detail_tahun_filter = $this->admin_model->detail_thn_akademik($id_thn_akademik_filter);
+            if ($detail_tahun_filter) {
+                $tahun_akademik_terpilih = $detail_tahun_filter;
+            }
+        }
+        $id_thn_akademik = $tahun_akademik_terpilih->id_thn_akademik;
 
         $tampil_fakultas = $this->admin_model->tampil_fakultas();
         $tampil_fakultas_sudah = $this->admin_model->tampil_fakultas();
@@ -5641,13 +5649,14 @@ class Home extends CI_CONTROLLER
 	        $chart_pendaftar_bulanan_tahunan = $this->admin_model->chart_pendaftar_bulanan_tahunan();
 	        $chart_referensi_pendaftar_tahunan = $this->admin_model->chart_referensi_pendaftar_tahunan();
 
-	        $data = array( 'title'          	=> 'Halaman Statistik Pendaftar TA ' .$ambil_detail_thn_akademik->nama_thn_akademik,
+	        $data = array( 'title'          	=> 'Halaman Statistik Pendaftar TA ' .$tahun_akademik_terpilih->nama_thn_akademik,
 	                       'tampil_fakultas' 	=> $tampil_fakultas,
                        'tampil_fakultas_sudah' 	=> $tampil_fakultas_sudah,
                        'tampil_fakultas_terverifikasi' 	=> $tampil_fakultas_terverifikasi,
                        'tampil_fakultas_diterima' 	=> $tampil_fakultas_diterima,
                        'tampil_fakultas_registrasi' 	=> $tampil_fakultas_registrasi,
-                       'tahun_akademik_aktif'    => $ambil_detail_thn_akademik,
+                       'tahun_akademik_aktif'    => $tahun_akademik_terpilih,
+                       'tahun_akademik_list'     => $this->admin_model->list_thn_akademik(),
                        'chart_pendaftar_tahunan_umum' => $chart_pendaftar_tahunan_umum,
                        'chart_pendaftar_tahunan_per_prodi' => $chart_pendaftar_tahunan_per_prodi,
 	                       'chart_diterima_tahunan_umum' => $chart_diterima_tahunan_umum,

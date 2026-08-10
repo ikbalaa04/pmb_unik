@@ -210,6 +210,19 @@ if (!empty($chart_referensi_pendaftar_tahunan)) {
 <div class="col-lg-12">
 <div class="panel panel-default">  
 <div class="panel-body"> 
+<form method="get" action="<?php echo base_url('admin/home/kalkulasi_pendaftar'); ?>" class="form-inline" style="margin-bottom:15px;">
+    <div class="form-group">
+        <label for="tahun-akademik-statistik">Tahun Akademik</label>
+        <select id="tahun-akademik-statistik" name="tahun_akademik" class="form-control" style="margin-left:8px;">
+            <?php foreach ($tahun_akademik_list as $tahun_akademik) { ?>
+                <option value="<?php echo $tahun_akademik->id_thn_akademik; ?>" <?php if ((string) $tahun_akademik_aktif->id_thn_akademik === (string) $tahun_akademik->id_thn_akademik) { echo 'selected'; } ?>>
+                    <?php echo $tahun_akademik->nama_thn_akademik; ?>
+                </option>
+            <?php } ?>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary" style="margin-left:8px;">Tampilkan</button>
+</form>
 <div class="rspv-tabel">
 <table id="example1" class="table table-bordered table-striped">
     <thead>
@@ -231,8 +244,7 @@ if (!empty($chart_referensi_pendaftar_tahunan)) {
       <?php  $i=1; foreach ($tampil_fakultas as $tampil_fakultas) { 
             $fakultas = $tampil_fakultas->id;
 
-            $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
-            $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
+            $id_thn_akademik = $tahun_akademik_aktif->id_thn_akademik;
 
             $list_kalkulasi_gelombang = $this->admin_model->list_kalkulasi_gelombang($fakultas,$id_thn_akademik);
 
