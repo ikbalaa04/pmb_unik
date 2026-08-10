@@ -5217,7 +5217,7 @@ class Home extends CI_CONTROLLER
         $tampil_fakultas_diterima = $this->admin_model->tampil_fakultas();
         $tampil_fakultas_registrasi = $this->admin_model->tampil_fakultas();
 
-        $data = array( 'title'          	=> 'Halaman Statistik Pendaftar TA ' .$ambil_detail_thn_akademik->nama_thn_akademik,
+        $data = array( 'title'          	=> 'Halaman Statistik Pendaftar',
                        'tampil_fakultas' 	=> $tampil_fakultas,
                        'tampil_fakultas_sudah' 	=> $tampil_fakultas_sudah,
                        'tampil_fakultas_terverifikasi' 	=> $tampil_fakultas_terverifikasi,

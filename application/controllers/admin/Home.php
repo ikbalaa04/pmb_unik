@@ -5649,7 +5649,7 @@ class Home extends CI_CONTROLLER
 	        $chart_pendaftar_bulanan_tahunan = $this->admin_model->chart_pendaftar_bulanan_tahunan();
 	        $chart_referensi_pendaftar_tahunan = $this->admin_model->chart_referensi_pendaftar_tahunan();
 
-	        $data = array( 'title'          	=> 'Halaman Statistik Pendaftar TA ' .$tahun_akademik_terpilih->nama_thn_akademik,
+	        $data = array( 'title'          	=> 'Halaman Statistik Pendaftar',
 	                       'tampil_fakultas' 	=> $tampil_fakultas,
                        'tampil_fakultas_sudah' 	=> $tampil_fakultas_sudah,
                        'tampil_fakultas_terverifikasi' 	=> $tampil_fakultas_terverifikasi,
