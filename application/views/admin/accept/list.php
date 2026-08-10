@@ -86,10 +86,10 @@ if($this->session->flashdata('success')){
 <div class="row">
 <?php if($this->session->userdata('id_level')=='1'||"4"){?>
 <div class="col-lg-12"><hr>
-<h4><center>Note : Nomor ujian bisa digenerate tanpa filter. Format: USM.tahun.kode fakultas.nomor urut global.</center></h4><hr> </div>
+<!-- <h4><center>Note : Nomor ujian bisa digenerate tanpa filter. Format: USM.tahun.kode fakultas.nomor urut global.</center></h4><hr> </div> -->
 <?php }else{ ?>
 <div class="col-lg-12"><hr>
-<h4><center>Note : Nomor ujian bisa digenerate tanpa filter. Format: USM.tahun.kode fakultas.nomor urut global.</center></h4><hr> </div>
+<!-- <h4><center>Note : Nomor ujian bisa digenerate tanpa filter. Format: USM.tahun.kode fakultas.nomor urut global.</center></h4><hr> </div> -->
 <?php } ?>
 
 <div class="col-lg-12">
