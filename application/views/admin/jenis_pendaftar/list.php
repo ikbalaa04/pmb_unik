@@ -33,8 +33,8 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
         <?php $i=1; foreach ($list_jenis as $list_jenis) { ?>
             <tr> 
                 <td width="20"><?php echo $i ?></td>
-                <td><?php echo $list_jenis->kode ?></td>
-                <td><?php echo $list_jenis->nama ?></td>
+                <td><?php echo html_escape($list_jenis->kode) ?></td>
+                <td><?php echo html_escape($list_jenis->nama) ?></td>
                 <?php if ($list_jenis->status == '0') { ?>
                 
                     <td align="center"><span class="label label-warning">Tidak Aktif</span></td>
@@ -45,6 +45,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
                   <?php } ?>
                 <td><center>
+                <?php if($this->session->userdata('id_level')=='1'){ ?>
+                <a href="<?php echo base_url('admin/home/delete_jenis_daftar/'.$list_jenis->id) ?>" onclick="return confirm('Jenis pendaftar ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+                <?php } ?>
                 <a href="<?php echo base_url('admin/home/edit_jenis_daftar/'.$list_jenis->id) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a>
             </tr>
          <?php $i++; } ?>
@@ -55,4 +58,3 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 </div>
 </div>
 </div>
-

@@ -39,17 +39,20 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
       <?php $i=1; foreach ($list_berkas as $list_berkas) { ?>
           <tr> 
               <td width="20"><?php echo $i ?></td>
-              <td><?php echo $list_berkas->nama_program ?></td>
-              <td><?php echo $list_berkas->nama_berkas ?></td>
-              <td><?php echo $list_berkas->besar_berkas ?> kb</td>
-              <td><?php echo $list_berkas->type_file ?></td>
-              <td><?php echo $list_berkas->urutan ?></td>
+              <td><?php echo html_escape($list_berkas->nama_program) ?></td>
+              <td><?php echo html_escape($list_berkas->nama_berkas) ?></td>
+              <td><?php echo html_escape($list_berkas->besar_berkas) ?> kb</td>
+              <td><?php echo html_escape($list_berkas->type_file) ?></td>
+              <td><?php echo html_escape($list_berkas->urutan) ?></td>
               <?php if ($list_berkas->status == '0') { ?>
                       <td align="center"><span class="label label-warning">Tidak Aktif</span></td>
               <?php }else{?>
                        <td align="center"><span class="label label-info">Aktif</span></td>  
                <?php } ?>
               <td><center>
+              <?php if($this->session->userdata('id_level')=='1'){ ?>
+              <a href="<?php echo base_url('admin/home/delete_custom_berkas/'.$list_berkas->id_berkas) ?>" onclick="return confirm('Custom berkas ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+              <?php } ?>
               <a href="<?php echo base_url('admin/home/edit_custom_berkas/'.$list_berkas->id_berkas) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a></center>
           </tr>
        <?php $i++; } ?>
@@ -67,4 +70,3 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 </b>
 </div>
 </div>
-

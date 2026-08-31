@@ -41,13 +41,13 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
       <?php $i=1; foreach ($list_prodi as $list_prodi) { ?>
           <tr> 
               <td width="20"><?php echo $i ?></td>
-              <td><?php echo $list_prodi->nama_fakultas ?></td>
-              <td><?php echo $list_prodi->jenjang ?></td>
-              <td><?php echo $list_prodi->kode?></td>
-              <td><?php echo $list_prodi->nama ?></td>
-              <td><?php echo $list_prodi->namabank?></td>
-              <td><?php echo $list_prodi->norek?></td>
-              <td><?php echo $list_prodi->biaya ?></td>
+              <td><?php echo html_escape($list_prodi->nama_fakultas) ?></td>
+              <td><?php echo html_escape($list_prodi->jenjang) ?></td>
+              <td><?php echo html_escape($list_prodi->kode)?></td>
+              <td><?php echo html_escape($list_prodi->nama) ?></td>
+              <td><?php echo html_escape($list_prodi->namabank)?></td>
+              <td><?php echo html_escape($list_prodi->norek)?></td>
+              <td><?php echo html_escape($list_prodi->biaya) ?></td>
               <?php if ($list_prodi->status == '0') { ?>
                   
                       <td align="center"><span class="label label-warning">Tidak Aktif</span></td>
@@ -58,7 +58,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
                <?php } ?>
               <td><center>
-               <!-- <a href="<?php echo base_url('admin/home/delete_prodi/'.$list_prodi->id) ?>"  onclick="return confirm('Anda Yakin Ingin Menghapus data ini!!!')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a> -->
+              <?php if($this->session->userdata('id_level')=='1'){ ?>
+               <a href="<?php echo base_url('admin/home/delete_prodi/'.$list_prodi->id) ?>" onclick="return confirm('Prodi ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+              <?php } ?>
               <a href="<?php echo base_url('admin/home/edit_prodi/'.$list_prodi->id) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a></center>
           </tr>
        <?php $i++; } ?>
@@ -69,4 +71,3 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 </div>
 </div>
 </div>
-

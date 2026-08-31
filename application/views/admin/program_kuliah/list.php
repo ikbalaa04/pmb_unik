@@ -38,8 +38,8 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
         <?php $i=1; foreach ($list_program as $list_program) { ?>
           <tr> 
               <td width="20"><?php echo $i ?></td>
-              <td><?php echo $list_program->kode_program ?></td>
-              <td><?php echo $list_program->nama ?></td>
+              <td><?php echo html_escape($list_program->kode_program) ?></td>
+              <td><?php echo html_escape($list_program->nama) ?></td>
                   <?php if ($list_program->status == '0') { ?>
                 
                     <td align="center"><span class="label label-warning">Tidak Aktif</span></td>
@@ -59,9 +59,11 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
                      <td align="center"><span class="label label-info">Berbayar</span></td>  
 
                   <?php } ?>
-              <td><?php echo $list_program->keterangan ?></td>
+              <td><?php echo html_escape($list_program->keterangan) ?></td>
               <td><center>
-               
+              <?php if($this->session->userdata('id_level')=='1'){ ?>
+              <a href="<?php echo base_url('admin/home/delete_program_kuliah/'.$list_program->id) ?>" onclick="return confirm('Program ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+              <?php } ?>
               <a href="<?php echo base_url('admin/home/edit_program_kuliah/'.$list_program->id) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a></center>
           </tr>
        <?php $i++; } ?>
@@ -72,5 +74,3 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 </div>
 </div>
 </div>
-
-

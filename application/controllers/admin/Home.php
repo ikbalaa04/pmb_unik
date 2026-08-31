@@ -846,6 +846,7 @@ class Home extends CI_CONTROLLER
   }
 
   public function delete_gelombang($id){
+      $this->require_master_delete_access('admin/home/gelombang');
       $data=array('id' => $id);
       $this->admin_model->delete_gelombang($data);
       $this->session->set_flashdata('success', 'Data telah di hapus');
@@ -944,6 +945,7 @@ class Home extends CI_CONTROLLER
   }
 
   public function delete_program_kuliah($id){
+      $this->require_master_delete_access('admin/home/program_kuliah');
       $data=array('id' => $id);
       $this->admin_model->delete_program($data);
       $this->session->set_flashdata('success', 'Data telah di hapus');
@@ -1019,6 +1021,7 @@ class Home extends CI_CONTROLLER
   }
 
   public function delete_jenis_daftar($id){
+      $this->require_master_delete_access('admin/home/jenis_daftar');
       $data=array('id' => $id);
       $this->admin_model->delete_jenis($data);
       $this->session->set_flashdata('success', 'Data telah di hapus');
@@ -1115,6 +1118,7 @@ class Home extends CI_CONTROLLER
   }
 
   public function delete_prodi($id){
+      $this->require_master_delete_access('admin/home/prodi');
       $data=array('id' => $id);
       $this->admin_model->delete_prodi($data);
       $this->session->set_flashdata('success', 'Data telah di hapus');
@@ -1198,6 +1202,7 @@ class Home extends CI_CONTROLLER
   }
 
   public function delete_fakultas($id){
+      $this->require_master_delete_access('admin/home/fakultas');
       $data=array('id' => $id);
       $this->admin_model->delete_fakultas($data);
       $this->session->set_flashdata('success', 'Data telah di hapus');
@@ -1340,6 +1345,14 @@ class Home extends CI_CONTROLLER
   //end karantina
 
   //verifikasi
+    private function require_master_delete_access($redirect_uri){
+      if((string) $this->session->userdata('id_level') !== '1'){
+        $this->session->set_flashdata('warning', 'Hanya Super Admin yang dapat menghapus data Master.');
+        redirect(base_url($redirect_uri), 'refresh');
+        exit;
+      }
+    }
+
     public function verifikasi(){
 
         $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik(); 
@@ -4510,6 +4523,13 @@ class Home extends CI_CONTROLLER
 
     }
 
+    public function delete_biaya($id){
+      $this->require_master_delete_access('admin/home/biaya');
+      $this->admin_model->delete_biaya(array('id' => $id));
+      $this->session->set_flashdata('success', 'Data biaya telah dihapus');
+      redirect(base_url('admin/home/biaya'),'refresh');
+    }
+
     public function get_list_prodi(){
         $id_fakultas = $this->input->post('fakultas');
         $data = $this->admin_model->get_list_prodi($id_fakultas);
@@ -4531,13 +4551,20 @@ class Home extends CI_CONTROLLER
     // }
 
     //Menu Jenjang
-  	public function jenjang(){
+   public function jenjang(){
         $list_jenjang = $this->admin_model->list_jenjang();
 
         $data = array( 'title'          => 'Halaman Jenjang',
                        'list_jenjang'   => $list_jenjang,
                        'isi'            => 'admin/jenjang/list');
         $this->load->view('admin/layout/wrapper', $data, FALSE);
+    }
+
+    public function delete_jenjang($id){
+      $this->require_master_delete_access('admin/home/jenjang');
+      $this->admin_model->delete_jenjang(array('id' => $id));
+      $this->session->set_flashdata('success', 'Data jenjang telah dihapus');
+      redirect(base_url('admin/home/jenjang'),'refresh');
     }
 
 
@@ -4944,7 +4971,8 @@ class Home extends CI_CONTROLLER
       	redirect(base_url('admin/home/diterima'),'refresh');
 	 }
 
-	 public function delete_gelombang_banyak(){
+	public function delete_gelombang_banyak(){
+		$this->require_master_delete_access('admin/home/gelombang');
 	 	$data = $this->input->post('id'); // Ambil data id
 		$this->admin_model->delete_gelombang_banyak($data);
 
@@ -5223,7 +5251,7 @@ class Home extends CI_CONTROLLER
 
     }
 
-    public function edit_sumber($id){
+  public function edit_sumber($id){
 
     $detail_sumber = $this->admin_model->detail_sumber($id); 
 
@@ -5251,6 +5279,13 @@ class Home extends CI_CONTROLLER
       $this->session->set_flashdata('success', 'Data telah diedit');
       redirect(base_url('admin/home/sumber'),'refresh');
     }
+  }
+
+  public function delete_sumber($id){
+    $this->require_master_delete_access('admin/home/sumber');
+    $this->admin_model->delete_sumber(array('id' => $id));
+    $this->session->set_flashdata('success', 'Data sumber referensi telah dihapus');
+    redirect(base_url('admin/home/sumber'),'refresh');
   }
 
   public function kelulusan_login(){
@@ -6002,7 +6037,7 @@ class Home extends CI_CONTROLLER
 
     }
 
-    public function edit_custom_berkas($id_berkas){
+  public function edit_custom_berkas($id_berkas){
 
     $detail_berkas = $this->admin_model->detail_berkas_master($id_berkas); 
 
@@ -6033,6 +6068,13 @@ class Home extends CI_CONTROLLER
       $this->session->set_flashdata('success', 'Data telah diedit');
       redirect(base_url('admin/home/custom_berkas'),'refresh');
     }
+  }
+
+  public function delete_custom_berkas($id_berkas){
+    $this->require_master_delete_access('admin/home/custom_berkas');
+    $this->admin_model->delete_berkas(array('id_berkas' => $id_berkas));
+    $this->session->set_flashdata('success', 'Data custom berkas telah dihapus');
+    redirect(base_url('admin/home/custom_berkas'),'refresh');
   }
 
   public function statistik_bar()

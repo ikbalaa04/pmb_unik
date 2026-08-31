@@ -38,10 +38,10 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
         <?php $i=1; foreach ($list_biaya as $list_biaya) { ?>
         <tr> 
             <td width="20"><?php echo $i ?></td>
-            <td><?php echo $list_biaya->nama_fakultas ?></td>
-            <td><?php echo $list_biaya->jenjang ?> <?php echo $list_biaya->nama_prodi ?></td>
-            <td><?php echo $list_biaya->program ?></td>
-            <td><?php echo $list_biaya->biaya ?></td>
+            <td><?php echo html_escape($list_biaya->nama_fakultas) ?></td>
+            <td><?php echo html_escape($list_biaya->jenjang.' '.$list_biaya->nama_prodi) ?></td>
+            <td><?php echo html_escape($list_biaya->program) ?></td>
+            <td><?php echo html_escape($list_biaya->biaya) ?></td>
             <?php if($list_biaya->utama == '1'){ ?>
             <td><span class="label label-info">Yes</span></td>
             <?php }else{ ?>
@@ -54,7 +54,9 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
             <td><span class="label label-warning">Tidak Aktif</span></td>  
             <?php } ?>
             <td><center>
-             <!-- <a href="<?php echo base_url('admin/home/delete_biaya/'.$list_biaya->id) ?>"  onclick="return confirm('Anda Yakin Ingin Menghapus data ini!!!')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a> -->
+            <?php if($this->session->userdata('id_level')=='1'){ ?>
+             <a href="<?php echo base_url('admin/home/delete_biaya/'.$list_biaya->id) ?>" onclick="return confirm('Data biaya ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+            <?php } ?>
             <a href="<?php echo base_url('admin/home/edit_biaya/'.$list_biaya->id) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a></center></td>
         </tr>
      <?php $i++; } ?>

@@ -45,12 +45,12 @@
             <td><input type="checkbox" class="check-item" name="id[]" value="<?php echo $list_gelombang->id ?>" /></td>
             <?php } ?>
             <td width="20"><?php echo $list_gelombang->id ?></td>
-            <td><?php echo $list_gelombang->nama_fakultas ?></td>
-            <td><?php echo $list_gelombang->nama ?></td>
+            <td><?php echo html_escape($list_gelombang->nama_fakultas) ?></td>
+            <td><?php echo html_escape($list_gelombang->nama) ?></td>
             <!-- <td><?php echo date('d-M-Y',strtotime($list_gelombang->date_start))?></td> -->
             <td><?php echo date('d-M-Y',strtotime($list_gelombang->date_end))?></td>
-            <td><?php echo $list_gelombang->tahun?></td>
-            <td><?php echo $list_gelombang->angkatan?></td>
+            <td><?php echo html_escape($list_gelombang->tahun)?></td>
+            <td><?php echo html_escape($list_gelombang->angkatan)?></td>
             <?php if ($list_gelombang->status == '0') { ?>
                 
                     <td align="center"><span class="label label-warning">Tidak Aktif</span></td>
@@ -60,9 +60,11 @@
                      <td align="center"><span class="label label-info">Aktif</span></td>  
 
              <?php } ?>
-            <td><?php echo $list_gelombang->keterangan?></td>
+            <td><?php echo html_escape($list_gelombang->keterangan)?></td>
             <td><center>
-             <!-- <a href="<?php echo base_url('admin/home/delete_gelombang/'.$list_gelombang->id) ?>" onclick="return confirm('Anda Yakin Ingin Menghapus data ini!!!')"  class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a> -->
+            <?php if($this->session->userdata('id_level')=='1'){ ?>
+             <a href="<?php echo base_url('admin/home/delete_gelombang/'.$list_gelombang->id) ?>" onclick="return confirm('Gelombang ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+            <?php } ?>
             <a href="<?php echo base_url('admin/home/edit_gelombang/'.$list_gelombang->id) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a></center>
             
             </td>
@@ -71,6 +73,7 @@
       </tbody>
   </table>
 </div><br>
+  <?php if($this->session->userdata('id_level')=='1'){ ?>
   <button type="button" id="btn-delete" class="btn btn-danger">Hapus Data Terpilih</button>
+  <?php } ?>
     </form><br>
-

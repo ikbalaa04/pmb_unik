@@ -777,8 +777,6 @@ class Admin_model extends CI_Model {
 			$this->db->from('prodi');
 			$this->db->where(array('prodi.status'   => '1'));
 			$this->db->join('fakultas','fakultas.id=prodi.fakultas','left');
-			$this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-			$this->db->where('jenjang.status','1');
 			$this->db->order_by('fakultas.nama_fakultas','asc');
 			$query = $this->db->get();
 			return $query->result();
@@ -803,8 +801,6 @@ class Admin_model extends CI_Model {
 			$this->db->where(array('prodi.fakultas'	=> $fakultas,
 								   'prodi.status'   => '1'));
 			$this->db->join('fakultas','fakultas.id=prodi.fakultas','left');
-			$this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-			$this->db->where('jenjang.status','1');
 			$this->db->order_by('prodi.nama','asc');
 			$query = $this->db->get();
 			return $query->result();
@@ -818,8 +814,6 @@ class Admin_model extends CI_Model {
 			$this->db->where(array('prodi.fakultas'	=> $fakultas,
 								   'prodi.status'   => '1'));
 			$this->db->join('fakultas','fakultas.id=prodi.fakultas','left');
-			$this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-			$this->db->where('jenjang.status','1');
 			$this->db->order_by('prodi.nama','asc');
 			$query = $this->db->get();
 			return $query->result();
@@ -832,8 +826,6 @@ class Admin_model extends CI_Model {
 			$this->db->from('prodi');
 			$this->db->where(array('prodi.fakultas'=> $fakultas,
 								   'prodi.status'  => '1'));
-			$this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-			$this->db->where('jenjang.status','1');
 			$this->db->order_by('prodi.nama','asc');
 			$query = $this->db->get();
 			return $query->result();
@@ -846,8 +838,6 @@ class Admin_model extends CI_Model {
 			$this->db->from('prodi');
 			$this->db->where(array('prodi.fakultas'=> $fakultas2,
 								   'prodi.status'  => '1'));
-			$this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-			$this->db->where('jenjang.status','1');
 			$this->db->order_by('prodi.nama','asc');
 			$query = $this->db->get();
 			return $query->result();
@@ -2153,8 +2143,6 @@ class Admin_model extends CI_Model {
         $this->db->select('prodi.*');
         $this->db->from('prodi');
         $this->db->where(array('prodi.fakultas' => $id_fakultas, 'prodi.status' => '1'));
-        $this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-        $this->db->where('jenjang.status','1');
         $this->db->order_by('prodi.nama','asc');
         $query = $this->db->get();
         return $query->result();
@@ -2179,9 +2167,7 @@ class Admin_model extends CI_Model {
 	        $this->db->from('prodi');
 	        $this->db->where(array('prodi.status' => '1', 'prodi.fakultas' => $fakultas));
 	        $this->db->join('fakultas', 'fakultas.id = prodi.fakultas');
-	        $this->db->join('jenjang','jenjang.nama=prodi.jenjang');
-	        $this->db->where('jenjang.status','1');
-	        $this->db->order_by('prodi.nama', 'asc');
+        $this->db->order_by('prodi.nama', 'asc');
         $query = $this->db->get();
 		return $query->result();
 
@@ -2905,6 +2891,11 @@ class Admin_model extends CI_Model {
 		$this->db->update('biaya', $data); 
 	}
 
+	public function delete_biaya($data){
+		$this->db->where('id', $data['id']);
+		$this->db->delete('biaya');
+	}
+
 	//lebih banyak biaya di beranda
     public function lebih_biaya($limit,$start)
 	{
@@ -2966,6 +2957,11 @@ class Admin_model extends CI_Model {
 	public function edit_jenjang($data){
 		$this->db->where('id', $data['id']);
 		$this->db->update('jenjang', $data); 
+	}
+
+	public function delete_jenjang($data){
+		$this->db->where('id', $data['id']);
+		$this->db->delete('jenjang');
 	}
 
 	//End jenjang
@@ -3904,9 +3900,14 @@ class Admin_model extends CI_Model {
 
 	}
 	
-	public function edit_berkas($data){
+    public function edit_berkas($data){
 		$this->db->where('id_berkas', $data['id_berkas']);
 		$this->db->update('berkas', $data); 
+	}
+
+	public function delete_berkas($data){
+		$this->db->where('id_berkas', $data['id_berkas']);
+		$this->db->delete('berkas');
 	}
 
 	public function detail_berkas_masuk_full($id_berkas_masuk)

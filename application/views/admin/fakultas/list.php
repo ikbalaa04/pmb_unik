@@ -34,9 +34,9 @@
         <?php $i=1; foreach ($list_fakultas as $list_fakultas) { ?>
             <tr> 
                 <td><?php echo $i ?></td>
-                <td><?php echo $list_fakultas->kode ?></td>
-                <td><?php echo $list_fakultas->nama_fakultas ?></td>
-                <td><?php echo $list_fakultas->singkatan ?></td>
+                <td><?php echo html_escape($list_fakultas->kode) ?></td>
+                <td><?php echo html_escape($list_fakultas->nama_fakultas) ?></td>
+                <td><?php echo html_escape($list_fakultas->singkatan) ?></td>
                 <?php if ($list_fakultas->status == '0') { ?>
                     
                         <td align="center"><a href="#" class="btn btn-sm btn-warning"><b>Tidak Aktif</b></a></td>
@@ -47,7 +47,9 @@
 
                  <?php } ?>
                 <td><center>
-                 <!-- <a href="<?php echo base_url('admin/home/delete_fakultas/'.$list_fakultas->id) ?>"  onclick="return confirm('Anda Yakin Ingin Menghapus data ini!!!')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a> -->
+                <?php if($this->session->userdata('id_level')=='1'){ ?>
+                 <a href="<?php echo base_url('admin/home/delete_fakultas/'.$list_fakultas->id) ?>" onclick="return confirm('Fakultas ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
+                <?php } ?>
                 <a href="<?php echo base_url('admin/home/edit_fakultas/'.$list_fakultas->id) ?>" class="btn btn-md btn-info"><i class="fa fa-edit"></i></a></center>
             </tr>
          <?php $i++; } ?>

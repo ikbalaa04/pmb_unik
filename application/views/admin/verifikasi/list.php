@@ -34,7 +34,7 @@ if (!empty($export_filter)) {
 <div class="row" align="text-center"> 
     <form method="post" action="<?php echo base_url('admin/home/verifikasi_filter')?>">    
 
-        <?php if($this->session->userdata('id_level')=='1'||'2'){?>
+        <?php if(in_array((string) $this->session->userdata('id_level'), array('1', '2'), TRUE)){?>
         <div class="col-lg-5">
             <?php $list_prodi_aktif = $this->admin_model->list_prodi_aktif();?>
             <label>Program Studi</label><br>
@@ -139,13 +139,13 @@ if (!empty($export_filter)) {
             <td><?php echo $verifikasi->nama_gelombang ?> - <?php echo $verifikasi->tahun_gelombang ?></td>
             <?php
             if($verifikasi->jurusan_pilihan !='0'){ ?>
-              <td><?php echo $pilihan1->jenjang ?> <?php echo $pilihan1->nama ?> </td>
+              <td><?php echo $pilihan1 ? html_escape($pilihan1->jenjang.' '.$pilihan1->nama) : '-' ?> </td>
             <?php }else{ ?>
               <td>-</td>
             <?php }?>
             <?php
             if($verifikasi->jurusan_pilihan2 !='0'){ ?>
-              <td><?php echo $pilihan2->jenjang ?> <?php echo $pilihan2->nama ?> </td> 
+              <td><?php echo $pilihan2 ? html_escape($pilihan2->jenjang.' '.$pilihan2->nama) : '-' ?> </td>
             <?php }else{ ?>
               <td>-</td>
             <?php }?>
