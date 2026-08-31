@@ -15,6 +15,21 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
   }  
 ?>
 
+<style>
+  #example1 .master-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  #example1 .master-actions .btn {
+    min-width: 34px;
+    height: 30px;
+    padding: 5px 9px;
+  }
+</style>
+
 <div class="row">
 <div class="col-lg-12">
 <div class="pane panel-default">  
@@ -46,19 +61,19 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 
                 <?php if ($list_jenjang->status == '0') { ?>
                 
-                    <td><center>
-                    <a href="<?php echo base_url('admin/home/edit_aktif_jenjang/'.$list_jenjang->id) ?>" class="btn btn-md btn-success"><i class="fa fa-check"></i> Aktifkan</a>
+                    <td><div class="master-actions">
+                    <a href="<?php echo base_url('admin/home/edit_aktif_jenjang/'.$list_jenjang->id) ?>" title="Aktifkan jenjang" class="btn btn-sm btn-success"><i class="fa fa-check"></i></a>
                     <?php if($this->session->userdata('id_level')=='1'){ ?>
-                    <a href="<?php echo base_url('admin/home/delete_jenjang/'.$list_jenjang->id) ?>" onclick="return confirm('Jenjang ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
-                    <?php } ?></center></td>
+                    <a href="<?php echo base_url('admin/home/delete_jenjang/'.$list_jenjang->id) ?>" title="Hapus jenjang" onclick="return confirm('Jenjang ini akan dihapus permanen. Lanjutkan?')" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i></a>
+                    <?php } ?></div></td>
                    
                   <?php }else{?>
 
-                    <td align="center"><center>
-                    <a href="<?php echo base_url('admin/home/edit_nonaktif_jenjang/'.$list_jenjang->id) ?>" class="btn btn-md btn-danger"><i class="fa fa-times-circle"></i> Non-aktifkan</a>
+                    <td align="center"><div class="master-actions">
+                    <a href="<?php echo base_url('admin/home/edit_nonaktif_jenjang/'.$list_jenjang->id) ?>" title="Nonaktifkan jenjang" class="btn btn-sm btn-warning"><i class="fa fa-times-circle"></i></a>
                     <?php if($this->session->userdata('id_level')=='1'){ ?>
-                    <a href="<?php echo base_url('admin/home/delete_jenjang/'.$list_jenjang->id) ?>" onclick="return confirm('Jenjang ini akan dihapus permanen. Lanjutkan?')" class="btn btn-md btn-danger"><i class="fa fa-trash-o"></i></a>
-                    <?php } ?></center></td>
+                    <a href="<?php echo base_url('admin/home/delete_jenjang/'.$list_jenjang->id) ?>" title="Hapus jenjang" onclick="return confirm('Jenjang ini akan dihapus permanen. Lanjutkan?')" class="btn btn-sm btn-danger"><i class="fa fa-trash-o"></i></a>
+                    <?php } ?></div></td>
 
                 <?php } ?>
             </tr>

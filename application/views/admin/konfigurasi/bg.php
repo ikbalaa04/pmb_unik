@@ -24,11 +24,13 @@ echo form_open_multipart(base_url('admin/home/konfigurasi_bg/'),'class="form-hor
   <div class="col-md-9">
     <?php if($detail_institusi->bg == "") { ?>
       <br><br><br><?php echo "(Belum ada background)";?>
-    <?php }else{ ?>
+    <?php }elseif(is_file(FCPATH.'assets/upload/bg/thumbs/'.$detail_institusi->bg) && is_file(FCPATH.'assets/upload/bg/'.$detail_institusi->bg)){ ?>
     Tampak Jelas <br>
     <img src="<?php echo base_url('assets/upload/bg/thumbs/'.$detail_institusi->bg)?>" class="img img-responsive img-thumbnail" width="200"><br><br>
     Tampak Buram <br>  
     <img src="<?php echo base_url('assets/upload/bg/'.$detail_institusi->bg)?>" class="img img-responsive img-thumbnail" width="200">
+  <?php }else{ ?>
+    <br><br><?php echo "File background tidak ditemukan, silakan upload ulang"; ?>
   <?php } ?>
   </div>
 </div>
@@ -66,11 +68,13 @@ echo form_open_multipart(base_url('admin/home/konfigurasi_bg/'),'class="form-hor
   <div class="col-md-9">
     <?php if($detail_institusi->bg_beranda == "") { ?>
       <br><br><br><?php echo "(Belum ada background)";?>
-    <?php }else{ ?>
+    <?php }elseif(is_file(FCPATH.'assets/upload/bg/thumbs/'.$detail_institusi->bg_beranda) && is_file(FCPATH.'assets/upload/bg/'.$detail_institusi->bg_beranda)){ ?>
     Tampak Jelas <br>
     <img src="<?php echo base_url('assets/upload/bg/thumbs/'.$detail_institusi->bg_beranda)?>" class="img img-responsive img-thumbnail" width="200"><br><br>
     Tampak Buram <br>  
     <img src="<?php echo base_url('assets/upload/bg/'.$detail_institusi->bg_beranda)?>" class="img img-responsive img-thumbnail" width="200">
+  <?php }else{ ?>
+    <br><br><?php echo "File background tidak ditemukan, silakan upload ulang"; ?>
   <?php } ?>
   </div>
 </div>

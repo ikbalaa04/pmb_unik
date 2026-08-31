@@ -7,7 +7,7 @@
 
     <?php
       $detail_institusi = $this->admin_model->detail_institusi();
-      $login_bg = !empty($detail_institusi->bg) ? base_url('assets/upload/bg/'.$detail_institusi->bg) : base_url('assets/bg.jpg');
+      $login_bg = !empty($detail_institusi->bg) && is_file(FCPATH.'assets/upload/bg/'.$detail_institusi->bg) ? base_url('assets/upload/bg/'.$detail_institusi->bg) : base_url('assets/bg.jpg');
       $logo = base_url('assets/logounik.png');
     ?>
     <link href="<?php echo base_url('assets/upload/logo/thumbs/'.$detail_institusi->logo)?>" rel="icon">

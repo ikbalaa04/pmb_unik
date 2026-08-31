@@ -654,8 +654,8 @@ class Home extends CI_CONTROLLER
 			//end create thumbnail
 
 			if($detail_institusi->bg != ""){
-				unlink('./assets/upload/bg/'.$detail_institusi->bg);
-				unlink('./assets/upload/bg/thumbs/'.$detail_institusi->bg);
+				if(is_file('./assets/upload/bg/'.$detail_institusi->bg)) unlink('./assets/upload/bg/'.$detail_institusi->bg);
+				if(is_file('./assets/upload/bg/thumbs/'.$detail_institusi->bg)) unlink('./assets/upload/bg/thumbs/'.$detail_institusi->bg);
 			}
 			
 			$i=$this->input;
@@ -719,8 +719,8 @@ class Home extends CI_CONTROLLER
 			//end create thumbnail
 
 			if($detail_institusi->bg_beranda != ""){
-				unlink('./assets/upload/bg/'.$detail_institusi->bg_beranda);
-				unlink('./assets/upload/bg/thumbs/'.$detail_institusi->bg_beranda);
+				if(is_file('./assets/upload/bg/'.$detail_institusi->bg_beranda)) unlink('./assets/upload/bg/'.$detail_institusi->bg_beranda);
+				if(is_file('./assets/upload/bg/thumbs/'.$detail_institusi->bg_beranda)) unlink('./assets/upload/bg/thumbs/'.$detail_institusi->bg_beranda);
 			}
 			
 			$i=$this->input;
