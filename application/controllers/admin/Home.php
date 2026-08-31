@@ -16,6 +16,16 @@ class Home extends CI_CONTROLLER
     $this->cek_kelengkapan_profil_mahasiswa();
     }
 
+    private function upload_directory($folder)
+    {
+        $folder = trim($folder, '/\\');
+        $path = rtrim(FCPATH, '/\\').DIRECTORY_SEPARATOR.'assets'.DIRECTORY_SEPARATOR.'upload'.DIRECTORY_SEPARATOR.$folder.DIRECTORY_SEPARATOR;
+        if (!is_dir($path)) {
+            mkdir($path, 0755, TRUE);
+        }
+        return $path;
+    }
+
     private function cek_kelengkapan_profil_mahasiswa()
     {
         if ($this->session->userdata('id_level') != '3') {
@@ -619,7 +629,7 @@ class Home extends CI_CONTROLLER
 
 		if($valid->run()){
 		
-			$config['upload_path']   	= './assets/upload/bg/';
+			$config['upload_path']   	= $this->upload_directory('bg');
 			$config['allowed_types'] 	= 'gif|jpg|png|svg|jpeg';
 			$config['max_size']      	= 3000; // KB
 
@@ -639,9 +649,9 @@ class Home extends CI_CONTROLLER
 
 			//create thumbnail
 			$config['image_library'] 	= 'gd2';
-			$config['source_image'] 	= './assets/upload/bg/'.$upload_foto['upload_data']['file_name'];
+			$config['source_image'] 	= $this->upload_directory('bg').$upload_foto['upload_data']['file_name'];
 			//lokasi thumbs
-			$config['new_image']		= './assets/upload/bg/thumbs/'.$upload_foto['upload_data']['file_name'];
+			$config['new_image']		= $this->upload_directory('bg/thumbs').$upload_foto['upload_data']['file_name'];
 			$config['create_thumb']		= TRUE;
 			$config['maintain_ratio'] 	= TRUE;
 			$config['width']         	= 500; //pixel
@@ -684,7 +694,7 @@ class Home extends CI_CONTROLLER
 
 		if($valid->run()){
 		
-			$config['upload_path']   	= './assets/upload/bg/';
+			$config['upload_path']   	= $this->upload_directory('bg');
 			$config['allowed_types'] 	= 'gif|jpg|png|svg|jpeg';
 			$config['max_size']      	= 3000; // KB
 
@@ -704,9 +714,9 @@ class Home extends CI_CONTROLLER
 
 			//create thumbnail
 			$config['image_library'] 	= 'gd2';
-			$config['source_image'] 	= './assets/upload/bg/'.$upload_foto['upload_data']['file_name'];
+			$config['source_image'] 	= $this->upload_directory('bg').$upload_foto['upload_data']['file_name'];
 			//lokasi thumbs
-			$config['new_image']		= './assets/upload/bg/thumbs/'.$upload_foto['upload_data']['file_name'];
+			$config['new_image']		= $this->upload_directory('bg/thumbs').$upload_foto['upload_data']['file_name'];
 			$config['create_thumb']		= TRUE;
 			$config['maintain_ratio'] 	= TRUE;
 			$config['width']         	= 500; //pixel
@@ -1578,7 +1588,7 @@ class Home extends CI_CONTROLLER
     public function unduh($id){
 
       $detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-      $folder = './assets/upload/bukti/';
+      $folder = $this->upload_directory('bukti');
       $file   = $detail_pendaftaran->bukti_bayar;
       force_download($folder.$file, NULL);
   	
@@ -1587,7 +1597,7 @@ class Home extends CI_CONTROLLER
   	public function unduh_regis($id){
 
       $detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-      $folder = './assets/upload/bukti/';
+      $folder = $this->upload_directory('bukti');
       $file   = $detail_pendaftaran->bukti_regis;
       force_download($folder.$file, NULL);
   	
@@ -2045,7 +2055,7 @@ class Home extends CI_CONTROLLER
 		private function _set()
 		{
 		    $config = array();
-		    $config['upload_path']      = './assets/upload/berkas/mb/';
+		    $config['upload_path']      = $this->upload_directory('berkas/mb');
 		    $config['allowed_types']    = 'jpg|jpeg|png|gif';
 		    $config['max_size']         = '2048'; // 2 MB
 		    $config['encrypt_name']		= TRUE;
@@ -2056,7 +2066,7 @@ class Home extends CI_CONTROLLER
 		private function _set_pd()
 		{
 		    $config = array();
-		    $config['upload_path']      = './assets/upload/berkas/pd/';
+		    $config['upload_path']      = $this->upload_directory('berkas/pd');
 		    $config['allowed_types']    = 'jpg|jpeg|png|gif';
 		    $config['max_size']         = '2048'; // 2 MB
 		    $config['encrypt_name']		= TRUE;
@@ -3462,7 +3472,7 @@ class Home extends CI_CONTROLLER
 		private function _set_mhs()
 		{
 		    $config = array();
-		    $config['upload_path']      = './assets/upload/berkas/mb/';
+		    $config['upload_path']      = $this->upload_directory('berkas/mb');
 		    $config['allowed_types']    = 'jpg|jpeg|png|gif';
 		    $config['max_size']         = '2048'; // 2 MB
 		    $config['encrypt_name']		= TRUE;
@@ -3473,7 +3483,7 @@ class Home extends CI_CONTROLLER
 		private function _set_pd_mhs()
 		{
 		    $config = array();
-		    $config['upload_path']      = './assets/upload/berkas/pd/';
+		    $config['upload_path']      = $this->upload_directory('berkas/pd');
 		    $config['allowed_types']    = 'jpg|jpeg|png|gif';
 		    $config['max_size']         = '2048'; // 2 MB
 		    $config['encrypt_name']		= TRUE;
@@ -3527,7 +3537,7 @@ class Home extends CI_CONTROLLER
 		if($valid->run()){
 			//jika foto tidak kosong
 			if(! empty($_FILES['bukti_bayar']['name'])){
-			$config['upload_path']   	= './assets/upload/bukti/';
+			$config['upload_path']   	= $this->upload_directory('bukti');
 			$config['allowed_types'] 	= 'jpg|png|jpeg';
 			$config['max_size']      	= 1028; // KB
 			$config['encrypt_name']   	= TRUE;
@@ -3551,9 +3561,9 @@ class Home extends CI_CONTROLLER
 
 				//create thumbnail
 				$config['image_library'] 	= 'gd2';
-				$config['source_image'] 	= './assets/upload/bukti/'.$upload_foto['upload_data']['file_name'];
+			$config['source_image'] 	= $this->upload_directory('bukti').$upload_foto['upload_data']['file_name'];
 				//lokasi thumbs
-				$config['new_image']		= './assets/upload/bukti/thumbs/'.$upload_foto['upload_data']['file_name'];
+			$config['new_image']		= $this->upload_directory('bukti/thumbs').$upload_foto['upload_data']['file_name'];
 				$config['create_thumb']		= TRUE;
 				$config['maintain_ratio'] 	= TRUE;
 				$config['width']         	= 800; //pixel
@@ -4207,7 +4217,7 @@ class Home extends CI_CONTROLLER
 		if($valid->run()){
 			//jika foto tidak kosong
 			if(! empty($_FILES['berkas']['name'])){
-			$config['upload_path']   	= './assets/upload/berkas/';
+			$config['upload_path']   	= $this->upload_directory('berkas');
 			$config['allowed_types'] 	= $detail_berkas_master->type_file;
 			$config['max_size']      	= $detail_berkas_master->besar_berkas; // KB
 			$config['encrypt_name']   	= TRUE;
@@ -4251,7 +4261,7 @@ class Home extends CI_CONTROLLER
 	public function unduh_berkas($id_berkas_masuk){
 
       $detail_berkas_masuk = $this->admin_model->detail_berkas_masuk($id_berkas_masuk);
-      $folder = './assets/upload/berkas/';
+      $folder = $this->upload_directory('berkas');
       $file   = $detail_berkas_masuk->file_masuk;
       force_download($folder.$file, NULL);
   	
@@ -4271,7 +4281,7 @@ class Home extends CI_CONTROLLER
 		if($valid->run()){
 			//jika foto tidak kosong
 			if(! empty($_FILES['berkas']['name'])){
-			$config['upload_path']   	= './assets/upload/berkas/';
+			$config['upload_path']   	= $this->upload_directory('berkas');
 			$config['allowed_types'] 	= $detail_berkas_masuk_full->type_file;
 			$config['max_size']      	= $detail_berkas_masuk_full->besar_berkas; // KB
 			$config['encrypt_name']   	= TRUE;
@@ -5863,7 +5873,7 @@ class Home extends CI_CONTROLLER
 		if($valid->run()){
 			//jika foto tidak kosong
 			if(! empty($_FILES['bukti_regis']['name'])){
-			$config['upload_path']   	= './assets/upload/bukti/';
+			$config['upload_path']   	= $this->upload_directory('bukti');
 			$config['allowed_types'] 	= 'jpg|png|jpeg';
 			$config['max_size']      	= 212; // KB
 			$config['encrypt_name']   	= TRUE;
@@ -5887,9 +5897,9 @@ class Home extends CI_CONTROLLER
 
 				//create thumbnail
 				$config['image_library'] 	= 'gd2';
-				$config['source_image'] 	= './assets/upload/bukti/'.$upload_foto['upload_data']['file_name'];
+			$config['source_image'] 	= $this->upload_directory('bukti').$upload_foto['upload_data']['file_name'];
 				//lokasi thumbs
-				$config['new_image']		= './assets/upload/bukti/thumbs/'.$upload_foto['upload_data']['file_name'];
+			$config['new_image']		= $this->upload_directory('bukti/thumbs').$upload_foto['upload_data']['file_name'];
 				$config['create_thumb']		= TRUE;
 				$config['maintain_ratio'] 	= TRUE;
 				$config['width']         	= 800; //pixel

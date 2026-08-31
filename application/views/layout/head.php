@@ -7,7 +7,12 @@
 
   <title><?php echo $title?></title>
   <?php $detail_institusi  = $this->admin_model->detail_institusi();?>
-  <?php $background_file = !empty($detail_institusi->bg_beranda) && is_file(FCPATH.'assets/upload/bg/'.$detail_institusi->bg_beranda) ? $detail_institusi->bg_beranda : ''; ?>
+  <?php
+    $background_file = !empty($detail_institusi->bg_beranda) && is_file(FCPATH.'assets/upload/bg/'.$detail_institusi->bg_beranda)
+      ? $detail_institusi->bg_beranda
+      : (is_file(FCPATH.'assets/upload/bg/aula.jpg') ? 'aula.jpg' : '');
+    $background_url = $background_file ? base_url('assets/upload/bg/'.$background_file) : base_url('assets/bg.jpg');
+  ?>
   <meta name="description" content="<?php echo $detail_institusi->deskripsi ?>">
   <meta content="" name="keywords">
 
@@ -81,13 +86,13 @@
     #hero {
       width: 100%;
       height: 80vh;
-      background: url("<?php echo $background_file ? base_url('assets/upload/bg/'.$background_file) : base_url('assets/bg.jpg')?>") center center;
+      background: url("<?php echo $background_url?>") center center;
       background-size: cover;
       position: relative;
     }
 
     .cta {
-      background: linear-gradient(rgba(2, 2, 2, 0.7), rgba(0, 0, 0, 0.7)), url("<?php echo $background_file ? base_url('assets/upload/bg/'.$background_file) : base_url('assets/bg.jpg')?>") fixed center center;
+      background: linear-gradient(rgba(2, 2, 2, 0.7), rgba(0, 0, 0, 0.7)), url("<?php echo $background_url?>") fixed center center;
       background-size: cover;
       padding: 60px 0;
     }

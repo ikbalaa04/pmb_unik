@@ -2,7 +2,7 @@
 $detail_institusi = $this->admin_model->detail_institusi();
 $hero_image = !empty($detail_institusi->bg_beranda) && is_file(FCPATH.'assets/upload/bg/'.$detail_institusi->bg_beranda)
   ? base_url('assets/upload/bg/'.$detail_institusi->bg_beranda)
-  : base_url('assets/bg.jpg');
+  : (is_file(FCPATH.'assets/upload/bg/aula.jpg') ? base_url('assets/upload/bg/aula.jpg') : base_url('assets/bg.jpg'));
 $news_items = isset($informasi) ? $informasi : array();
 $gallery_items = isset($galeri) ? $galeri : array();
 $statistik_items = isset($statistik_pendaftar) ? $statistik_pendaftar : array();
