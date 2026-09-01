@@ -2,3 +2,4 @@
 .codex/
 application/config/database.php
 /.agents
+assets/
