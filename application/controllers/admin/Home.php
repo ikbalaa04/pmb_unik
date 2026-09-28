@@ -2514,16 +2514,19 @@ class Home extends CI_CONTROLLER
 
     }
 
-	    public function lulus_accept_apt($id){
+    public function lulus_accept_apt($id){
 
-    	$detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
-	        $data = array( 'id' 		=> $detail_pendaftaran->id,
-        			   'fix' 		=> '1');
-	        $this->admin_model->edit_pendaftaran($data);
-	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
-	        redirect(base_url('admin/home/accept_apt'),'refresh');
+        $detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
+        $data = array(
+            'id'      => $detail_pendaftaran->id,
+            'fix'     => '1',
+            'non_fix' => '0'
+        );
+        $this->admin_model->edit_pendaftaran($data);
+        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
+        redirect(base_url('admin/home/accept_apt'),'refresh');
 
-	    }
+    }
 
     public function gagal_accept_apt($id){
 
@@ -2605,7 +2608,13 @@ class Home extends CI_CONTROLLER
 	        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik();
 	        $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
 	        $result = $this->admin_model->generate_nim_lulus($id_thn_akademik);
-	        $message = $result['berhasil'].' NIM berhasil digenerate';
+        $message = $result['berhasil'].' NIM baru berhasil digenerate';
+        if ($result['diubah'] > 0) {
+            $message .= ', '.$result['diubah'].' NIM disesuaikan dengan prodi terbaru';
+        }
+        if ($result['dipertahankan'] > 0) {
+            $message .= ', '.$result['dipertahankan'].' NIM lama tetap dipertahankan';
+        }
 	        if ($result['gagal'] > 0) {
 	            $message .= ', '.$result['gagal'].' gagal karena mapping fakultas/prodi belum cocok';
 	            $this->session->set_flashdata('warning', $message);

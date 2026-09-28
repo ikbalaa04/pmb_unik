@@ -12,8 +12,8 @@
     ?>
     <link href="<?php echo base_url('assets/upload/logo/thumbs/'.$detail_institusi->logo)?>" rel="icon">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="<?php echo base_url()?>assets/login/css/style.css">
+    <link rel="stylesheet" href="<?php echo base_url()?>assets/admin/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?php echo base_url()?>assets/depan/lib/bootstrap/css/bootstrap.min.css">
 
     <style>
       * {
@@ -23,6 +23,7 @@
       body {
         min-height: 100vh;
         margin: 0;
+        overflow-x: hidden;
         color: #1f2933;
         background: #f6faf7;
         font-family: "Open Sans", Arial, sans-serif;
@@ -39,6 +40,9 @@
       }
 
       .login-shell {
+        width: 100%;
+        max-width: 1140px;
+        margin: 0 auto;
         display: grid;
         grid-template-columns: minmax(0, 1fr) 430px;
         min-height: 640px;
@@ -150,6 +154,28 @@
         margin: 10px 0 26px;
         color: #667085;
         line-height: 1.65;
+      }
+
+      .login-form .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .login-alert {
+        margin-bottom: 1rem;
+        padding: 12px 14px;
+        border: 1px solid transparent;
+      }
+
+      .login-alert.alert-warning {
+        border-color: #f6d58b;
+        color: #7a4b00;
+        background: #fff8e6;
+      }
+
+      .login-alert.alert-success {
+        border-color: #a8dfbf;
+        color: #176b3a;
+        background: #effbf4;
       }
 
       .login-alert {
@@ -280,6 +306,11 @@
       }
 
       @media (max-width: 575px) {
+        .login-page > .container {
+          padding-right: 12px;
+          padding-left: 12px;
+        }
+
         .login-visual,
         .login-panel {
           padding: 26px;
@@ -362,10 +393,8 @@
       </div>
     </main>
 
-    <script src="<?php echo base_url()?>assets/login/js/jquery.min.js"></script>
-    <script src="<?php echo base_url()?>assets/login/js/popper.js"></script>
-    <script src="<?php echo base_url()?>assets/login/js/bootstrap.min.js"></script>
-    <script src="<?php echo base_url()?>assets/login/js/main.js"></script>
+    <script src="<?php echo base_url()?>assets/depan/lib/jquery/jquery.min.js"></script>
+    <script src="<?php echo base_url()?>assets/depan/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script>
       (function() {
         var password = document.getElementById('password');

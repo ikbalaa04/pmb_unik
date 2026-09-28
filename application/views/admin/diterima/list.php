@@ -68,7 +68,7 @@ if (!empty($export_filter)) {
 	        <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
 	        <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/diterima')?>" > Tanpa Filter</a>
 	        <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo $export_url ?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
-	        <a class="btn btn-warning btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/generate_nim_diterima')?>" onclick="return confirm('Generate NIM untuk semua peserta lulus yang belum memiliki NIM?')"><i class="fa fa-id-card"></i> Generate NIM</a>
+	        <a class="btn btn-warning btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/generate_nim_diterima')?>" onclick="return confirm('Generate NIM untuk peserta diterima yang belum memiliki NIM dan sesuaikan NIM peserta yang pindah jurusan?')"><i class="fa fa-id-card"></i> Generate NIM</a>
 	    </form>
 </div><br>
 

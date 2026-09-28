@@ -1236,44 +1236,43 @@ class Admin_model extends CI_Model {
 				return FALSE;
 			}
 
-			if (isset($pendaftaran->nim) && trim($pendaftaran->nim) != '') {
-				return $pendaftaran->nim;
-			}
-
-			$tahun_akademik = $this->detail_thn_akademik($pendaftaran->tahun_akademik);
-			$tahun = $tahun_akademik ? $tahun_akademik->nama_thn_akademik : '';
-			if (!preg_match('/([0-9]{4})/', $tahun, $match)) {
-				$gelombang = $this->detail_gelombang_id($pendaftaran->gelombang);
-				$tahun = $gelombang && $gelombang->tahun != '' ? $gelombang->tahun : date('Y');
-				preg_match('/([0-9]{4})/', $tahun, $match);
-			}
-			$kode_tahun = isset($match[1]) ? substr($match[1], -2) : date('y');
-
-				$prodi = $this->detail_prodi_nim($pendaftaran->jurusan_pilihan, $pendaftaran->jenjang);
-				if (!$prodi) {
-					return FALSE;
-				}
-
-			$kode_fakultas = $this->kode_fakultas_nim($pendaftaran->fakultas);
-			$kode_prodi = $this->kode_prodi_nim($kode_fakultas, $prodi);
-			if ($kode_fakultas === FALSE || $kode_prodi === FALSE) {
+			$prefix = $this->nim_prefix_pendaftar($pendaftaran);
+			if ($prefix === FALSE) {
 				return FALSE;
 			}
 
-			$prefix = $kode_tahun.$kode_fakultas.$kode_prodi;
-			$this->db->select('nim');
-			$this->db->from('pendaftaran');
-			$this->db->like('nim', $prefix, 'after');
-			$this->db->order_by('nim', 'desc');
-			$this->db->limit(1);
-			$query = $this->db->get();
-			$last = $query->row();
-			$nomor_terakhir = 0;
-			if ($last && preg_match('/([0-9]{4})$/', $last->nim, $last_match)) {
-				$nomor_terakhir = (int) $last_match[1];
+			// NIM yang sudah sesuai tahun, fakultas, dan prodi tidak diubah.
+			// Jika prefix berbeda, data prodi/fakultas sudah berubah sehingga
+			// NIM harus dibuat ulang untuk prodi yang baru.
+			$nim_lama = trim((string) $pendaftaran->nim);
+			if ($nim_lama !== '' && preg_match('/^'.preg_quote($prefix, '/').'[0-9]{4}$/', $nim_lama)) {
+				return $nim_lama;
 			}
 
-			$nim = $prefix.str_pad($nomor_terakhir + 1, 4, '0', STR_PAD_LEFT);
+			$this->db->select('nim');
+			$this->db->from('pendaftaran');
+			$this->db->where('id !=', $pendaftaran->id);
+			$this->db->like('nim', $prefix, 'after');
+			$query = $this->db->get();
+			$nomor_terakhir = 0;
+			$pattern = '/^'.preg_quote($prefix, '/').'([0-9]{4})$/';
+			foreach ($query->result() as $row) {
+				if (preg_match($pattern, trim((string) $row->nim), $last_match)) {
+					$nomor_terakhir = max($nomor_terakhir, (int) $last_match[1]);
+				}
+			}
+
+			do {
+				$nomor_terakhir++;
+				$nim = $prefix.str_pad($nomor_terakhir, 4, '0', STR_PAD_LEFT);
+				$this->db->select('id');
+				$this->db->from('pendaftaran');
+				$this->db->where('nim', $nim);
+				$this->db->where('id !=', $pendaftaran->id);
+				$this->db->limit(1);
+				$duplikat = $this->db->get()->row();
+			} while ($duplikat);
+
 			$this->edit_pendaftaran(array(
 				'id'  => $pendaftaran->id,
 				'nim' => $nim
@@ -1281,29 +1280,71 @@ class Admin_model extends CI_Model {
 			return $nim;
 		}
 
+		private function nim_prefix_pendaftar($pendaftaran)
+		{
+			$tahun_akademik = $this->detail_thn_akademik($pendaftaran->tahun_akademik);
+			$tahun = $tahun_akademik ? $tahun_akademik->nama_thn_akademik : '';
+			$match = array();
+			if (!preg_match('/([0-9]{4})/', $tahun, $match)) {
+				$gelombang = $this->detail_gelombang_id($pendaftaran->gelombang);
+				$tahun = $gelombang && $gelombang->tahun != '' ? $gelombang->tahun : date('Y');
+				preg_match('/([0-9]{4})/', $tahun, $match);
+			}
+			$kode_tahun = isset($match[1]) ? substr($match[1], -2) : date('y');
+
+			$prodi = $this->detail_prodi_nim($pendaftaran->jurusan_pilihan, $pendaftaran->jenjang);
+			if (!$prodi) {
+				return FALSE;
+			}
+
+			// Gunakan fakultas master prodi agar perpindahan prodi lintas fakultas
+			// menghasilkan prefix NIM yang benar.
+			$fakultas_prodi = !empty($prodi->fakultas) ? $prodi->fakultas : $pendaftaran->fakultas;
+			$kode_fakultas = $this->kode_fakultas_nim($fakultas_prodi);
+			$kode_prodi = $this->kode_prodi_nim($kode_fakultas, $prodi);
+			if ($kode_fakultas === FALSE || $kode_prodi === FALSE) {
+				return FALSE;
+			}
+
+			return $kode_tahun.$kode_fakultas.$kode_prodi;
+		}
+
 		public function generate_nim_lulus($id_thn_akademik)
 		{
-			$this->db->select('id');
+			$this->db->select('id, nim');
 			$this->db->from('pendaftaran');
 			$this->db->where(array(
 				'tahun_akademik' => $id_thn_akademik,
 				'bayar' => '1',
 				'approve' => '1',
-				'fix' => '1',
-				'non_fix' => '0'
+				'fix' => '1'
 			));
 			$this->db->group_start();
-			$this->db->where('nim', '');
-			$this->db->or_where('nim IS NULL', NULL, FALSE);
+			$this->db->where('non_fix', '0');
+			$this->db->or_where('non_fix', '');
+			$this->db->or_where('non_fix IS NULL', NULL, FALSE);
 			$this->db->group_end();
 			$this->db->order_by('jurusan_pilihan', 'asc');
 			$this->db->order_by('id', 'asc');
 			$query = $this->db->get();
 
-			$result = array('berhasil' => 0, 'gagal' => 0);
+			$result = array(
+				'berhasil' => 0,
+				'diubah' => 0,
+				'dipertahankan' => 0,
+				'gagal' => 0
+			);
 			foreach ($query->result() as $row) {
-				if ($this->generate_nim_pendaftar($row->id)) {
-					$result['berhasil']++;
+				$nim_lama = trim((string) $row->nim);
+				$nim_baru = $this->generate_nim_pendaftar($row->id);
+				if ($nim_baru) {
+					if ($nim_lama === '') {
+						$result['berhasil']++;
+					} elseif ($nim_lama === $nim_baru) {
+						$result['dipertahankan']++;
+					} else {
+						$result['diubah']++;
+					}
 				} else {
 					$result['gagal']++;
 				}
@@ -1889,6 +1930,7 @@ class Admin_model extends CI_Model {
 
 			private function parse_prodi_filter($prodi)
 			{
+				$prodi = (string) $prodi;
 				$result = array('jenjang' => '', 'kode' => $prodi);
 				if (strpos($prodi, '|') !== FALSE) {
 					list($result['jenjang'], $result['kode']) = explode('|', $prodi, 2);
@@ -2008,6 +2050,7 @@ class Admin_model extends CI_Model {
 
 		$gelombang = $this->input->post('gelombang');
 		$prodi = $this->input->post('prodi');
+		$prodi_filter = $this->parse_prodi_filter($prodi);
 				
 		$this->db->select('pendaftaran.id, pendaftaran.verifikasi_regis, pendaftaran.bukti_regis,pendaftaran.registrasi_ulang, pendaftaran.username, pendaftaran.jenjang, pendaftaran.registrasi_ulang,  pendaftaran.sumber, pendaftaran.verifikasi_berkas, pendaftaran.keterangan_berkas, pendaftaran.keterangan_sumber, pendaftaran.program, pendaftaran.keterangan_berkas, pendaftaran.ipk, pendaftaran.fix, pendaftaran.nim, pendaftaran.noujian, pendaftaran.jenis, pendaftaran.fakultas, pendaftaran.gelombang, pendaftaran.jurusan_pilihan, pendaftaran.jurusan_pilihan2, pendaftaran.nama_lengkap, pendaftaran.email, pendaftaran.password, pendaftaran.hp, pendaftaran.sekolah_nama, pendaftaran.sekolah_jurusan, pendaftaran.sekolah_nama_jurusan, pendaftaran.program, pendaftaran.tanggal_daftar, pendaftaran.bayar, pendaftaran.approve, pendaftaran.atas_nama, pendaftaran.tgl_bayar, pendaftaran.bank, prodi.nama as nama_prodi, program.nama as nama_program, fakultas.singkatan, gelombang.nama as nama_gelombang, gelombang.kode as KG, gelombang.tahun as tahun_gelombang');
 		$this->db->from('pendaftaran');
