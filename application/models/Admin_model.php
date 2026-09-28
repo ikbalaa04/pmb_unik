@@ -1229,11 +1229,18 @@ class Admin_model extends CI_Model {
 			return 'USM' . date('y') . $kode_fakultas . $nomor;
 		}
 
-		public function generate_nim_pendaftar($id_pendaftaran)
+		public function generate_nim_pendaftar($id_pendaftaran, $force = FALSE)
 		{
 			$pendaftaran = $this->detail_pendaftaran($id_pendaftaran);
 			if (!$pendaftaran) {
 				return FALSE;
+			}
+
+			$nim_lama = trim((string) $pendaftaran->nim);
+			// Generate massal/otomatis hanya mengisi NIM yang masih kosong.
+			// NIM lama tidak berubah hanya karena mapping prodi diperbarui.
+			if ($nim_lama !== '' && !$force) {
+				return $nim_lama;
 			}
 
 			$prefix = $this->nim_prefix_pendaftar($pendaftaran);
@@ -1241,10 +1248,7 @@ class Admin_model extends CI_Model {
 				return FALSE;
 			}
 
-			// NIM yang sudah sesuai tahun, fakultas, dan prodi tidak diubah.
-			// Jika prefix berbeda, data prodi/fakultas sudah berubah sehingga
-			// NIM harus dibuat ulang untuk prodi yang baru.
-			$nim_lama = trim((string) $pendaftaran->nim);
+			// Pada generate manual, NIM yang sudah sesuai tetap dipertahankan.
 			if ($nim_lama !== '' && preg_match('/^'.preg_quote($prefix, '/').'[0-9]{4}$/', $nim_lama)) {
 				return $nim_lama;
 			}
@@ -1330,21 +1334,19 @@ class Admin_model extends CI_Model {
 
 			$result = array(
 				'berhasil' => 0,
-				'diubah' => 0,
 				'dipertahankan' => 0,
 				'gagal' => 0
 			);
 			foreach ($query->result() as $row) {
 				$nim_lama = trim((string) $row->nim);
+				if ($nim_lama !== '') {
+					$result['dipertahankan']++;
+					continue;
+				}
+
 				$nim_baru = $this->generate_nim_pendaftar($row->id);
 				if ($nim_baru) {
-					if ($nim_lama === '') {
-						$result['berhasil']++;
-					} elseif ($nim_lama === $nim_baru) {
-						$result['dipertahankan']++;
-					} else {
-						$result['diubah']++;
-					}
+					$result['berhasil']++;
 				} else {
 					$result['gagal']++;
 				}

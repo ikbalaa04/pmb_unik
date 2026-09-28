@@ -2609,9 +2609,6 @@ class Home extends CI_CONTROLLER
 	        $id_thn_akademik = $ambil_detail_thn_akademik->id_thn_akademik;
 	        $result = $this->admin_model->generate_nim_lulus($id_thn_akademik);
         $message = $result['berhasil'].' NIM baru berhasil digenerate';
-        if ($result['diubah'] > 0) {
-            $message .= ', '.$result['diubah'].' NIM disesuaikan dengan prodi terbaru';
-        }
         if ($result['dipertahankan'] > 0) {
             $message .= ', '.$result['dipertahankan'].' NIM lama tetap dipertahankan';
         }
@@ -2620,6 +2617,36 @@ class Home extends CI_CONTROLLER
 	            $this->session->set_flashdata('warning', $message);
 	        } else {
 	            $this->session->set_flashdata('success', $message);
+	        }
+	        redirect(base_url('admin/home/diterima'),'refresh');
+	    }
+
+	    public function generate_nim_diterima_satuan($id){
+	        $detail_pendaftaran = $this->admin_model->detail_pendaftaran($id);
+	        $ambil_detail_thn_akademik = $this->admin_model->ambil_detail_thn_akademik();
+	        $non_fix = $detail_pendaftaran && isset($detail_pendaftaran->non_fix)
+	            ? (string) $detail_pendaftaran->non_fix : '';
+	        $diterima = $detail_pendaftaran
+	            && (string) $detail_pendaftaran->tahun_akademik === (string) $ambil_detail_thn_akademik->id_thn_akademik
+	            && (string) $detail_pendaftaran->bayar === '1'
+	            && (string) $detail_pendaftaran->approve === '1'
+	            && (string) $detail_pendaftaran->fix === '1'
+	            && ($non_fix === '' || $non_fix === '0');
+
+	        if (!$diterima) {
+	            $this->session->set_flashdata('warning', 'Data mahasiswa tidak berada pada status diterima.');
+	            redirect(base_url('admin/home/diterima'),'refresh');
+	            return;
+	        }
+
+	        $nim_lama = trim((string) $detail_pendaftaran->nim);
+	        $nim_baru = $this->admin_model->generate_nim_pendaftar($id, TRUE);
+	        if (!$nim_baru) {
+	            $this->session->set_flashdata('warning', 'NIM gagal digenerate. Periksa mapping fakultas dan prodi mahasiswa.');
+	        } elseif ($nim_lama !== '' && $nim_lama !== $nim_baru) {
+	            $this->session->set_flashdata('success', 'NIM mahasiswa berhasil disesuaikan menjadi '.$nim_baru.'.');
+	        } else {
+	            $this->session->set_flashdata('success', 'NIM mahasiswa berhasil digenerate: '.$nim_baru.'.');
 	        }
 	        redirect(base_url('admin/home/diterima'),'refresh');
 	    }
@@ -5055,13 +5082,11 @@ class Home extends CI_CONTROLLER
         			   'fakultas' 		=> $detail_gelombang->fakultas,
         			   'fix' 			=> '1',
         			   'non_fix' 		=> '0',
-                       'nim' => NULL,
         			   'gelombang'=> $detail_pendaftaran->gelombang_2,
         			   'gelombang_2'=> $detail_pendaftaran->gelombang,
         			   'jurusan_pilihan'=> $detail_pendaftaran->jurusan_pilihan2,
         			   'jurusan_pilihan2'=> $detail_pendaftaran->jurusan_pilihan);
 	        $this->admin_model->edit_pendaftaran($data);
-	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
 
 	        $username = $detail_pendaftaran->username;
         $detail_pengguna = $this->admin_model->detail_pengguna_admin($username);
@@ -5084,13 +5109,11 @@ class Home extends CI_CONTROLLER
     	$detail_gelombang = $this->admin_model->detail_gelombang_id($id_gelombang);
 	        $data = array( 'id' 			=> $detail_pendaftaran->id,
         			   'fakultas' 		=> $detail_gelombang->fakultas,
-                       'nim' => NULL,
         			   'gelombang'=> $detail_pendaftaran->gelombang_2,
         			   'gelombang_2'=> $detail_pendaftaran->gelombang,
         			   'jurusan_pilihan'=> $detail_pendaftaran->jurusan_pilihan2,
         			   'jurusan_pilihan2'=> $detail_pendaftaran->jurusan_pilihan);
 	        $this->admin_model->edit_pendaftaran($data);
-	        $this->admin_model->generate_nim_pendaftar($detail_pendaftaran->id);
 
 	        $username = $detail_pendaftaran->username;
         $detail_pengguna = $this->admin_model->detail_pengguna_admin($username);

@@ -68,7 +68,7 @@ if (!empty($export_filter)) {
 	        <input style="margin-top: 5px; border-radius: 5px" type="submit" value="Filter" class="btn btn-info btn-md">
 	        <a class="btn btn-success btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/diterima')?>" > Tanpa Filter</a>
 	        <a class="btn btn-primary btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo $export_url ?>"><i class="fa fa-file-excel-o"></i> Export Excel</a>
-	        <a class="btn btn-warning btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/generate_nim_diterima')?>" onclick="return confirm('Generate NIM untuk peserta diterima yang belum memiliki NIM dan sesuaikan NIM peserta yang pindah jurusan?')"><i class="fa fa-id-card"></i> Generate NIM</a>
+	        <a class="btn btn-warning btn-md" style="margin-top: 5px; border-radius: 5px" href="<?php echo base_url('admin/home/generate_nim_diterima')?>" onclick="return confirm('Generate NIM hanya untuk peserta diterima yang belum memiliki NIM? NIM lama tidak akan diubah.')"><i class="fa fa-id-card"></i> Generate NIM Kosong</a>
 	    </form>
 </div><br>
 
@@ -133,7 +133,10 @@ if (!empty($export_filter)) {
             </td>  
             <?php } ?>
 
-	            <td width="20"><?php if(!isset($diterima->nim) || $diterima->nim == ''){echo "Belum Ada";}else{echo $diterima->nim;} ?></td>
+	            <td width="120">
+                <?php if(!isset($diterima->nim) || $diterima->nim == ''){echo "Belum Ada";}else{echo $diterima->nim;} ?><br>
+                <a href="<?php echo base_url('admin/home/generate_nim_diterima_satuan/'.$diterima->id) ?>" class="btn btn-xs btn-warning" onclick="return confirm('Generate ulang NIM mahasiswa ini sesuai prodi saat ini? NIM lama hanya berubah untuk mahasiswa ini.')"><i class="fa fa-id-card"></i> Generate NIM</a>
+            </td>
 	            <td width="20"><?php if($diterima->noujian == ''){echo "Belum Ada";}else{echo $diterima->noujian;} ?></td>
             <td width="20"><?php if($diterima->jenis == ''){echo "Belum diisi";}else{echo $diterima->jenis;} ?></td>
             <td width="20"><?php if($diterima->nama_program == ''){echo "Belum diisi";}else{echo $diterima->nama_program;} ?></td>
