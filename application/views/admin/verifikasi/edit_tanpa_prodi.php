@@ -21,6 +21,14 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 <div class="row">
 <?php echo form_open_multipart(base_url('admin/home/edit_tanpa_prodi/'.$detail->id),'class="form-horizontal"'); ?>
 
+<?php if (in_array((string) $this->session->userdata('id_level'), array('1', '2'), TRUE)) { ?>
+<div class="col-md-12">
+    <a href="<?php echo base_url('admin/home/edit_prodi_pendaftar/'.$detail->id) ?>" class="btn btn-warning btn-md">
+        <i class="fa fa-exchange"></i> Edit Program Studi (tanpa batas kuota)
+    </a>
+</div><br>
+<?php } ?>
+
 <div class="col-md-5"></div>
 <div class="col-md-6"><h2><b>Data Profil</b></h2></div>
 <div class="col-md-12"><hr></div>
@@ -686,4 +694,3 @@ echo validation_errors('<div class="alert alert-warning">','</div>');
 </div>
 
 <?php echo form_close(); ?>
-

@@ -135,10 +135,12 @@ if ($detail->fix == 1) {
 <?php
 $boleh_ubah_prodi = (isset($sisa_ubah_prodi) && $sisa_ubah_prodi > 0) || !empty($wajib_utama_belum_lengkap);
 $atribut_ubah_prodi = $boleh_ubah_prodi ? 'required=""' : 'disabled=""';
+$maks_ubah_prodi = isset($maks_ubah_prodi) ? (int) $maks_ubah_prodi : 2;
+$label_kuota_ubah_prodi = $boleh_ubah_prodi ? $sisa_ubah_prodi.' kali tersedia' : 'sudah habis';
 ?>
 
 <div class="alert alert-info">
-    Kuota perubahan fakultas/program studi: <b><?php echo $boleh_ubah_prodi ? '1 kali tersedia' : 'sudah habis' ?></b>.
+    Kuota perubahan fakultas/program studi: <b><?php echo $label_kuota_ubah_prodi ?></b> dari maksimal <?php echo $maks_ubah_prodi ?> kali.
     Perubahan pilihan pertama, pilihan kedua, atau hanya pilihan kedua tetap dihitung sebagai 1 kali perubahan.
 </div>
 
